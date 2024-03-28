@@ -19,3 +19,25 @@ bool
 
 
 ## Example
+
+```
+import "tx"
+import "cell"
+
+function main() {
+  cell[] inputs = tx.inputs();
+  cell[] outputs = tx.outputs();
+
+  if(inputs.size() < outputs.size()) {
+    return false;
+  }
+
+  for(cell input: inputs) {
+    if(input.capacity < 100) {
+      return true;
+    }
+  }
+
+  return true;
+}
+```
