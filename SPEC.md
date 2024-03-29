@@ -1,6 +1,5 @@
 ## Primitive Types
 
-array []  
 uint8  
 uint16  
 uint32  
@@ -8,15 +7,32 @@ uint64
 uint128  
 uint256  
 byte  
-string    
+string   
 bool  
-table  
+table
+vector
+union
+function
 
 ## Statements
 
+if
+for
+break
+continue
+return
 
-## Control
+## Packages
 
+### built-in packages
+
+#### tx
+
+#### debug
+
+Support limited print function. Formatting is not support.
+
+#### cell
 
 ## Example
 
@@ -28,8 +44,8 @@ import "debug"
 
 function main() {
 
-  cell[] inputs = tx.inputs();
-  cell[] outputs = tx.outputs();
+  vector<cell> inputs = tx.inputs();
+  vector<cell> outputs = tx.outputs();
   if(inputs.size() < outputs.size()) {
     return false;
   }
