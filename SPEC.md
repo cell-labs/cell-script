@@ -1,4 +1,4 @@
-## Primary Types
+## Primitive Types
 
 uint8  
 uint16  
@@ -36,14 +36,16 @@ Support limited print function. Formatting is not support.
 
 ## Example
 
+Here is an example of a simple cell script.
 ```
 import "tx"
 import "cell"
+import "debug"
 
 function main() {
+
   vector<cell> inputs = tx.inputs();
   vector<cell> outputs = tx.outputs();
-
   if(inputs.size() < outputs.size()) {
     return false;
   }
@@ -54,6 +56,14 @@ function main() {
     }
   }
 
+  uint8 idx = tx.scriptIndex("script hash");
+  debug.log("find the script hash at cell idx");
+
+  byte[][] witness = tx.witness();
+  for(byte[] w: witness) {
+    debug.log("the witness data is", w);
+  }
+  
   return true;
 }
 ```
