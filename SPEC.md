@@ -1,4 +1,22 @@
-## Primitive Types
+# Introduction
+
+
+# Notation
+
+
+# Source code representation
+
+
+# Lexical elements
+
+
+# Constants
+
+
+# Variables
+
+
+# Primitive Types
 
 uint8  
 uint16  
@@ -9,12 +27,26 @@ uint256
 byte  
 string   
 bool  
-table
-vector
-union
-function
+table  
+vector  
+union  
+function  
 
-## Statements
+
+# Blocks
+
+
+# Declarations and scope
+
+
+# Expressions
+
+
+
+# Primitive Types
+
+
+# Statements
 
 if
 for
@@ -22,48 +54,28 @@ break
 continue
 return
 
-## Packages
+# Built-in functions
 
-### built-in packages
 
-#### tx
+# Packages
 
-#### debug
+
+# Program initialization and execution
+
+
+# Errors
+
+
+# Misc
+
+## tx
+
+
+## debug
 
 Support limited print function. Formatting is not support.
 
-#### cell
+## cell
 
-## Example
 
-Here is an example of a simple cell script.
-```
-import "tx"
-import "cell"
-import "debug"
-
-function main() {
-
-  vector<cell> inputs = tx.inputs();
-  vector<cell> outputs = tx.outputs();
-  if(inputs.size() < outputs.size()) {
-    return false;
-  }
-
-  for(cell input: inputs) {
-    if(input.capacity < 100) {
-      return true;
-    }
-  }
-
-  uint8 idx = tx.scriptIndex("script hash");
-  debug.log("find the script hash at cell idx");
-
-  byte[][] witness = tx.witness();
-  for(byte[] w: witness) {
-    debug.log("the witness data is", w);
-  }
-  
-  return true;
-}
-```
+# Appendix
