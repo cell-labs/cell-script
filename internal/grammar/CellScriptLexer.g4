@@ -15,6 +15,7 @@ CONTINUE : 'continue';
 BREAK    : 'break';
 IMPORT   : 'import';
 RETURN   : 'return';
+MAIN     : 'main';
 
 // Skip rules
 WHITESPACE: [ \r\n\t]+ -> skip;
@@ -25,15 +26,20 @@ R_CURLY    : '}';
 L_BRACKET  : '(';
 R_BRACKET  : ')';
 COMMA      : ',';
-NUMBER     : [0-9]+;
 IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]*;
-STRING     : '"' IDENTIFIER '"';
-TYPE       : 'int';
-BOOL       : 'bool';
+TYPE       : TYPE_INT | TYPE_BOOL;
+TYPE_INT   : 'int';
+TYPE_BOOL  : 'bool';
 ADD        : '+';
 SUB        : '-';
 MUL        : '*';
 DIV        : '/';
+
+// Literal
+LITERAL    : STRING_LIT | BOOL_LIT | NUMBER;
+NUMBER     : [0-9]+;
+STRING_LIT : '"' IDENTIFIER '"';
+BOOL_LIT   : 'true' | 'false';
 
 // End of statement
 EOS: ([\r\n]+ | ';' | '/*' .*? '*/' | EOF);

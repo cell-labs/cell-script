@@ -91,3 +91,15 @@ func (s *BaseCellScriptParserListener) EnterExpression(ctx *ExpressionContext) {
 
 // ExitExpression is called when production expression is exited.
 func (s *BaseCellScriptParserListener) ExitExpression(ctx *ExpressionContext) {}
+
+// EnterArithmeticExpr is called when production arithmeticExpr is entered.
+func (s *BaseCellScriptParserListener) EnterArithmeticExpr(ctx *ArithmeticExprContext) {}
+
+// ExitArithmeticExpr is called when production arithmeticExpr is exited.
+func (s *BaseCellScriptParserListener) ExitArithmeticExpr(ctx *ArithmeticExprContext) {}
+
+// EnterReturnExpr is called when production returnExpr is entered.
+func (s *BaseCellScriptParserListener) EnterReturnExpr(ctx *ReturnExprContext) {}
+
+// ExitReturnExpr is called when production returnExpr is exited.
+func (s *BaseCellScriptParserListener) ExitReturnExpr(ctx *ReturnExprContext) {}

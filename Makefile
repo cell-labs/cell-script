@@ -18,9 +18,9 @@ fmt:
 	cd ${MKFILE_DIR} && go fmt ./...
 build:
 	@echo "build"
-	cd ${MKFILE_DIR} && \
 	go build -v -trimpath \
-		-o ${RELEASE_DIR}/cell ${MKFILE_DIR}
+		-o ${RELEASE_DIR}/cell .
+	rm cell
 	ln -s ${RELEASE_DIR}/cell cell
 test:
 	@echo "unit test"
@@ -28,6 +28,8 @@ test:
 	git diff --exit-code go.mod go.sum
 	go mod verify
 	go test -v -gcflag "all=-l" ${MKFILE_DIR}
+example:
 	@echo "test cell examples"
-	./cell || \
+	make build
+	./cell || true
 	./cell tests/examples/hi.cell

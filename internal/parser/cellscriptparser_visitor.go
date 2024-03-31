@@ -42,4 +42,10 @@ type CellScriptParserVisitor interface {
 
 	// Visit a parse tree produced by CellScriptParser#expression.
 	VisitExpression(ctx *ExpressionContext) interface{}
+
+	// Visit a parse tree produced by CellScriptParser#arithmeticExpr.
+	VisitArithmeticExpr(ctx *ArithmeticExprContext) interface{}
+
+	// Visit a parse tree produced by CellScriptParser#returnExpr.
+	VisitReturnExpr(ctx *ReturnExprContext) interface{}
 }

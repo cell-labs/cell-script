@@ -54,3 +54,11 @@ func (v *BaseCellScriptParserVisitor) VisitTypeParameterDecl(ctx *TypeParameterD
 func (v *BaseCellScriptParserVisitor) VisitExpression(ctx *ExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
+
+func (v *BaseCellScriptParserVisitor) VisitArithmeticExpr(ctx *ArithmeticExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseCellScriptParserVisitor) VisitReturnExpr(ctx *ReturnExprContext) interface{} {
+	return v.VisitChildren(ctx)
+}

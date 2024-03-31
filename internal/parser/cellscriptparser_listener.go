@@ -43,6 +43,12 @@ type CellScriptParserListener interface {
 	// EnterExpression is called when entering the expression production.
 	EnterExpression(c *ExpressionContext)
 
+	// EnterArithmeticExpr is called when entering the arithmeticExpr production.
+	EnterArithmeticExpr(c *ArithmeticExprContext)
+
+	// EnterReturnExpr is called when entering the returnExpr production.
+	EnterReturnExpr(c *ReturnExprContext)
+
 	// ExitSourceFile is called when exiting the sourceFile production.
 	ExitSourceFile(c *SourceFileContext)
 
@@ -78,4 +84,10 @@ type CellScriptParserListener interface {
 
 	// ExitExpression is called when exiting the expression production.
 	ExitExpression(c *ExpressionContext)
+
+	// ExitArithmeticExpr is called when exiting the arithmeticExpr production.
+	ExitArithmeticExpr(c *ArithmeticExprContext)
+
+	// ExitReturnExpr is called when exiting the returnExpr production.
+	ExitReturnExpr(c *ReturnExprContext)
 }

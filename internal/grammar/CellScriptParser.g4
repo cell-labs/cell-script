@@ -37,14 +37,15 @@ declaration
 
 functionDecl
     : FUNC IDENTIFIER typeParameters? signature body?
+    | FUNC MAIN typeParameters? body?
     ;
 
 typeParameters
-    : L_BRACKET typeParameterDecl (COMMA typeParameterDecl)* R_BRACKET
+    : L_BRACKET typeParameterDecl? (COMMA typeParameterDecl)* R_BRACKET
     ;
 
 signature
-    : BOOL
+    : TYPE
     ;
 
 body
@@ -56,7 +57,16 @@ typeParameterDecl
     ;
 
 expression
-    : expression op = ('*' | '/') expression
-    | expression op = ('+' | '-') expression
+    : arithmeticExpr
+    | returnExpr
+    ;
+
+arithmeticExpr
+    : arithmeticExpr op = ('+' | '-') arithmeticExpr
+    | arithmeticExpr op = ('*' | '/') arithmeticExpr
     | NUMBER
+    ;
+
+returnExpr
+    : RETURN (LITERAL | IDENTIFIER)
     ;
