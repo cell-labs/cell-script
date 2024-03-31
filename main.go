@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	debug    bool
-	output   string
+	debug  bool
+	output string
 )
 
 func init() {

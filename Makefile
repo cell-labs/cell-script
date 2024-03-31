@@ -20,10 +20,14 @@ build:
 	@echo "build"
 	cd ${MKFILE_DIR} && \
 	go build -v -trimpath \
-	-o ${RELEASE_DIR}/go-to ${MKFILE_DIR}
+		-o ${RELEASE_DIR}/cell ${MKFILE_DIR}
+	ln -s ${RELEASE_DIR}/cell cell
 test:
 	@echo "unit test"
-	go test ./...
+	go mod tidy
+	git diff --exit-code go.mod go.sum
+	go mod verify
+	go test -v -gcflag "all=-l" ${MKFILE_DIR}
 	@echo "test cell examples"
 	./cell || \
 	./cell tests/examples/hi.cell
