@@ -2,31 +2,46 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"strings"
 
-	"github.com/antlr4-go/antlr/v4"
+	flag "github.com/spf13/pflag"
 
-	"github.com/cell-labs/cell-script/internal/lexer"
-	"github.com/cell-labs/cell-script/internal/parser"
+	"github.com/cell-labs/cell-script/internal/compiler"
 )
 
-func main() {
-	// Setup the input
-	is := antlr.NewInputStream(`function a() { int a = 1 }`)
+var (
+	debug    bool
+	output   string
+)
 
-	// Create the Lexer
-	lexer := lexer.NewCellScriptLexer(is)
-
-	// Read all tokens
-	for {
-		t := lexer.NextToken()
-		if t.GetTokenType() == antlr.TokenEOF {
-			break
-		}
-		fmt.Printf("%s (%q)\n",
-			lexer.SymbolicNames[t.GetTokenType()], t.GetText())
+func init() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options] <filename>\n", os.Args[0])
+		flag.PrintDefaults()
 	}
 
-	stream := antlr.NewCommonTokenStream(lexer, 0)
-	parser := parser.NewCellScriptParser(stream)
-	parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+	flag.BoolVarP(&debug, "debug", "d", false, "Emit debug information during compile time")
+	flag.StringVarP(&output, "output", "o", "", "Output binary filename")
+}
+
+func main() {
+	flag.Parse()
+	if len(flag.Args()) < 1 {
+		log.Printf("No file specified. Usage: %s path/to/file.cell", os.Args[0])
+		os.Exit(1)
+	}
+
+	if output == "" {
+		basename := filepath.Base(flag.Arg(0))
+		output = strings.TrimSuffix(basename, filepath.Ext(basename))
+	}
+
+	err := compiler.Run(flag.Arg(0), output, debug)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
 }
