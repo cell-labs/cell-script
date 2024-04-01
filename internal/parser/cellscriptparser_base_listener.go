@@ -32,11 +32,11 @@ func (s *BaseCellScriptParserListener) EnterImportStmt(ctx *ImportStmtContext) {
 // ExitImportStmt is called when production importStmt is exited.
 func (s *BaseCellScriptParserListener) ExitImportStmt(ctx *ImportStmtContext) {}
 
-// EnterFunctionStmt is called when production functionStmt is entered.
-func (s *BaseCellScriptParserListener) EnterFunctionStmt(ctx *FunctionStmtContext) {}
+// EnterDeclaration is called when production declaration is entered.
+func (s *BaseCellScriptParserListener) EnterDeclaration(ctx *DeclarationContext) {}
 
-// ExitFunctionStmt is called when production functionStmt is exited.
-func (s *BaseCellScriptParserListener) ExitFunctionStmt(ctx *FunctionStmtContext) {}
+// ExitDeclaration is called when production declaration is exited.
+func (s *BaseCellScriptParserListener) ExitDeclaration(ctx *DeclarationContext) {}
 
 // EnterEos is called when production eos is entered.
 func (s *BaseCellScriptParserListener) EnterEos(ctx *EosContext) {}
@@ -50,11 +50,11 @@ func (s *BaseCellScriptParserListener) EnterImportDecl(ctx *ImportDeclContext) {
 // ExitImportDecl is called when production importDecl is exited.
 func (s *BaseCellScriptParserListener) ExitImportDecl(ctx *ImportDeclContext) {}
 
-// EnterDeclaration is called when production declaration is entered.
-func (s *BaseCellScriptParserListener) EnterDeclaration(ctx *DeclarationContext) {}
+// EnterVarDecl is called when production varDecl is entered.
+func (s *BaseCellScriptParserListener) EnterVarDecl(ctx *VarDeclContext) {}
 
-// ExitDeclaration is called when production declaration is exited.
-func (s *BaseCellScriptParserListener) ExitDeclaration(ctx *DeclarationContext) {}
+// ExitVarDecl is called when production varDecl is exited.
+func (s *BaseCellScriptParserListener) ExitVarDecl(ctx *VarDeclContext) {}
 
 // EnterFunctionDecl is called when production functionDecl is entered.
 func (s *BaseCellScriptParserListener) EnterFunctionDecl(ctx *FunctionDeclContext) {}
@@ -74,11 +74,11 @@ func (s *BaseCellScriptParserListener) EnterSignature(ctx *SignatureContext) {}
 // ExitSignature is called when production signature is exited.
 func (s *BaseCellScriptParserListener) ExitSignature(ctx *SignatureContext) {}
 
-// EnterBody is called when production body is entered.
-func (s *BaseCellScriptParserListener) EnterBody(ctx *BodyContext) {}
+// EnterBlock is called when production block is entered.
+func (s *BaseCellScriptParserListener) EnterBlock(ctx *BlockContext) {}
 
-// ExitBody is called when production body is exited.
-func (s *BaseCellScriptParserListener) ExitBody(ctx *BodyContext) {}
+// ExitBlock is called when production block is exited.
+func (s *BaseCellScriptParserListener) ExitBlock(ctx *BlockContext) {}
 
 // EnterTypeParameterDecl is called when production typeParameterDecl is entered.
 func (s *BaseCellScriptParserListener) EnterTypeParameterDecl(ctx *TypeParameterDeclContext) {}
@@ -103,3 +103,69 @@ func (s *BaseCellScriptParserListener) EnterReturnExpr(ctx *ReturnExprContext) {
 
 // ExitReturnExpr is called when production returnExpr is exited.
 func (s *BaseCellScriptParserListener) ExitReturnExpr(ctx *ReturnExprContext) {}
+
+// EnterStatement is called when production statement is entered.
+func (s *BaseCellScriptParserListener) EnterStatement(ctx *StatementContext) {}
+
+// ExitStatement is called when production statement is exited.
+func (s *BaseCellScriptParserListener) ExitStatement(ctx *StatementContext) {}
+
+// EnterSimpleStmt is called when production simpleStmt is entered.
+func (s *BaseCellScriptParserListener) EnterSimpleStmt(ctx *SimpleStmtContext) {}
+
+// ExitSimpleStmt is called when production simpleStmt is exited.
+func (s *BaseCellScriptParserListener) ExitSimpleStmt(ctx *SimpleStmtContext) {}
+
+// EnterExpressionStmt is called when production expressionStmt is entered.
+func (s *BaseCellScriptParserListener) EnterExpressionStmt(ctx *ExpressionStmtContext) {}
+
+// ExitExpressionStmt is called when production expressionStmt is exited.
+func (s *BaseCellScriptParserListener) ExitExpressionStmt(ctx *ExpressionStmtContext) {}
+
+// EnterAssignment is called when production assignment is entered.
+func (s *BaseCellScriptParserListener) EnterAssignment(ctx *AssignmentContext) {}
+
+// ExitAssignment is called when production assignment is exited.
+func (s *BaseCellScriptParserListener) ExitAssignment(ctx *AssignmentContext) {}
+
+// EnterAssign_op is called when production assign_op is entered.
+func (s *BaseCellScriptParserListener) EnterAssign_op(ctx *Assign_opContext) {}
+
+// ExitAssign_op is called when production assign_op is exited.
+func (s *BaseCellScriptParserListener) ExitAssign_op(ctx *Assign_opContext) {}
+
+// EnterReturnStmt is called when production returnStmt is entered.
+func (s *BaseCellScriptParserListener) EnterReturnStmt(ctx *ReturnStmtContext) {}
+
+// ExitReturnStmt is called when production returnStmt is exited.
+func (s *BaseCellScriptParserListener) ExitReturnStmt(ctx *ReturnStmtContext) {}
+
+// EnterBreakStmt is called when production breakStmt is entered.
+func (s *BaseCellScriptParserListener) EnterBreakStmt(ctx *BreakStmtContext) {}
+
+// ExitBreakStmt is called when production breakStmt is exited.
+func (s *BaseCellScriptParserListener) ExitBreakStmt(ctx *BreakStmtContext) {}
+
+// EnterContinueStmt is called when production continueStmt is entered.
+func (s *BaseCellScriptParserListener) EnterContinueStmt(ctx *ContinueStmtContext) {}
+
+// ExitContinueStmt is called when production continueStmt is exited.
+func (s *BaseCellScriptParserListener) ExitContinueStmt(ctx *ContinueStmtContext) {}
+
+// EnterIfStmt is called when production ifStmt is entered.
+func (s *BaseCellScriptParserListener) EnterIfStmt(ctx *IfStmtContext) {}
+
+// ExitIfStmt is called when production ifStmt is exited.
+func (s *BaseCellScriptParserListener) ExitIfStmt(ctx *IfStmtContext) {}
+
+// EnterForStmt is called when production forStmt is entered.
+func (s *BaseCellScriptParserListener) EnterForStmt(ctx *ForStmtContext) {}
+
+// ExitForStmt is called when production forStmt is exited.
+func (s *BaseCellScriptParserListener) ExitForStmt(ctx *ForStmtContext) {}
+
+// EnterForClause is called when production forClause is entered.
+func (s *BaseCellScriptParserListener) EnterForClause(ctx *ForClauseContext) {}
+
+// ExitForClause is called when production forClause is exited.
+func (s *BaseCellScriptParserListener) ExitForClause(ctx *ForClauseContext) {}

@@ -9,7 +9,7 @@ options {
 }
 
 sourceFile
-    : importStmt functionStmt EOF
+    : importStmt declaration EOF
     ;
 
 // import statement
@@ -17,9 +17,9 @@ importStmt
     : (importDecl eos)*
     ;
 
-// function statement
-functionStmt
-    : ((functionDecl | declaration) eos)* EOF
+// declaration
+declaration
+    : ((functionDecl | varDecl) eos)* EOF
     ;
 
 eos
@@ -31,13 +31,12 @@ importDecl
     : IMPORT IDENTIFIER
     ;
 
-declaration
-    : TYPE IDENTIFIER
+varDecl
+    : VAR TYPE IDENTIFIER
     ;
 
 functionDecl
-    : FUNC IDENTIFIER typeParameters? signature body?
-    | FUNC MAIN typeParameters? body?
+    : FUNC IDENTIFIER typeParameters? signature block?
     ;
 
 typeParameters
@@ -48,7 +47,7 @@ signature
     : TYPE
     ;
 
-body
+block
     : L_CURLY expression? R_CURLY
     ;
 
@@ -64,9 +63,61 @@ expression
 arithmeticExpr
     : arithmeticExpr op = ('+' | '-') arithmeticExpr
     | arithmeticExpr op = ('*' | '/') arithmeticExpr
-    | NUMBER
+    | IDENTIFIER
     ;
 
 returnExpr
-    : RETURN (LITERAL | IDENTIFIER)
+    : RETURN (IDENTIFIER)
+    ;
+
+statement
+    : declaration
+    | simpleStmt
+    | returnStmt
+    | breakStmt
+    | continueStmt
+    | block
+    | ifStmt
+    | forStmt
+    ;
+
+simpleStmt
+    : assignment
+    | expressionStmt
+    ;
+
+expressionStmt
+    : expression
+    ;
+
+assignment
+    : expression assign_op expression
+    ;
+
+assign_op
+    : (ADD | SUB | MUL | DIV | MOD)? ASSIGN
+    ;
+
+returnStmt
+    : RETURN expression? eos
+    ;
+
+breakStmt
+    : BREAK IDENTIFIER?
+    ;
+
+continueStmt
+    : CONTINUE IDENTIFIER?
+    ;
+
+ifStmt
+    : IF (expression | eos expression | simpleStmt eos expression) block (ELSE (ifStmt | block))?
+    ;
+
+forStmt
+    : FOR (expression? | forClause) block
+    ;
+
+forClause
+    : initStmt = simpleStmt? eos expression? eos postStmt = simpleStmt?
     ;
