@@ -21,7 +21,7 @@ build:
 	@echo "build"
 	go build -v -trimpath \
 		-o ${RELEASE_DIR}/cell ./cmd/cell
-	rm cell
+	rm -f cell
 	ln -s ${RELEASE_DIR}/cell cell
 test:
 	@echo "unit test"

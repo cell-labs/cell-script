@@ -46,6 +46,7 @@ The internal discussion can be found [here](./DISCUSSION.md).
 brew install go@1.22
 brew install antlr@4
 brew install openjdk@21
+brew install llvm@16
 make build
 
 cell <file>.cell
