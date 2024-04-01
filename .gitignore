@@ -1,3 +1,4 @@
 internal/grammar/.antlr
 output
 cell
+*.cell

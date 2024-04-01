@@ -1,0 +1,25 @@
+package lexer
+
+var keywords = map[string]struct{}{
+	"if":          {},
+	"else":        {},
+	"function":        {},
+	"return":      {},
+	"type":        {},
+	"struct":      {},
+	"var":         {},
+	"const":       {},
+	"package":     {},
+	"for":         {},
+	"break":       {},
+	"continue":    {},
+	"import":      {},
+	"true":        {},
+	"false":       {},
+	"interface":   {},
+	"range":       {},
+	"switch":      {},
+	"case":        {},
+	"fallthrough": {},
+	"default":     {},
+}

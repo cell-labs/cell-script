@@ -20,9 +20,7 @@ fmt:
 build:
 	@echo "build"
 	go build -v -trimpath \
-		-o ${RELEASE_DIR}/cell .
-	go build -v -trimpath \
-		-o ${RELEASE_DIR} ./cmd/...
+		-o ${RELEASE_DIR}/cell ./cmd/cell
 	rm cell
 	ln -s ${RELEASE_DIR}/cell cell
 test:
@@ -35,4 +33,4 @@ example:
 	@echo "test cell examples"
 	make build
 	./cell || true
-	./cell tests/examples/hi.cell
+	./cell tests/examples/hi.cell && ./hi
