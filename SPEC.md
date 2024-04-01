@@ -64,28 +64,17 @@ Identifiers name program entities such as variables and types. An identifier is 
 ## Keywords
 
 ```
-bool
 break
-byte
 continue
 const
 else
 for
 function
-if
-import
+if  
+import  
 return
-string
-uint8  
-uint16  
-uint32  
-uint64  
-uint128  
-uint256  
-table
-union
-var
-vector
+range
+var  
 ```
 
 ## Operators and punctuation
@@ -245,6 +234,10 @@ function(a, _ uint32, z uint64) bool
 
 # Complex Types
 
+## Array types
+
+TODO
+
 ## Vector types
 An vector is a numbered sequence of elements of a single type, called the element type. The number of elements is called the length of the vector and is never negative.
 
@@ -256,6 +249,9 @@ ElementType = Type .
 
 The length is part of the vector's type; it must evaluate to a non-negative constant representable by a value of type int. The length of vector a can be discovered using the built-in function size. The elements can be addressed by integer indices 0 through len(a)-1. Vector types are always one-dimensional but may be composed to form multi-dimensional types.
 
+## Struct
+
+TODO
 
 ## Table types
 
@@ -297,10 +293,30 @@ TODO
 
 ## Predeclared identifiers
 
+The following identifiers are implicitly declared in the universe block
+
+```
+Types:
+	bool byte string
+	uint8 uint16 uint32 uint64 uint128 uint256
+
+Constants:
+	true false
+
+Zero value:
+	null
+
+Functions:
+	append len max min  
+```
+
 TODO
 
 ## Constant declarations
 
+```
+const a, b, c = 3, 4, "foo" // a = 3, b = 4, c = "foo", untyped integer and string constants
+```
 TODO
 
 ## Type declarations
@@ -317,7 +333,26 @@ VarSpec     = IdentifierList ( Type [ "=" ExpressionList ] | "=" ExpressionList 
 ```
 
 ```
-var i uin8
+var i uint8
+var i uint16
+var i uint32
+var i uint64
+var i uint128
+var i uint256
+
+var i byte
+
+```
+
+A short variable declaration uses the syntax:
+
+```
+ShortVarDecl = IdentifierList ":=" ExpressionList .
+```
+
+```
+i, j := 0, 10
+f := func() int { return 7 }
 ```
 
 ## Function declarations
@@ -332,7 +367,14 @@ FunctionBody = Block .
 
 If the function's signature declares result parameters, the function body's statement list must end in a terminating statement.
 
-
+```
+func min(x uint8, y uint8) uint8{
+	if x < y {
+		return x
+	}
+	return y
+}
+```
 
 # Expressions
 
@@ -363,35 +405,213 @@ A qualified identifier accesses an identifier in a different package, which must
 math.Sin // denotes the Sin function in package math
 ```
 
+## Index expressions
+
+A primary expression of the form
+
+```
+a[x]
+```
+
 # Statements
 
-if
-for
-break
-continue
-return
+## Assignment statements
+
+An assignment replaces the current value stored in a variable with a new value specified by an expression. An assignment statement may assign a single value to a single variable, or multiple values to a matching number of variables.
+
+```
+Assignment = ExpressionList assign_op ExpressionList .
+
+assign_op = [ add_op | mul_op ] "=" .
+```
+
+Each left-hand side operand must be addressable, a map index expression, or (for = assignments only) the blank identifier. Operands may be parenthesized.
+
+```
+x = 1
+a[i] = 23
+```
+
+```
+a, b = b, a  // exchange a and b
+
+x := []int{1, 2, 3}
+i := 0
+i, x[i] = 1, 2  // set i = 1, x[0] = 2
+
+i = 0
+x[i], i = 2, 1  // set x[0] = 2, i = 1
+
+x[0], x[0] = 1, 2  // set x[0] = 1, then x[0] = 2 (so x[0] == 2 at end)
+
+x[1], x[3] = 4, 5  // set x[1] = 4, then panic setting x[3] = 5.
+
+type Point struct { x, y int }
+var p *Point
+x[2], p.x = 6, 7  // set x[2] = 6, then panic setting p.x = 7
+
+i = 2
+x = []int{3, 5, 7}
+for i, x[i] = range x {  // set i, x[2] = 0, x[0]
+	break
+}
+// after this loop, i == 0 and x is []int{3, 5, 3}
+```
+## If statements
+
+"If" statements specify the conditional execution of two branches according to the value of a boolean expression. If the expression evaluates to true, the "if" branch is executed, otherwise, if present, the "else" branch is executed.
+
+```
+IfStmt = "if" [ SimpleStmt ";" ] Expression Block [ "else" ( IfStmt | Block ) ] .
+```
+
+```
+if x > max {
+	x = max
+}
+```
 
 
-TODO
+## For statements
+
+A "for" statement specifies repeated execution of a block. There are three forms: The iteration may be controlled by a single condition, a "for" clause, or a "range" clause.
+
+```
+for a < b {
+	a *= 2
+}
+```
+
+```
+for i := 0; i < 10; i++ {
+	f(i)
+}
+```
+
+```
+var a [10]string
+for i, s := range a {
+	// type of i is int
+	// type of s is string
+	// s == a[i]
+	g(i, s)
+}
+
+```
+
+## Break statements
+
+A "break" statement terminates execution of the innermost "for" statement within the same function.
+
+```
+BreakStmt = "break" [ Label ] .
+```
+
+```
+for i = 0; i < n; i++ {
+		for j = 0; j < m; j++ {
+			if a[i][j] == nil {
+				state = Error
+				break OuterLoop
+            } else if a[i][j] == item {
+				state = Found
+				break OuterLoop
+			}
+		}
+	}
+```
+
+## Continue statements
+
+A "continue" statement begins the next iteration of the innermost enclosing "for" loop by advancing control to the end of the loop block. The "for" loop must be within the same function.
+
+```
+ContinueStmt = "continue" [ Label ] .
+```
+
+```
+for y, row := range rows {
+		for x, data := range row {
+			if data == endOfRow {
+				continue RowLoop
+			}
+			row[x] = data + bias(x, y)
+		}
+	}
+```
+
+## Return statements
+
+A "return" statement in a function F terminates the execution of F, and optionally provides one or more result values. Any functions deferred by F are executed before F returns to its caller.
+
+```
+ReturnStmt = "return" [ ExpressionList ] .
+```
+
+In a function without a result type, a "return" statement must not specify any result values.
+
+```
+func noResult() {
+	return
+}
+```
 
 # Built-in functions
 
+Built-in functions are predeclared. They are called like any other function but some of them accept a type instead of an expression as the first argument.
+
+The built-in functions do not have standard Go types, so they can only appear in call expressions; they cannot be used as function values.
+
 TODO
+
+## Length
+
+The built-in functions len take arguments of various types and return a result of type int. The implementation guarantees that the result always fits into an int.
+
+```
+Call      Argument type    Result
+
+len(s)    string type      string length in bytes
+          [n]T, *[n]T      array length (== n)
+          []T              slice length
+
+```
+
+## Min and max
+
+The built-in functions min and max compute the smallest—or largest, respectively—value of a fixed number of arguments of ordered types. There must be at least one argument.
+
+The same type rules as for operators apply: for ordered arguments x and y, min(x, y) is valid if x + y is valid, and the type of min(x, y) is the type of x + y (and similarly for max). If all arguments are constant, the result is constant.
+
+```
+var x, y int
+m := min(x)                 // m == x
+m := min(x, y)              // m is the smaller of x and y
+m := max(x, y, 10)          // m is the larger of x and y but at least 10
+var s []string
+_ = min(s...)               // invalid: slice arguments are not permitted
+t := max("", "foo", "bar")  // t == "foo" (string kind)
+```
 
 # Packages
 
+TODO
 
 # Program initialization and execution
 
+TODO
 
 # Errors
 
+TODO
 
 # Misc
 
+TODO
 
 ## tx
 
+TODO
 
 ## debug
 
@@ -399,5 +619,8 @@ Support limited print function. Formatting is not support.
 
 ## cell
 
+TODO
 
 # Appendix
+
+TODO
