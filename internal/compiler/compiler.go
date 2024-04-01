@@ -64,17 +64,17 @@ func compileFile(options *Options) parser.ISourceFileContext {
 
 	// generate tokens using lexer
 	lexer := lexer.NewCellScriptLexer(antlr.NewInputStream(string(fileContents)))
-	checkStage(options.Stage, compiler{Lexer: lexer})
+	checkStage(options, &compiler{Lexer: lexer})
 
 	// generate AST using parser
 	parser := parser.NewCellScriptParser(antlr.NewCommonTokenStream(lexer, 0))
 	parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
-	checkStage(options.Stage, compiler{Parser: parser})
+	checkStage(options, &compiler{Parser: parser})
 	return parser.SourceFile()
 }
 
-func checkStage(i int, c compiler) {
-	switch i {
+func checkStage(options *Options, c *compiler) {
+	switch options.Stage {
 	case STAGE_LEXER:
 		for {
 			t := c.Lexer.NextToken()
@@ -84,7 +84,10 @@ func checkStage(i int, c compiler) {
 			fmt.Printf("%s (%q)\n",
 				c.Lexer.SymbolicNames[t.GetTokenType()], t.GetText())
 		}
+	default:
+		return
 	}
+	options.Stage = STAGE_EXIT
 }
 
 func Run(options *Options) error {

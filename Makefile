@@ -8,6 +8,7 @@ RELEASE_DIR := ${MKFILE_DIR}/output
 clean:
 	rm -rf internal/parser
 	rm -rf internal/lexer
+	rm -rf output
 grammar: antlr
 
 antlr:
@@ -20,6 +21,8 @@ build:
 	@echo "build"
 	go build -v -trimpath \
 		-o ${RELEASE_DIR}/cell .
+	go build -v -trimpath \
+		-o ${RELEASE_DIR} ./cmd/...
 	rm cell
 	ln -s ${RELEASE_DIR}/cell cell
 test:
