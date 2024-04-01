@@ -23,6 +23,7 @@ func init() {
 		flag.PrintDefaults()
 	}
 
+	// todo: add verbose compile option
 	flag.BoolVarP(&debug, "debug", "d", false, "Emit debug information during compile time")
 	flag.StringVarP(&output, "output", "o", "", "Output binary filename")
 }
@@ -39,7 +40,10 @@ func main() {
 		output = strings.TrimSuffix(basename, filepath.Ext(basename))
 	}
 
-	err := compiler.Run(flag.Arg(0), output, debug)
+	options := compiler.NewOptions(flag.Arg(0))
+	options.Output = output
+	options.Debug = debug
+	err := compiler.Run(options)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

@@ -1,11 +1,12 @@
 package compiler
 
 import (
+	"errors"
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
-	_ "path/filepath"
 	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
@@ -13,11 +14,14 @@ import (
 	"github.com/cell-labs/cell-script/internal/parser"
 )
 
-func ReadSource() {}
+type compiler struct {
+	Lexer  *lexer.CellScriptLexer
+	Parser *parser.CellScriptParser
+}
 
-func compilePackage(path, name, output string, debug bool) error {
+func compilePackage(options *Options) error {
 	// todo: name output and debug
-	p, err := os.Stat(path)
+	p, err := os.Stat(options.Path)
 	if err != nil {
 		return err
 	}
@@ -26,7 +30,8 @@ func compilePackage(path, name, output string, debug bool) error {
 
 	// Parse all files in the folder
 	if p.IsDir() {
-		err = filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+		root := options.Path
+		err = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
@@ -34,8 +39,10 @@ func compilePackage(path, name, output string, debug bool) error {
 				return nil
 			}
 			if strings.HasSuffix(d.Name(), ".cell") {
-				parsedFiles = append(parsedFiles, parseFile(filepath.Join(path, d.Name())))
+				return errors.New("Unknown source file format")
 			}
+			options.Path = filepath.Join(options.Path, d.Name())
+			parsedFiles = append(parsedFiles, compileFile(options))
 			return nil
 		})
 		if err != nil {
@@ -43,27 +50,43 @@ func compilePackage(path, name, output string, debug bool) error {
 		}
 	} else {
 		// Parse a single file
-		parsedFiles = append(parsedFiles, parseFile(path))
+		parsedFiles = append(parsedFiles, compileFile(options))
 	}
 	return nil
 }
 
-func parseFile(name string) parser.ISourceFileContext {
+func compileFile(options *Options) parser.ISourceFileContext {
 	// Read specified input file
-	fileContents, err := os.ReadFile(name)
+	fileContents, err := os.ReadFile(options.Path)
 	if err != nil {
 		log.Printf("read file error: %s\n", err)
 	}
 
 	// generate tokens using lexer
 	lexer := lexer.NewCellScriptLexer(antlr.NewInputStream(string(fileContents)))
+	checkStage(options.Stage, compiler{Lexer: lexer})
 
 	// generate AST using parser
 	parser := parser.NewCellScriptParser(antlr.NewCommonTokenStream(lexer, 0))
 	parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
+	checkStage(options.Stage, compiler{Parser: parser})
 	return parser.SourceFile()
 }
 
-func Run(path, output string, debug bool) error {
-	return compilePackage(path, "main", output, debug)
+func checkStage(i int, c compiler) {
+	switch i {
+	case STAGE_LEXER:
+		for {
+			t := c.Lexer.NextToken()
+			if t.GetTokenType() == antlr.TokenEOF {
+				break
+			}
+			fmt.Printf("%s (%q)\n",
+				c.Lexer.SymbolicNames[t.GetTokenType()], t.GetText())
+		}
+	}
+}
+
+func Run(options *Options) error {
+	return compilePackage(options)
 }
