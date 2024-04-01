@@ -1,0 +1,28 @@
+//package main
+import "debug";
+import "tx";
+import "cell";
+
+// main is the entry point of every cell script
+function main() {
+    var inputs:vector<cell>= tx.inputs();
+    var outputs:vector<cell> = tx.outputs();
+
+    var input_amount: uint128;
+    var output_amount: uint128;
+
+    for(var input in inputs) {
+        input_amount += input.data.as(uint128);
+    }
+
+    for(var output in outputs) {
+        output_amount += output.data.as(uint128);
+    }
+
+    if(input_amount < output_amount) {
+        debug.error("Invalid Amount");
+        return 1;
+    }
+    
+    return 0;
+}
