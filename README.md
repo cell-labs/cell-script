@@ -6,33 +6,40 @@ Cell Script is a newly designed language for smart-contract programming on the U
 
 Here is an example of a simple cell script.
 ```
+//package main
+import "debug"
 import "tx"
 import "cell"
-import "debug"
 
+// main is the entry point of every cell script
 function main() {
+    var inputs := tx.inputs()
+    var outputs := tx.outputs()
 
-  vector<cell> inputs = tx.inputs();
-  vector<cell> outputs = tx.outputs();
-  if(inputs.size() < outputs.size()) {
-    return false;
-  }
+    var in_sum, out_sum uint128
 
-  for(cell input: inputs) {
-    if(input.capacity < 100) {
-      return true;
+    for _, input := range inputs {
+        in_sum += input.data.as(uint128)
+        if in_sum < input.data.as(uint128) {
+            debug.Printf("input overflow")
+            return 1
+        }
     }
-  }
 
-  uint8 idx = tx.scriptIndex("script hash");
-  debug.log("find the script hash at cell idx");
+    for _, output := range outputs {
+        out_sum += output.data.as(uint128)
+        if out_sum < input.data.as(uint128) {
+            debug.Printf("output overflow")
+            return 1
+        }
+    }
 
-  vector<vector<byte>> witness = tx.witness();
-  for(vector<byte> w: witness) {
-    debug.log("the witness data is", w);
-  }
-  
-  return true;
+    if in_sum < out_sum {
+        debug.Printf("Invalid Amount")
+        return 1
+    }
+    
+    return 0
 }
 ```
 
