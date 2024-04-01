@@ -18,11 +18,25 @@ import (
 
 var debug bool
 
-func Build(path, goroot, outputBinaryPath string, setDebug bool, optimize bool) error {
-	c := compiler.NewCompiler()
-	debug = setDebug
+type Options struct {
+	Debug    bool
+	Optimize bool
+	Path     string
+	Package  string
+	Output   string
+	Target   string
+	Root     string
+}
 
-	err := compilePackage(c, path, goroot, "main")
+func Build(options *Options) error {
+	path := options.Path
+	outputBinaryPath := options.Output
+	optimize := options.Optimize
+	root := options.Root
+	c := compiler.NewCompiler()
+	debug = options.Debug
+
+	err := compilePackage(c, path, root, "main")
 	if err != nil {
 		return err
 	}
@@ -59,12 +73,15 @@ func Build(path, goroot, outputBinaryPath string, setDebug bool, optimize bool) 
 		clangArgs = append(clangArgs, "-O3")
 	}
 
-	// crossCompileArgs := []string{
-	// 	"--target=riscv64",
-	//     "-march=rv64imac_zba_zbb_zbc_zbs",
-	//     "--sysroot=/opt/homebrew/opt/riscv-gnu-toolchain/bin/riscv64-unknown-elf-gcc",
-	// }
-	// clangArgs = append(clangArgs, crossCompileArgs...)
+	if options.Target == "riscv" {
+		crossCompileArgs := []string{
+			"--target=riscv64",
+			"-march=rv64imac",
+			"--sysroot=/opt/homebrew/opt/riscv-gnu-toolchain/riscv64-unknown-elf",
+			"--gcc-toolchain=/opt/homebrew/opt/riscv-gnu-toolchain",
+		}
+		clangArgs = append(clangArgs, crossCompileArgs...)
+	}
 
 	// Invoke clang compiler to compile LLVM IR to a binary executable
 	cmd := exec.Command("clang", clangArgs...)

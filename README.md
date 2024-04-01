@@ -47,7 +47,13 @@ brew install go@1.22
 brew install antlr@4
 brew install openjdk@21
 brew install llvm@16
+brew tap riscv-software-src/riscv
+brew install riscv-tools
+export PATH=/opt/homebrew/bin:$PATH
+brew install --cask spike
 make build
 
 cell <file>.cell
+cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
+ckb-debugger --bin <file>
 ```
