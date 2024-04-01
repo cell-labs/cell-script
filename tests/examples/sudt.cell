@@ -1,28 +1,35 @@
 //package main
-import "debug";
-import "tx";
-import "cell";
+import "debug"
+import "tx"
+import "cell"
 
 // main is the entry point of every cell script
 function main() {
-    var inputs:vector<cell>= tx.inputs();
-    var outputs:vector<cell> = tx.outputs();
+    var inputs := tx.inputs()
+    var outputs := tx.outputs()
 
-    var input_amount: uint128;
-    var output_amount: uint128;
+    var in_sum, out_sum uint128
 
-    for(var input in inputs) {
-        input_amount += input.data.as(uint128);
+    for _, input := range inputs {
+        in_sum += input.data.as(uint128)
+        if in_sum < input.data.as(uint128) {
+            debug.Printf("input overflow")
+            return 1
+        }
     }
 
-    for(var output in outputs) {
-        output_amount += output.data.as(uint128);
+    for _, output := range outputs {
+        out_sum += output.data.as(uint128)
+        if out_sum < input.data.as(uint128) {
+            debug.Printf("output overflow")
+            return 1
+        }
     }
 
-    if(input_amount < output_amount) {
-        debug.error("Invalid Amount");
-        return 1;
+    if in_sum < out_sum {
+        debug.Printf("Invalid Amount")
+        return 1
     }
     
-    return 0;
+    return 0
 }
