@@ -1,7 +1,7 @@
 //package main
-import "debug";
+import "debug"
 
 function main() {
-    debug.Printf("hello world!");
-    return 0;
+    debug.Printf("hello world!")
+    return 0
 }
