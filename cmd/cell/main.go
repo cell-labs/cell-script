@@ -15,6 +15,7 @@ var (
 	debug    bool
 	optimize bool
 	output   string
+	target   string
 )
 
 func init() {
@@ -25,10 +26,11 @@ func init() {
 
 	flag.BoolVarP(&debug, "debug", "d", false, "Emit debug information during compile time")
 	flag.BoolVarP(&optimize, "optimize", "O", false, "Enable clang optimization")
+	flag.StringVarP(&target, "target", "t", "native", "Compile to this target")
 	flag.StringVarP(&output, "output", "o", "", "Output binary filename")
 }
 
-func main() {
+func parseOptions() *build.Options {
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
@@ -36,16 +38,27 @@ func main() {
 		os.Exit(1)
 	}
 
-	// "GOROOT" (treroot?) detection based on the binary path
-	treBinaryPath, _ := os.Executable()
-	goroot := filepath.Clean(treBinaryPath + "/../pkg/")
+	binaryPath, _ := os.Executable()
+	root := filepath.Clean(binaryPath + "/../pkg/")
 
 	if output == "" {
 		basename := filepath.Base(flag.Arg(0))
 		output = strings.TrimSuffix(basename, filepath.Ext(basename))
 	}
+	return &build.Options{
+		Debug:    debug,
+		Optimize: optimize,
+		Path:     flag.Arg(0),
+		Package:  "",
+		Output:   output,
+		Target:   target,
+		Root:     root,
+	}
+}
 
-	err := build.Build(flag.Arg(0), goroot, output, debug, optimize)
+func main() {
+	options := parseOptions()
+	err := build.Build(options)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

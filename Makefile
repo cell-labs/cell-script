@@ -34,3 +34,4 @@ example:
 	make build
 	./cell || true
 	./cell tests/examples/hi.cell && ./hi
+	./cell -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
