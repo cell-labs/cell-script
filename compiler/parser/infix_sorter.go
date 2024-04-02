@@ -4,11 +4,12 @@ package parser
 https://golang.org/ref/spec#Operator_precedence
 
 Precedence    Operator
-    5             *  /  %  <<  >>  &  &^
-    4             +  -  |  ^
-    3             ==  !=  <  <=  >  >=
-    2             &&
-    1             ||
+
+	5             *  /  %  <<  >>  &  &^
+	4             +  -  |  ^
+	3             ==  !=  <  <=  >  >=
+	2             &&
+	1             ||
 */
 var infixPrioMap = map[Operator]int{
 	OP_MUL:         5,

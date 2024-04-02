@@ -4,17 +4,17 @@ package syscall
 type fn string
 
 const (
-	EXIT fn = "EXIT"
+	EXIT  fn = "EXIT"
 	WRITE fn = "WRITE"
 )
 
 var convDarwin = map[fn]int64{
-	EXIT: 0x2000001,
+	EXIT:  0x2000001,
 	WRITE: 0x2000004,
 }
 
 var convLinux = map[fn]int64{
-	EXIT: 60,
+	EXIT:  60,
 	WRITE: 1,
 }
 

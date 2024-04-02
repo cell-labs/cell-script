@@ -9,7 +9,6 @@ import (
 func (p *parser) parseImport() *ImportNode {
 	p.i++
 
-
 	// Single import statement
 	expectPathString := p.lookAhead(0)
 	if expectPathString.Type == lexer.STRING {

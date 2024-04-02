@@ -24,6 +24,7 @@ const (
 	STAGE_FINAL
 	STAGE_EXIT
 )
+
 var (
 	debug  bool
 	output string

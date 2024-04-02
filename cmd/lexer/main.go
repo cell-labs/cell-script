@@ -7,7 +7,6 @@ import (
 	"github.com/cell-labs/cell-script/internal/compiler"
 )
 
-
 func init() {
 	compiler.SetupOptions()
 }
