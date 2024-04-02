@@ -30,7 +30,7 @@ build:
 ckblibc:
 	@echo " >>> build libdummy.a"
 	cd third-party/ckb-c-stdlib && \
-	clang --target=riscv64 \
+	clang --target=riscv64 -v \
 		-march=rv64imc \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
