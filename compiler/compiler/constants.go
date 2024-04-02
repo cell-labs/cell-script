@@ -69,7 +69,8 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 
 	case parser.BOOL:
 		return value.Value{
-			Value:      constant.NewInt(llvmTypes.I1, v.Value),
+			// todo: optimise bool memory
+			Value:      constant.NewInt(llvmTypes.I32, v.Value),
 			Type:       types.Bool,
 			IsVariable: false,
 		}

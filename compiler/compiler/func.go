@@ -239,17 +239,15 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	c.compile(v.Body)
 
-	// Return void if there is no return type explicitly set
-	if len(v.ReturnValues) == 0 {
-		c.contextBlock.NewRet(nil)
-	} else {
-		// Pop return variables context
-		c.contextFuncRetVals = c.contextFuncRetVals[0 : len(c.contextFuncRetVals)-1]
-	}
-
-	// Return 0 by default in main func
-	if v.Name == "main" {
-		c.contextBlock.NewRet(constant.NewInt(llvmTypes.I32, 0))
+	// todo: check main return type
+	if v.Name != "main" {
+		// Return void if there is no return type explicitly set
+		if len(v.ReturnValues) == 0 {
+			c.contextBlock.NewRet(nil)
+		} else {
+			// Pop return variables context
+			c.contextFuncRetVals = c.contextFuncRetVals[0 : len(c.contextFuncRetVals)-1]
+		}
 	}
 
 	c.contextFunc = prevContextFunc
