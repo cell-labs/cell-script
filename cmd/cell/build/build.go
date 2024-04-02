@@ -80,17 +80,19 @@ func Build(options *Options) error {
 			"-ffunction-sections", "-fdata-sections",
 			"-nostdlib",
 			"-L" + root,
-			"-ldummylibc",
 		}
 		if debug {
-			fmt.Println(crossCompileArgs)
+			crossCompileArgs = append(crossCompileArgs, "-ldummylibc")
+			fmt.Println(clangArgs)
+		} else {
+			crossCompileArgs = append(crossCompileArgs, "-ldummylibc")
+
 		}
 		clangArgs = append(clangArgs, crossCompileArgs...)
 	}
 
 	// Invoke clang compiler to compile LLVM IR to a binary executable
 	cmd := exec.Command("clang", clangArgs...)
-	fmt.Println(clangArgs)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(output))
