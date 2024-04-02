@@ -222,7 +222,7 @@ func (c *Compiler) addGlobal() {
 	b.NewRet(nil)
 
 	// main.main function, body will be added later
-	c.mainFunc = c.module.NewFunc("main", types.I32.LLVM())
+	c.mainFunc = c.module.NewFunc("main", types.I64.LLVM()) // TODO: Size based on arch
 	mainBlock := c.mainFunc.NewBlock(name.Block())
 	mainBlock.NewCall(c.initGlobalsFunc)
 }

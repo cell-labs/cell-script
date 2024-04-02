@@ -9,5 +9,5 @@ function main() {
 	
 	// 1000
 	debug.Printf("%d\n", ok)
-	return true
+	return 0
 }

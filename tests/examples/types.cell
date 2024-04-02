@@ -14,5 +14,5 @@ function main() {
     r2 := v3 + v4
     debug.Printf(r2)
 
-    return true
+    return 0
 }
