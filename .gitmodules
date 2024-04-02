@@ -1,0 +1,3 @@
+[submodule "third-party/ckb-c-stdlib"]
+	path = third-party/ckb-c-stdlib
+	url = https://github.com/nervosnetwork/ckb-c-stdlib.git
