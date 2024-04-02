@@ -2,6 +2,8 @@
 import "debug"
 
 function main() {
-    debug.Printf("hello world!")
+    var ok bool
+    ok = tx.ScriptVerify()
+    debug.Printf("hello world! %d\n", ok)
     return 0
 }
