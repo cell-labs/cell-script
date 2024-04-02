@@ -21,9 +21,10 @@ fmt:
 	cd ${MKFILE_DIR} && go fmt ./...
 build:
 	@echo "build"
+	git submodule update --init --recursive
+	make ckblibc
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
-	make ckblibc
 	rm -f cell
 	ln -s ${CELL} cell
 ckblibc:
