@@ -23,6 +23,9 @@ build:
 		-o ${RELEASE_DIR}/cell ./cmd/cell
 	rm -f cell
 	ln -s ${RELEASE_DIR}/cell cell
+cross:
+	@echo "cross compiling"
+	docker run --rm -v ${MKFILE_DIR}:/code nervos/ckb-riscv-gnu-toolchain:gnu-focal-20230214 bash -c "cd /code/third-party && sh build.sh"
 test:
 	@echo "unit test"
 	go mod tidy
