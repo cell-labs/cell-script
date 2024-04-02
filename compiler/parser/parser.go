@@ -40,6 +40,8 @@ func Parse(input []lexer.Item, debug bool) *FileNode {
 			"uint32":  {},
 			"int64":   {},
 			"uint64":  {},
+			"uint128": {},
+			"uint256": {},
 			"uintptr": {},
 			"string":  {},
 		},

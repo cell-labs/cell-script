@@ -201,6 +201,8 @@ func (c *Compiler) addGlobal() {
 	global.DefinePkgType("uint32", types.U32)
 	global.DefinePkgType("int64", types.I64)
 	global.DefinePkgType("uint64", types.U64)
+	global.DefinePkgType("uint128", types.U128)
+	global.DefinePkgType("uint256", types.U256)
 	global.DefinePkgType("uintptr", types.Uintptr)
 	global.DefinePkgType("string", types.String)
 
