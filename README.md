@@ -59,6 +59,7 @@ brew install riscv-tools
 export PATH=/opt/homebrew/bin:$PATH
 brew install --cask spike
 make build
+source install.sh
 
 cell <file>.cell
 cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger

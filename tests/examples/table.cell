@@ -1,0 +1,29 @@
+package main
+
+import "debug"
+
+type Book table {
+	book_id int
+    pages uint32
+}
+
+type Bookshelf table {
+	book0 Book
+	book1 Book
+}
+
+function main() {
+	var shelf Bookshelf
+	var b0 Book
+
+	shelf.book0 = b0
+	shelf.book0.book_id = 1000
+
+	shelf.book1.book_id = 2000
+
+	// 1000
+	debug.Printf("%d\n", shelf.book0.book_id)
+
+	// 2000
+	debug.Printf("%d\n", shelf.book1.book_id)
+}

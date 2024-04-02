@@ -1143,7 +1143,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 	}
 
 	// struct parsing
-	if current.Type == lexer.KEYWORD && current.Val == "struct" {
+	if current.Type == lexer.KEYWORD && current.Val == "table" {
 		p.i++
 
 		res := &StructTypeNode{

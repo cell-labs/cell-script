@@ -6,7 +6,7 @@ var keywords = map[string]struct{}{
 	"function":    {},
 	"return":      {},
 	"type":        {},
-	"struct":      {},
+	"table":       {},
 	"var":         {},
 	"const":       {},
 	"package":     {},
