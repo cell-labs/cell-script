@@ -33,7 +33,7 @@ func Build(options *Options) error {
 	outputBinaryPath := options.Output
 	optimize := options.Optimize
 	root := options.Root
-	c := compiler.NewCompiler()
+	c := compiler.NewCompiler(&compiler.Options{Target: options.Target})
 	debug = options.Debug
 
 	err := compilePackage(c, path, root, "main")
@@ -85,6 +85,7 @@ func Build(options *Options) error {
 
 	// Invoke clang compiler to compile LLVM IR to a binary executable
 	cmd := exec.Command("clang", clangArgs...)
+	fmt.Println(clangArgs)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(output))

@@ -20,6 +20,10 @@ import (
 	llvmValue "github.com/llir/llvm/ir/value"
 )
 
+type Options struct {
+	Target string
+}
+
 type Compiler struct {
 	module *ir.Module
 
@@ -73,7 +77,7 @@ var (
 	i64 = types.I64
 )
 
-func NewCompiler() *Compiler {
+func NewCompiler(options *Options) *Compiler {
 	c := &Compiler{
 		module: ir.NewModule(),
 
@@ -119,6 +123,11 @@ func NewCompiler() *Compiler {
 		targetTriple[1] = "pc-windows"
 	default:
 		panic("unsupported GOOS: " + runtime.GOOS)
+	}
+
+	if options.Target != "native" {
+		targetTriple[0] = options.Target
+		targetTriple[1] = "unknown"
 	}
 
 	c.module.TargetTriple = fmt.Sprintf("%s-%s", targetTriple[0], targetTriple[1])
