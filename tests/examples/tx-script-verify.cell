@@ -1,0 +1,13 @@
+import "tx"
+import "debug"
+
+function main() {
+
+	var ok bool
+
+	ok = tx.ScriptVerify()
+	
+	// 1000
+	debug.Printf("%d\n", ok)
+	return true
+}

@@ -30,6 +30,9 @@ type Compiler struct {
 	// functions provided by the OS, such as printf and malloc
 	osFuncs OSFuncs
 
+	// functions for transactions
+	txFuncs TxFuncs
+
 	packages       map[string]*pkg
 	currentPackage *pkg
 
@@ -72,9 +75,11 @@ type Compiler struct {
 }
 
 var (
-	i8  = types.I8
-	i32 = types.I32
-	i64 = types.I64
+	boolean = types.Bool
+	i8      = types.I8
+	i32     = types.I32
+	i64     = types.I64
+	// cellData = types.CellData
 )
 
 func NewCompiler(options *Options) *Compiler {
@@ -97,6 +102,7 @@ func NewCompiler(options *Options) *Compiler {
 	}
 
 	c.createExternalPackage()
+	c.createTxPackage()
 	c.addGlobal()
 	c.pushVariablesStack()
 

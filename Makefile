@@ -25,7 +25,9 @@ build:
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
 	@echo "sussecfully build cell"
-ckb-libc: ckb-libc-debug ckb-libc-release
+build/debug:
+	go build -gcflags=all="-N -l" ./cmd/cell
+ckb-libc: ckb-libc-release
 ckb-libc-debug:
 	@echo " >>> build libdummy-debug.a"
 	cd third-party/ckb-c-stdlib && \
@@ -33,6 +35,7 @@ ckb-libc-debug:
 		-march=rv64imc \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
+		-I . \
 		-c libc/src/impl.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
 		-o impl.o && \
@@ -47,9 +50,9 @@ ckb-libc-release:
 		-march=rv64imc \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
-		-c libc/src/impl.c \
-		-o impl.o && \
-	riscv64-unknown-elf-ar rcs libdummylibc.a impl.o
+		-I . \
+		-c ../wrapper.c && \
+	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
 	mkdir -p output/pkg
 	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
 	@echo "sussecfully build libdummy.a"
