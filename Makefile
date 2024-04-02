@@ -5,7 +5,6 @@ MKFILE_DIR := $(dir $(MKFILE_PATH))
 RELEASE_DIR := ${MKFILE_DIR}/output
 
 CELL := ${RELEASE_DIR}/cell
-
 .phony: clean antlr grammar dev build test test_cell_examples
 clean:
 	# rm -rf internal/parser
@@ -25,8 +24,9 @@ build:
 	make ckblibc
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
-	rm -f cell
-	ln -s ${CELL} cell
+	@echo "sussecfully build cell"
+
+
 ckblibc:
 	@echo " >>> build libdummy.a"
 	cd third-party/ckb-c-stdlib && \
@@ -38,7 +38,10 @@ ckblibc:
 		-o impl.o && \
 	riscv64-unknown-elf-ar rcs libdummylibc.a impl.o
 	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
+	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg 
+	@echo "sussecfully build libdummy.a"
+install:
+	source ./install.sh
 test:
 	@echo "unit test"
 	go mod tidy
@@ -65,3 +68,4 @@ test/cross:
 		-Wl,--gc-sections \
 		-o main tests/examples/hi.ll
 	ckb-debugger --bin main
+
