@@ -4,10 +4,12 @@ MKFILE_PATH := ${abspath $(lastword $(MAKEFILE_LIST))}
 MKFILE_DIR := $(dir $(MKFILE_PATH))
 RELEASE_DIR := ${MKFILE_DIR}/output
 
+CELL := ${RELEASE_DIR}/cell
+
 .phony: clean antlr grammar dev build test test_cell_examples
 clean:
-	rm -rf internal/parser
-	rm -rf internal/lexer
+	# rm -rf internal/parser
+	# rm -rf internal/lexer
 	rm -rf output
 grammar: antlr
 
@@ -20,21 +22,45 @@ fmt:
 build:
 	@echo "build"
 	go build -v -trimpath \
-		-o ${RELEASE_DIR}/cell ./cmd/cell
+		-o ${CELL} ./cmd/cell
+	make ckblibc
 	rm -f cell
-	ln -s ${RELEASE_DIR}/cell cell
-cross:
-	@echo "cross compiling"
-	docker run --rm -v ${MKFILE_DIR}:/code nervos/ckb-riscv-gnu-toolchain:gnu-focal-20230214 bash -c "cd /code/third-party && sh build.sh"
+	ln -s ${CELL} cell
+ckblibc:
+	@echo " >>> build libdummy.a"
+	cd third-party/ckb-c-stdlib && \
+	clang --target=riscv64 \
+		-march=rv64imc \
+		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
+		-I libc \
+		-c libc/src/impl.c \
+		-o impl.o && \
+	riscv64-unknown-elf-ar rcs libdummylibc.a impl.o
+	mkdir -p output/pkg
+	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
 test:
 	@echo "unit test"
 	go mod tidy
 	git diff --exit-code go.mod go.sum
 	go mod verify
 	go test -v -gcflag "all=-l" ${MKFILE_DIR}
-example:
+test/example:
 	@echo "test cell examples"
 	make build
-	./cell || true
-	./cell tests/examples/hi.cell && ./hi
-	./cell -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
+	${CELL} || true
+	${CELL} tests/examples/hi.cell && ./hi
+	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
+test/cross:
+	@echo "test cross compiling"
+	@echo cross hi.ll with linking dummy.c
+	which clang
+	clang --target=riscv64 \
+		-march=rv64imc \
+		-Wno-override-module \
+		-ffunction-sections -fdata-sections \
+		-nostdlib \
+		-L output/pkg \
+		-ldummylibc \
+		-Wl,--gc-sections \
+		-o main tests/examples/hi.ll
+	ckb-debugger --bin main

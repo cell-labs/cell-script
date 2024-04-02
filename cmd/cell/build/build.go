@@ -76,9 +76,14 @@ func Build(options *Options) error {
 	if options.Target == "riscv" {
 		crossCompileArgs := []string{
 			"--target=riscv64",
-			"-march=rv64imac",
-			"--sysroot=/opt/homebrew/opt/riscv-gnu-toolchain/riscv64-unknown-elf",
-			"--gcc-toolchain=/opt/homebrew/opt/riscv-gnu-toolchain",
+			"-march=rv64imc",
+			"-ffunction-sections", "-fdata-sections",
+			"-nostdlib",
+			"-L" + root,
+			"-ldummylibc",
+		}
+		if debug {
+			fmt.Println(crossCompileArgs)
 		}
 		clangArgs = append(clangArgs, crossCompileArgs...)
 	}
