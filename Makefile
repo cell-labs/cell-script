@@ -10,6 +10,8 @@ clean:
 	# rm -rf internal/parser
 	# rm -rf internal/lexer
 	rm -rf output
+	rm third-party/ckb-c-stdlib/*.o
+	rm third-party/ckb-c-stdlib/*.a
 grammar: antlr
 
 antlr:
@@ -20,6 +22,7 @@ fmt:
 	cd ${MKFILE_DIR} && go fmt ./...
 build:
 	@echo "build"
+	make clean
 	git submodule update --init --recursive
 	make ckb-libc
 	go build -v -trimpath \
@@ -29,6 +32,20 @@ build:
 build/debug:
 	go build -gcflags=all="-N -l" ./cmd/cell
 ckb-libc: ckb-libc-release
+sudt-c:
+	@echo " >>> build sudt-c"
+	cd third-party/ckb-c-stdlib && \
+	clang --target=riscv64 \
+		-march=rv64imc \
+		-nostdlib \
+		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
+		-I libc \
+		-I molecule \
+		-I . \
+		../sudt.c \
+		-o sudt-c && \
+	cp sudt-c ../..
+	@echo "sussecfully build sudt-c"
 ckb-libc-debug:
 	@echo " >>> build libdummy-debug.a"
 	cd third-party/ckb-c-stdlib && \
@@ -49,7 +66,7 @@ ckb-libc-release:
 	cd third-party/ckb-c-stdlib && \
 	clang --target=riscv64 \
 		-march=rv64imc \
-		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
+		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
 		-I libc \
 		-I . \
 		-c ../wrapper.c && \
@@ -77,6 +94,7 @@ test/example:
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
 	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs
+	${CELL} -t riscv tests/examples/sudt.cell && ckb-debugger --bin sudt
 
 	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files
 	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package
