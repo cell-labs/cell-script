@@ -1,0 +1,10 @@
+package cell
+
+type SegData table {
+	data string
+}
+
+type Cell table {
+	size uint64
+	data SegData
+}

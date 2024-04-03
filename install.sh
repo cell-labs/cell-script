@@ -1,1 +1,1 @@
-export PATH=./output:${PATH}
+export PATH=${PWD}/output:${PATH}

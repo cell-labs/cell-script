@@ -1,0 +1,24 @@
+package main
+
+import (
+	"debug"
+	"sub"
+)
+
+var PackageVar string
+
+function main() {
+	debug.Printf("%s\n", sub.World()) // World
+
+	var a sub.AnotherInt
+	a = 10
+
+	debug.Printf("%d\n", a.Plus5()) // 15
+
+	sub.PackageVar = "inAnotherPkg"
+	PackageVar = "thisPackageVar"
+
+	debug.Printf("%s\n", sub.GetPackageVar()) // inAnotherPkg
+	debug.Printf("%s\n", PackageVar) // thisPackageVar
+	return 0
+}

@@ -24,6 +24,7 @@ build:
 	make ckb-libc
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
+	cp -r pkg/* output/pkg
 	@echo "sussecfully build cell"
 build/debug:
 	go build -gcflags=all="-N -l" ./cmd/cell

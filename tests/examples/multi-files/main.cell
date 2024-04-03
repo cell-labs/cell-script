@@ -1,0 +1,11 @@
+package main  
+import "debug"
+
+// foo
+// bar
+
+function main() {
+	debug.Printf("foo\n")
+	bar()
+	return 0
+}
