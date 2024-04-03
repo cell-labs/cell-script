@@ -2,35 +2,20 @@ import "debug"
 import "tx"
 import "cell"
 
-// main is the entry point of every cell script
 function main() {
-    tx.scriptVerify()
-
-    if(tx.isOwnerMode()) {
-        return 0
+    // tx.scriptVerify()
+    if tx.isOwnerMode() {
+        return 0 
     }
-    
 
-    var ins = tx.inputs()
-    var outs = tx.outputs()
+    in_sum, out_sum := 0, 0
 
-    var in_sum uint64
-    var out_sum uint64
-
-    for _, input := range ins {
+    for input := range tx.inputs() {
         in_sum += input
-        if in_sum < input {
-            debug.Printf("input overflow")
-            return 1
-        }
     }
 
-    for _, output := range outs {
+    for output := range tx.outputs() {
         out_sum += output
-        if out_sum < output {
-            debug.Printf("output overflow")
-            return 1
-        }
     }
 
     if in_sum < out_sum {
