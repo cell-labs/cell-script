@@ -149,13 +149,13 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 				for _, packagePath := range importNode.PackagePaths {
 
 					// Is built in to the compiler
-					if packagePath == "debug" || packagePath == "tx" {
+					if packagePath == "debug" {
 						continue
 					}
 
 					searchPaths := []string{
-						path + "/" + packagePath,
 						goroot + "/" + packagePath,
+						path + "/" + packagePath,
 					}
 
 					importSuccessful := false
@@ -176,7 +176,7 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 						}
 
 						importSuccessful = true
-						// overwrite cell package if user-defined 
+						// overwrite cell package if user-defined
 						if packagePath == "cell" {
 							break
 						}

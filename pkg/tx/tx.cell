@@ -1,0 +1,9 @@
+package tx
+
+function script_verify() bool {
+	return true
+}
+
+function ScriptVerify() bool {
+	return script_verify()
+}

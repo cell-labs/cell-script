@@ -1,0 +1,51 @@
+import "debug"
+
+function ff() []int {
+	return []int{40, 50}
+}
+
+function main() {
+	s := []int{10, 20, 30}
+	// 0 10
+	// 1 20
+	// 2 30
+	for i, v := range s {
+		debug.Printf("%d %d\n", i, v)
+	}
+
+	// _, 10
+	// _, 20
+	// _, 30
+	for _, v := range s {
+		debug.Printf("_, %d\n", v)
+	}
+
+	// 0
+	// 1
+	// 2
+	for k := range s {
+	 	debug.Printf("%d\n", k)
+	}
+
+	// AAA
+	// AAA
+	// AAA
+	for range s {
+		debug.Printf("%s\n", "AAA")
+	}
+
+	// 0 40
+	// 1 50
+	f := ff()
+	for k, v := range f {
+		debug.Printf("%d %d\n", k, v)
+	}
+
+	// 0 40
+	// 1 50
+	for k, v := range ff() {
+		debug.Printf("%d %d\n", k, v)
+	}
+	return 0
+}
+

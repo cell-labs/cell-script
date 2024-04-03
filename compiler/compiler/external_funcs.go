@@ -102,39 +102,3 @@ func (c *Compiler) createExternalPackage() {
 
 	c.packages["debug"] = external
 }
-
-func (c *Compiler) createTxPackage() {
-	external := NewPkg("tx")
-
-	setExternal := func(internalName string, fn *ir.Func, variadic bool) value.Value {
-		fn.Sig.Variadic = variadic
-		val := value.Value{
-			Type: &types.Function{
-				LlvmReturnType: types.Void,
-				FuncType:       fn.Type(),
-				IsExternal:     true,
-			},
-			Value: fn,
-		}
-		external.DefinePkgVar(internalName, val)
-		return val
-	}
-
-	c.txFuncs.ScriptVerify = setExternal("ScriptVerify", c.module.NewFunc("script_verify",
-		boolean.LLVM(),
-	), true)
-
-	// c.txFuncs.Inputs = setExternal("Inputs", c.module.NewFunc("get_utxo_inputs",
-	// 	bool.LLVM(),
-	// ), true)
-
-	// c.txFuncs.Outputs = setExternal("Outputs", c.module.NewFunc("get_utxo_outputs",
-	// 	bool.LLVM(),
-	// ), true)
-
-	// c.txFuncs.GetInputCellDataLen = setExternal("GetInputCellDataLen", c.module.NewFunc("get_input_cell_data_len",
-	// 	bool.LLVM(),
-	// ), true)
-
-	c.packages["tx"] = external
-}

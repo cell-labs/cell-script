@@ -75,11 +75,10 @@ type Compiler struct {
 }
 
 var (
-	boolean  = types.Bool
-	i8       = types.I8
-	i32      = types.I32
-	i64      = types.I64
-	// cell	 = types.Cell
+	boolean = types.Bool
+	i8      = types.I8
+	i32     = types.I32
+	i64     = types.I64
 )
 
 func NewCompiler(options *Options) *Compiler {
@@ -102,7 +101,6 @@ func NewCompiler(options *Options) *Compiler {
 	}
 
 	c.createExternalPackage()
-	c.createTxPackage()
 	c.addGlobal()
 	c.pushVariablesStack()
 

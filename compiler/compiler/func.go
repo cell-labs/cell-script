@@ -96,7 +96,12 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		// Change the name of our function
 		compiledName = c.currentPackageName + "_method_" + v.MethodOnType.TypeName + "_" + v.Name
 	} else if v.IsNamed {
-		compiledName = c.currentPackageName + "_" + v.Name
+		// todo ffi set identifier
+		if c.currentPackageName == "tx" {
+			compiledName = v.Name
+		} else {
+			compiledName = c.currentPackageName + "_" + v.Name
+		}
 	} else {
 		compiledName = c.currentPackageName + "_" + name.AnonFunc()
 	}
@@ -130,7 +135,12 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		c.initGlobalsFunc.Blocks[0].NewCall(fn) // Setup call to init from the global init func
 	} else {
 		fn = c.module.NewFunc(compiledName, funcRetType.LLVM(), llvmParams...)
-		entry = fn.NewBlock(name.Block())
+		// regiester ffi function definnition for tx package
+		if c.currentPackageName == "tx" && (compiledName == "script_verify") {
+			// do not generate block
+		} else {
+			entry = fn.NewBlock(name.Block())
+		}
 	}
 
 	typesFunc := &types.Function{
@@ -139,6 +149,17 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		ReturnTypes:    treReturnTypes,
 		IsVariadic:     isVariadicFunc,
 		ArgumentTypes:  treParams,
+	}
+
+	// regiester ffi function definnition for tx package
+	// without generate func body
+	if c.currentPackageName == "tx" && (compiledName == "script_verify") {
+		val := value.Value{
+			Type:  typesFunc,
+			Value: fn,
+		}
+		c.currentPackage.DefinePkgVar(compiledName, val)
+		return val
 	}
 
 	// Save as a method on the type
