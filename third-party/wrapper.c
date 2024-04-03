@@ -57,6 +57,57 @@ bool script_verify() {
   return true;
 }
 
+bool is_owner_mode() {
+  unsigned char script[SCRIPT_SIZE];
+  uint64_t len = SCRIPT_SIZE;
+  int ret = ckb_load_script(script, &len, 0);
+
+  mol_seg_t script_seg;
+  script_seg.ptr = (uint8_t *)script;
+  script_seg.size = len;
+
+  mol_seg_t args_seg = MolReader_Script_get_args(&script_seg);
+  mol_seg_t args_bytes_seg = MolReader_Bytes_raw_bytes(&args_seg);
+  if (args_bytes_seg.size != BLAKE2B_BLOCK_SIZE) {
+    return false;
+  }
+
+  // With owner lock script extracted, we will look through each input in the
+  // current transaction to see if any unlocked cell uses owner lock.
+  int owner_mode = 0;
+  size_t i = 0;
+  while (1) {
+    uint8_t buffer[BLAKE2B_BLOCK_SIZE];
+    uint64_t len = BLAKE2B_BLOCK_SIZE;
+    // There are 2 points worth mentioning here:
+    //
+    // * First, we are using the checked version of CKB syscalls, the checked
+    // versions will return an error if our provided buffer is not enough to
+    // hold all returned data. This can help us ensure that we are processing
+    // enough data here.
+    // * Second, `CKB_CELL_FIELD_LOCK_HASH` is used here to directly load the
+    // lock script hash, so we don't have to manually calculate the hash again
+    // here.
+    ret = ckb_checked_load_cell_by_field(buffer, &len, 0, i, CKB_SOURCE_INPUT,
+                                         CKB_CELL_FIELD_LOCK_HASH);
+    if (ret == CKB_INDEX_OUT_OF_BOUND) {
+      break;
+    }
+    if (ret != CKB_SUCCESS) {
+      return false;
+    }
+    if (len != BLAKE2B_BLOCK_SIZE) {
+      return false;
+    }
+    if (memcmp(buffer, args_bytes_seg.ptr, BLAKE2B_BLOCK_SIZE) == 0) {
+      owner_mode = 1;
+      break;
+    }
+    i += 1;
+  }
+  return (owner_mode == 1);
+}
+
 uint64_t get_input_cell_data_len(int i) {
   uint64_t len = 0;
   int ret =

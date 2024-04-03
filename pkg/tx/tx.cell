@@ -9,6 +9,13 @@ function scriptVerify() bool {
 	return script_verify()
 }
 
+function is_owner_mode() bool {
+	return true
+}
+function isOwnerMode() bool {
+	return is_owner_mode()
+}
+
 function get_utxo_inputs() []cell.Cell {
 	return []cell.Cell{}
 }

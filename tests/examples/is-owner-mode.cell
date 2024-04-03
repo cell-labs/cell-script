@@ -1,0 +1,10 @@
+//package main
+import "debug"
+import "tx"
+
+function main() {
+    var ok bool
+    ok = tx.isOwnerMode()
+    debug.Printf("isOwnerMode! %d\n", ok)
+    return 0
+}

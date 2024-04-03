@@ -118,7 +118,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes)
 
-	isTxFuncs := c.currentPackageName == "tx" && (compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
+	isTxFuncs := c.currentPackageName == "tx" && (compiledName == "is_owner_mode" || compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
 	var fn *ir.Func
 	var entry *ir.Block
 
