@@ -152,6 +152,9 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 					if packagePath == "debug" {
 						continue
 					}
+					if c.IsPackageImported(packagePath) {
+						continue
+					}
 
 					searchPaths := []string{
 						goroot + "/" + packagePath,

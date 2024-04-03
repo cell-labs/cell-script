@@ -170,6 +170,11 @@ func (c *Compiler) GetIR() string {
 	return c.module.String()
 }
 
+func (c *Compiler) IsPackageImported(name string) bool {
+	_, ok := c.packages[name]
+	return ok
+}
+
 func (c *Compiler) addGlobal() {
 	types.ModuleStringType = c.module.NewTypeDef("string", internal.String())
 
