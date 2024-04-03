@@ -16,7 +16,9 @@ const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 #define ERROR_SCRIPT_TOO_LONG -21
 
 typedef struct {
-  uint64_t size;
+  uint32_t size;
+  uint32_t cap;
+  uint32_t offset;
   mol_seg_t* data;
 }cell_data_t;
 cell_data_t EMPTY_CELL_DATA = {0};
@@ -113,7 +115,7 @@ cell_data_t get_utxo_inputs() {
     inputs.data[i].ptr = data;
     i += 1;
     inputs.size = i;
-  }
+  };
   return inputs;
 }
 

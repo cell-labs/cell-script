@@ -118,6 +118,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes)
 
+	isTxFuncs := c.currentPackageName == "tx" && (compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
 	var fn *ir.Func
 	var entry *ir.Block
 
@@ -136,7 +137,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	} else {
 		fn = c.module.NewFunc(compiledName, funcRetType.LLVM(), llvmParams...)
 		// regiester ffi function definnition for tx package
-		if c.currentPackageName == "tx" && (compiledName == "script_verify") {
+		if isTxFuncs {
 			// do not generate block
 		} else {
 			entry = fn.NewBlock(name.Block())
@@ -153,7 +154,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	// regiester ffi function definnition for tx package
 	// without generate func body
-	if c.currentPackageName == "tx" && (compiledName == "script_verify") {
+	if isTxFuncs {
 		val := value.Value{
 			Type:  typesFunc,
 			Value: fn,

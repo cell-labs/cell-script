@@ -71,7 +71,15 @@ test/example:
 	make build
 	${CELL} || true
 	${CELL} tests/examples/hi.cell && ./hi
-	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
+	${CELL} -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
+	${CELL} -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld
+	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table
+	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
+	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
+	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs
+
+	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files
+	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package
 test/cross:
 	@echo "test cross compiling"
 	@echo cross hi.ll with linking dummy.c

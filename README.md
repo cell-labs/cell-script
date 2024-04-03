@@ -13,6 +13,7 @@ import "cell"
 
 // main is the entry point of every cell script
 function main() {
+    tx.ScriptVerify()
     var inputs := tx.inputs()
     var outputs := tx.outputs()
 
@@ -42,6 +43,8 @@ function main() {
     return 0
 }
 ```
+
+
 
 The ideas and specs can be found [here](./SPEC.md). 
 

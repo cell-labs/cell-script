@@ -5,12 +5,7 @@ import "debug"
 
 
 function main() {
-	var seg cell.SegData
-	seg.data = "seg"
 	var c cell.Cell
-	c.size = 100
-	c.data = seg
-	debug.Printf("%d\n", c.size)
-	debug.Printf("%s\n", c.data.data)
+	c = "1234"
 	return 0
 }

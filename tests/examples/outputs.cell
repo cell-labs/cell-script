@@ -1,0 +1,12 @@
+import "debug"
+import "cell"
+import "tx"
+
+function main() {
+	ok := tx.ScriptVerify()
+	debug.Printf("%d:", ok)
+	var outputs []cell.Cell
+	outputs = tx.Outputs()
+	ret := int64(len(outputs))
+	return ret
+}

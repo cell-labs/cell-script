@@ -176,10 +176,6 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 						}
 
 						importSuccessful = true
-						// overwrite cell package if user-defined
-						if packagePath == "cell" {
-							break
-						}
 					}
 
 					if !importSuccessful {
