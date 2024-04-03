@@ -15,8 +15,6 @@ import (
 	"errors"
 
 	"github.com/llir/llvm/ir"
-	"github.com/llir/llvm/ir/constant"
-	llvmTypes "github.com/llir/llvm/ir/types"
 	llvmValue "github.com/llir/llvm/ir/value"
 )
 
@@ -374,7 +372,7 @@ func (c *Compiler) panic(block *ir.Block, message string) {
 	globMsg := c.module.NewGlobalDef(strings.NextStringName(), strings.Constant("runtime panic: "+message+"\n"))
 	globMsg.Immutable = true
 	block.NewCall(c.osFuncs.Printf.Value.(llvmValue.Named), strings.Toi8Ptr(block, globMsg))
-	block.NewCall(c.osFuncs.Exit.Value.(llvmValue.Named), constant.NewInt(llvmTypes.I32, 1))
+	// block.NewCall(c.osFuncs.Exit.Value.(llvmValue.Named), constant.NewInt(llvmTypes.I32, 1))
 }
 
 type Panic string
