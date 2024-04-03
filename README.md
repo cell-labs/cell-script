@@ -6,7 +6,6 @@ Cell Script is a newly designed language for smart-contract programming on the U
 
 Here is an example of a simple cell script.
 ```
-//package main
 import "debug"
 import "tx"
 import "cell"
@@ -14,22 +13,23 @@ import "cell"
 // main is the entry point of every cell script
 function main() {
     tx.scriptVerify()
-    var ins := tx.inputs()
-    var outs := tx.outputs()
+    var ins = tx.inputs()
+    var outs = tx.outputs()
 
-    var in_sum, out_sum uint128
+    var in_sum uint64
+    var out_sum uint64
 
     for _, input := range ins {
-        in_sum += input.data.as(uint128)
-        if in_sum < input.data.as(uint128) {
+        in_sum += input
+        if in_sum < input {
             debug.Printf("input overflow")
             return 1
         }
     }
 
     for _, output := range outs {
-        out_sum += output.data.as(uint128)
-        if out_sum < input.data.as(uint128) {
+        out_sum += output
+        if out_sum < output {
             debug.Printf("output overflow")
             return 1
         }

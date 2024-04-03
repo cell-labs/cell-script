@@ -16,11 +16,16 @@ const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 #define ERROR_SCRIPT_TOO_LONG -21
 
 typedef struct {
+  uint64_t data;
+}cell_meta_data;
+
+typedef struct {
   uint32_t size;
   uint32_t cap;
   uint32_t offset;
-  mol_seg_t* data;
+  cell_meta_data* ptr;
 }cell_data_t;
+
 cell_data_t EMPTY_CELL_DATA = {0};
 
 bool script_verify() {
@@ -86,12 +91,13 @@ uint64_t get_output_cell_data_len(int i) {
 
 cell_data_t get_utxo_inputs() {
   cell_data_t inputs = {0};
-  inputs.data = malloc(MAX_CELLS * sizeof(mol_seg_t));
+  inputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
   int i = 0;
   while (1) {
     uint64_t len = get_input_cell_data_len(i);
-    uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
-    int ret = ckb_load_cell_data(data, &len, 0, i,
+    // uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
+    uint64_t cur_data = 0; 
+    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
                              CKB_SOURCE_GROUP_INPUT);
     // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
     // through all cells of current type.
@@ -105,14 +111,10 @@ cell_data_t get_utxo_inputs() {
       return EMPTY_CELL_DATA;
     }
     if (i >= (int)MAX_CELLS) {
-      for (int j = 0; j <= i; j++) {
-        free(inputs.data[j].ptr);
-      }
-      free(inputs.data);
+      free(inputs.ptr);
       return EMPTY_CELL_DATA;
     }
-    inputs.data[i].size = len;
-    inputs.data[i].ptr = data;
+    inputs.ptr[i].data = cur_data;
     i += 1;
     inputs.size = i;
   };
@@ -121,12 +123,12 @@ cell_data_t get_utxo_inputs() {
 
 cell_data_t get_utxo_outputs() {
   cell_data_t outputs = {0};
-  outputs.data = malloc(MAX_CELLS * sizeof(mol_seg_t));
+  outputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
   int i = 0;
   while (1) {
     uint64_t len = get_output_cell_data_len(i);
-    uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
-    int ret = ckb_load_cell_data(&data, &len, 0, i,
+    uint64_t cur_data = 0;
+    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
                              CKB_SOURCE_GROUP_OUTPUT);
     // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
     // through all cells of current type.
@@ -140,14 +142,10 @@ cell_data_t get_utxo_outputs() {
       return EMPTY_CELL_DATA;
     }
     if (i >= (int)MAX_CELLS) {
-      for (int j = 0; j <= i; j++) {
-        free(outputs.data[j].ptr);
-      }
-      free(outputs.data);
+      free(outputs.ptr);
       return EMPTY_CELL_DATA;
     }
-    outputs.data[i].size = len;
-    outputs.data[i].ptr = data;
+    outputs.ptr[i].data = cur_data;
     i += 1;
     outputs.size = i;
   }
