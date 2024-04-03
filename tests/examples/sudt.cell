@@ -5,6 +5,12 @@ import "cell"
 // main is the entry point of every cell script
 function main() {
     tx.scriptVerify()
+
+    if(tx.isOwnerMode()) {
+        return 0
+    }
+    
+
     var ins = tx.inputs()
     var outs = tx.outputs()
 
