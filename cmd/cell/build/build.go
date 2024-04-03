@@ -16,10 +16,9 @@ import (
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
 )
 
-var debug bool
-
 type Options struct {
 	Debug    bool
+	Verbose  bool
 	Optimize bool
 	Path     string
 	Package  string
@@ -34,16 +33,16 @@ func Build(options *Options) error {
 	optimize := options.Optimize
 	root := options.Root
 	c := compiler.NewCompiler(&compiler.Options{Target: options.Target})
-	debug = options.Debug
+	debug := options.Debug
 
-	err := compilePackage(c, path, root, "main")
+	err := compilePackage(c, path, "main", options)
 	if err != nil {
 		return err
 	}
 
 	compiled := c.GetIR()
 
-	if debug {
+	if options.Verbose {
 		fmt.Println(compiled)
 	}
 
@@ -82,8 +81,7 @@ func Build(options *Options) error {
 			"-L" + root,
 		}
 		if debug {
-			crossCompileArgs = append(crossCompileArgs, "-ldummylibc")
-			fmt.Println(clangArgs)
+			crossCompileArgs = append(crossCompileArgs, "-ldummylibc-debug")
 		} else {
 			crossCompileArgs = append(crossCompileArgs, "-ldummylibc")
 
@@ -107,7 +105,8 @@ func Build(options *Options) error {
 	return nil
 }
 
-func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
+func compilePackage(c *compiler.Compiler, path, name string, options *Options) error {
+	stdroot := options.Root
 	f, err := os.Stat(path)
 	if err != nil {
 		return err
@@ -127,13 +126,13 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 				// Tre files doesn't have to contain valid Go code, and is used to prevent issues
 				// with some of the go tools (like vgo)
 				if strings.HasSuffix(file.Name(), ".cell") || strings.HasSuffix(file.Name(), ".go") {
-					parsedFiles = append(parsedFiles, parseFile(path+"/"+file.Name()))
+					parsedFiles = append(parsedFiles, parseFile(path+"/"+file.Name(), options))
 				}
 			}
 		}
 	} else {
 		// Parse a single file
-		parsedFiles = append(parsedFiles, parseFile(path))
+		parsedFiles = append(parsedFiles, parseFile(path, options))
 	}
 
 	// Scan for ImportNodes
@@ -157,7 +156,7 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 					}
 
 					searchPaths := []string{
-						goroot + "/" + packagePath,
+						stdroot + "/" + packagePath,
 						path + "/" + packagePath,
 					}
 
@@ -169,11 +168,11 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 							continue
 						}
 
-						if debug {
+						if options.Verbose {
 							log.Printf("Loading %s from %s", packagePath, sp)
 						}
 
-						err = compilePackage(c, sp, goroot, packagePath)
+						err = compilePackage(c, sp, packagePath, options)
 						if err != nil {
 							return err
 						}
@@ -199,7 +198,7 @@ func compilePackage(c *compiler.Compiler, path, goroot, name string) error {
 	})
 }
 
-func parseFile(path string) parser.FileNode {
+func parseFile(path string, options *Options) parser.FileNode {
 	// Read specified input file
 	fileContents, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -210,7 +209,7 @@ func parseFile(path string) parser.FileNode {
 	lexed := lexer.Lex(string(fileContents))
 
 	// Run lexed source through the parser. A syntax tree is returned.
-	parsed := parser.Parse(lexed, debug)
+	parsed := parser.Parse(lexed, options.Debug)
 
 	// List of passes to run on the AST
 	passes := []func(*parser.FileNode) *parser.FileNode{
