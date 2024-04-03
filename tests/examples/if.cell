@@ -1,0 +1,40 @@
+package main
+
+import "debug"
+
+
+function main() {
+	// 1
+	// 0
+	// a was true
+	// b was not true
+	// 0
+
+	a := true
+	debug.Printf("%d\n", a)
+
+	a = false
+	debug.Printf("%d\n", a)
+
+	a = true
+	if a {
+		debug.Printf("a was true")
+	}
+	if !a {
+		debug.Printf("a was not true")
+	}
+
+	b := false
+	if b {
+		debug.Printf("b was true")
+	}
+	if !b {
+		debug.Printf("b was not true")
+	}
+
+	var c bool
+	c = false
+	debug.Printf("%d\n", c)
+	
+	return 0
+}

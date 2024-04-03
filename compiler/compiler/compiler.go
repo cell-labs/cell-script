@@ -75,11 +75,11 @@ type Compiler struct {
 }
 
 var (
-	boolean = types.Bool
-	i8      = types.I8
-	i32     = types.I32
-	i64     = types.I64
-	// cellData = types.CellData
+	boolean  = types.Bool
+	i8       = types.I8
+	i32      = types.I32
+	i64      = types.I64
+	// cell	 = types.Cell
 )
 
 func NewCompiler(options *Options) *Compiler {
@@ -203,6 +203,7 @@ func (c *Compiler) addGlobal() {
 	global.DefinePkgType("uint8", types.U8)
 	global.DefinePkgType("int16", types.I16)
 	global.DefinePkgType("uint16", types.U16)
+	global.DefinePkgType("exit", types.I64)
 	global.DefinePkgType("int32", types.I32)
 	global.DefinePkgType("uint32", types.U32)
 	global.DefinePkgType("int64", types.I64)

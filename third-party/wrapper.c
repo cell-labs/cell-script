@@ -14,8 +14,6 @@ const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 #define ERROR_ENCODING -2
 #define ERROR_SYSCALL -3
 #define ERROR_SCRIPT_TOO_LONG -21
-#define ERROR_OVERFLOWING -51
-#define ERROR_AMOUNT -52
 
 typedef struct {
   uint64_t size;

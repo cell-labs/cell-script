@@ -26,4 +26,6 @@ function main() {
 
 	// 2000
 	debug.Printf("%d\n", shelf.book1.book_id)
+
+	return 0
 }
