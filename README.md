@@ -13,13 +13,13 @@ import "cell"
 
 // main is the entry point of every cell script
 function main() {
-    tx.ScriptVerify()
-    var inputs := tx.inputs()
-    var outputs := tx.outputs()
+    tx.scriptVerify()
+    var ins := tx.inputs()
+    var outs := tx.outputs()
 
     var in_sum, out_sum uint128
 
-    for _, input := range inputs {
+    for _, input := range ins {
         in_sum += input.data.as(uint128)
         if in_sum < input.data.as(uint128) {
             debug.Printf("input overflow")
@@ -27,7 +27,7 @@ function main() {
         }
     }
 
-    for _, output := range outputs {
+    for _, output := range outs {
         out_sum += output.data.as(uint128)
         if out_sum < input.data.as(uint128) {
             debug.Printf("output overflow")

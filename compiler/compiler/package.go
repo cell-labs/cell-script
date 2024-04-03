@@ -1,9 +1,6 @@
 package compiler
 
 import (
-	"fmt"
-	"unicode"
-
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 )
@@ -28,9 +25,6 @@ func (p *pkg) DefinePkgVar(name string, val value.Value) {
 }
 
 func (p *pkg) GetPkgVar(name string, inSamePackage bool) (value.Value, bool) {
-	if unicode.IsLower([]rune(name)[0]) && !inSamePackage {
-		compilePanic(fmt.Sprintf("Can't use %s from outside of %s", name, p.name))
-	}
 
 	v, ok := p.vars[name]
 	return v, ok
@@ -41,9 +35,6 @@ func (p *pkg) DefinePkgType(name string, ty types.Type) {
 }
 
 func (p *pkg) GetPkgType(name string, inSamePackage bool) (types.Type, bool) {
-	if unicode.IsLower([]rune(name)[0]) && !inSamePackage {
-		compilePanic(fmt.Sprintf("Can't use %s from outside of %s", name, p.name))
-	}
 
 	v, ok := p.types[name]
 	return v, ok

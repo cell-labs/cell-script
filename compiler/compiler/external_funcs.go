@@ -22,14 +22,6 @@ type OSFuncs struct {
 	Exit    value.Value
 }
 
-// functions for tx package
-type TxFuncs struct {
-	ScriptVerify        value.Value
-	GetInputCellDataLen value.Value
-	Inputs              value.Value
-	Outputs             value.Value
-}
-
 func (c *Compiler) createExternalPackage() {
 	external := NewPkg("debug")
 

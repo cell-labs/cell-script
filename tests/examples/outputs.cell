@@ -3,10 +3,10 @@ import "cell"
 import "tx"
 
 function main() {
-	ok := tx.ScriptVerify()
+	ok := tx.scriptVerify()
 	debug.Printf("%d:", ok)
-	var outputs []cell.Cell
-	outputs = tx.Outputs()
-	ret := int64(len(outputs))
+	var outs []cell.Cell
+	outs = tx.outputs()
+	ret := int64(len(outs))
 	return ret
 }

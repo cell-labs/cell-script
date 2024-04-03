@@ -3,11 +3,11 @@ import "cell"
 import "tx"
 
 function main() {
-	ok := tx.ScriptVerify()
+	ok := tx.scriptVerify()
 	debug.Printf("%d:", ok)
-	var inputs []cell.Cell
-	inputs = tx.Inputs()
+	var ins []cell.Cell
+	ins = tx.inputs()
 	var ret int64
-	ret = int64(len(inputs))
-	return ret
+	ret = int64(len(ins))
+	return 0
 }

@@ -30,9 +30,6 @@ type Compiler struct {
 	// functions provided by the OS, such as printf and malloc
 	osFuncs OSFuncs
 
-	// functions for transactions
-	txFuncs TxFuncs
-
 	packages       map[string]*pkg
 	currentPackage *pkg
 

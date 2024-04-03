@@ -4,7 +4,7 @@ import "tx"
 
 function main() {
     var ok bool
-    ok = tx.ScriptVerify()
+    ok = tx.scriptVerify()
     debug.Printf("hello world! %d\n", ok)
     return 0
 }

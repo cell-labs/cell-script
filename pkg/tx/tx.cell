@@ -5,20 +5,20 @@ import "cell"
 function script_verify() bool {
 	return true
 }
-function ScriptVerify() bool {
+function scriptVerify() bool {
 	return script_verify()
 }
 
 function get_utxo_inputs() []cell.Cell {
 	return []cell.Cell{}
 }
-function Inputs() []cell.Cell {
+function inputs() []cell.Cell {
 	return get_utxo_inputs()
 }
 
 function get_utxo_outputs() []cell.Cell {
 	return []cell.Cell{}
 }
-function Outputs() []cell.Cell {
+function outputs() []cell.Cell {
 	return get_utxo_outputs()
 }

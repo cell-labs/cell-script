@@ -5,7 +5,7 @@ function main() {
 
 	var ok bool
 
-	ok = tx.ScriptVerify()
+	ok = tx.scriptVerify()
 	
 	// 1000
 	debug.Printf("%d\n", ok)
