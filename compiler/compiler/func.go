@@ -118,10 +118,10 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	if c.currentPackageName == "main" && v.Name == "main" {
 		if len(v.ReturnValues) != 0 {
-			panic("main func can not have a return type")
+			panic("main func have a default return type int64")
 		}
 
-		funcRetType = types.I32
+		funcRetType = types.I64
 		fn = c.mainFunc
 		entry = fn.Blocks[0] // use already defined block
 	} else if v.Name == "init" {
