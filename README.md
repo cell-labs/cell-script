@@ -65,3 +65,15 @@ cell <file>.cell
 cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
 ckb-debugger --bin <file>
 ```
+
+## How to Deploy?
+```
+git clone git@github.com:cell-labs/cell-cli.git
+cd cell-cli
+npm install
+npm install -g .
+# 1、Copy the cell bin file to the Cell-Cli folder: exmple: helloworld
+# 2、Enter your CKB private key in cell.config.js
+cell-cli deploy ./helloworld
+```
+
