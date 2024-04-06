@@ -6,5 +6,8 @@ function main() {
     var ok bool
     ok = tx.isOwnerMode()
     debug.Printf("isOwnerMode! %d\n", ok)
-    return 0
+    if ok {
+        return 0
+    }
+    return 1
 }
