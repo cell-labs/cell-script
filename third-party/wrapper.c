@@ -61,10 +61,19 @@ bool is_owner_mode() {
   unsigned char script[SCRIPT_SIZE];
   uint64_t len = SCRIPT_SIZE;
   int ret = ckb_load_script(script, &len, 0);
+  if (ret != CKB_SUCCESS) {
+    return false;
+  }
+  if (len > SCRIPT_SIZE) {
+    return false;
+  }
 
   mol_seg_t script_seg;
   script_seg.ptr = (uint8_t *)script;
   script_seg.size = len;
+  if (MolReader_Script_verify(&script_seg, false) != MOL_OK) {
+    return false;
+  }
 
   mol_seg_t args_seg = MolReader_Script_get_args(&script_seg);
   mol_seg_t args_bytes_seg = MolReader_Bytes_raw_bytes(&args_seg);
@@ -146,6 +155,9 @@ cell_data_t get_utxo_inputs() {
   int i = 0;
   while (1) {
     uint64_t len = get_input_cell_data_len(i);
+    if (len < 16) {
+      return EMPTY_CELL_DATA;
+    }
     // uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
     uint64_t cur_data = 0; 
     int ret = ckb_load_cell_data(&cur_data, &len, 0, i,

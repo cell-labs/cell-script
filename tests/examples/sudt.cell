@@ -4,12 +4,20 @@ import "cell"
 
 function main() {
     // tx.scriptVerify()
+    // isOwnerMode return a bool value:
+    // true - Indicate that the verification was successful and the device owner mode has been successfully set.
+    // false - Means that either the verification process failed or the device owner mode has not been set.
+    //         In the case where verification fails, the program should terminate immediately.
+    // For the time being, simply returning 'false' does not adequately convey the distinction between two states.
     if tx.isOwnerMode() {
-        return 0 
+        return 0
     }
 
     in_sum, out_sum := 0, 0
-
+    ins := tx.inputs()
+    if len(ins) == int32(0) {
+        return 1
+    }
     for input := range tx.inputs() {
         in_sum += input
     }
