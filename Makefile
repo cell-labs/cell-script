@@ -127,6 +127,10 @@ unittest:
 	go test -v ${MKFILE_DIR}/compiler/lexer/*.go
 	go test -v ${MKFILE_DIR}/compiler/parser/*.go
 	go test -v ${MKFILE_DIR}/compiler/passes/bigint/*.go
+	# go test -v -gcflag "all=-l" ${MKFILE_DIR}
+	go test -v ${MKFILE_DIR}/internal/lexer_test.go
+	go test -v ${MKFILE_DIR}/internal/parser_test.go
+	go test -v ${MKFILE_DIR}/internal/walker_test.go
 test/example:
 	@echo " >>> test cell examples"
 	make build
