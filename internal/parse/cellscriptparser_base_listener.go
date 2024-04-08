@@ -1,6 +1,6 @@
 // Code generated from CellScriptParser.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
-package parser // CellScriptParser
+package parse // CellScriptParser
 import "github.com/antlr4-go/antlr/v4"
 
 // BaseCellScriptParserListener is a complete listener for a parse tree produced by CellScriptParser.

@@ -1,6 +1,6 @@
 // Code generated from CellScriptLexer.g4 by ANTLR 4.13.1. DO NOT EDIT.
 
-package lexer
+package lex
 
 import (
 	"fmt"
