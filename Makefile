@@ -23,6 +23,7 @@ fmt:
 build:
 	@echo " >>> build"
 	make clean
+	make antlr
 	git submodule update --init --recursive
 	make ckb-libc
 	go build -v -trimpath \
@@ -83,7 +84,10 @@ test:
 	go mod tidy
 	git diff --exit-code go.mod go.sum
 	go mod verify
-	go test -v -gcflag "all=-l" ${MKFILE_DIR}
+	# go test -v -gcflag "all=-l" ${MKFILE_DIR}
+	go test -v ${MKFILE_DIR}/internal/lexer_test.go
+	go test -v ${MKFILE_DIR}/internal/parser_test.go
+	go test -v ${MKFILE_DIR}/internal/walker_test.go
 test/example:
 	@echo " >>> test cell examples"
 	make build
