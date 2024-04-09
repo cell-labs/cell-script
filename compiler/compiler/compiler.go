@@ -269,9 +269,6 @@ func (c *Compiler) compile(instructions []parser.Node) {
 			// Add to tre mapping
 			c.currentPackage.DefinePkgType(v.Name, t)
 
-		case *parser.SwitchNode:
-			c.compileSwitchNode(v)
-
 		default:
 			c.compileValue(v)
 			break
