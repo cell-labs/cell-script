@@ -13,7 +13,7 @@ func init() {
 
 func main() {
 	options := compiler.ParseOptions()
-	options.Stage = compiler.STAGE_LEXED
+	options.Stage = compiler.STAGE_PARSED
 	err := compiler.Run(options)
 	if err != nil {
 		log.Println(err)

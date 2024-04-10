@@ -10,13 +10,14 @@ import (
 	"strings"
 
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/cell-labs/cell-script/internal/lexer"
-	"github.com/cell-labs/cell-script/internal/parser"
+	"github.com/cell-labs/cell-script/internal/ast"
+	"github.com/cell-labs/cell-script/internal/lex"
+	"github.com/cell-labs/cell-script/internal/parse"
 )
 
 type compiler struct {
-	Lexer  *lexer.CellScriptLexer
-	Parser *parser.CellScriptParser
+	Lexer  *lex.CellScriptLexer
+	Parser *parse.CellScriptParser
 }
 
 func compilePackage(options *Options) error {
@@ -26,7 +27,7 @@ func compilePackage(options *Options) error {
 		return err
 	}
 
-	var parsedFiles []parser.ISourceFileContext
+	var parsedFiles []parse.ISourceFileContext
 
 	// Parse all files in the folder
 	if p.IsDir() {
@@ -55,7 +56,7 @@ func compilePackage(options *Options) error {
 	return nil
 }
 
-func compileFile(options *Options) parser.ISourceFileContext {
+func compileFile(options *Options) parse.ISourceFileContext {
 	// Read specified input file
 	fileContents, err := os.ReadFile(options.Path)
 	if err != nil {
@@ -63,31 +64,31 @@ func compileFile(options *Options) parser.ISourceFileContext {
 	}
 
 	// generate tokens using lexer
-	lexer := lexer.NewCellScriptLexer(antlr.NewInputStream(string(fileContents)))
-	checkStage(options, &compiler{Lexer: lexer})
+	lexer := lex.NewCellScriptLexer(antlr.NewInputStream(string(fileContents)))
+	DumpTokens(options, lexer)
 
 	// generate AST using parser
-	parser := parser.NewCellScriptParser(antlr.NewCommonTokenStream(lexer, 0))
+	parser := parse.NewCellScriptParser(antlr.NewCommonTokenStream(lexer, 0))
 	parser.AddErrorListener(antlr.NewDiagnosticErrorListener(true))
-	checkStage(options, &compiler{Parser: parser})
+	DumpAST(options, parser)
 	return parser.SourceFile()
 }
 
-func checkStage(options *Options, c *compiler) {
-	switch options.Stage {
-	case STAGE_LEXER:
-		for {
-			t := c.Lexer.NextToken()
-			if t.GetTokenType() == antlr.TokenEOF {
-				break
-			}
-			fmt.Printf("%s (%q)\n",
-				c.Lexer.SymbolicNames[t.GetTokenType()], t.GetText())
-		}
-	default:
+func DumpTokens(options *Options, lexer *lex.CellScriptLexer) {
+	if options.Stage != STAGE_LEXED {
 		return
 	}
-	options.Stage = STAGE_EXIT
+	for t := lexer.NextToken(); t.GetTokenType() == antlr.TokenEOF; t = lexer.NextToken() {
+		fmt.Printf("%s (%q)\n",
+			lexer.SymbolicNames[t.GetTokenType()], t.GetText())
+	}
+}
+
+func DumpAST(options *Options, parser *parse.CellScriptParser) {
+	if options.Stage != STAGE_PARSED {
+		return
+	}
+	fmt.Println(ast.Dump(parser))
 }
 
 func Run(options *Options) error {
