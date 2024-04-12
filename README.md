@@ -68,6 +68,12 @@ cell <file>.cell
 cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
 ckb-debugger --bin <file>
 ```
+## To develop xUDT
+
+ckb-c-stdlib use molecule 0.7.1
+```
+cargo install moleculec@0.7.1 --locked
+```
 
 ## How to Deploy?
 ```

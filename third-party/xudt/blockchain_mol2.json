@@ -1,0 +1,522 @@
+{
+  "syntax_version": {
+    "version": 1
+  },
+  "namespace": "xudt_rce",
+  "imports": [
+    {
+      "name": "blockchain",
+      "paths": [],
+      "path_supers": 0
+    }
+  ],
+  "declarations": [
+    {
+      "type": "dynvec",
+      "name": "ScriptVec",
+      "item": "Script"
+    },
+    {
+      "type": "option",
+      "name": "ScriptVecOpt",
+      "item": "ScriptVec"
+    },
+    {
+      "type": "table",
+      "name": "XudtWitnessInput",
+      "fields": [
+        {
+          "name": "owner_script",
+          "type": "ScriptOpt"
+        },
+        {
+          "name": "owner_signature",
+          "type": "BytesOpt"
+        },
+        {
+          "name": "raw_extension_data",
+          "type": "ScriptVecOpt"
+        },
+        {
+          "name": "extension_data",
+          "type": "BytesVec"
+        }
+      ]
+    },
+    {
+      "type": "struct",
+      "name": "RCRule",
+      "fields": [
+        {
+          "name": "smt_root",
+          "type": "Byte32"
+        },
+        {
+          "name": "flags",
+          "type": "byte"
+        }
+      ]
+    },
+    {
+      "type": "fixvec",
+      "name": "RCCellVec",
+      "item": "Byte32"
+    },
+    {
+      "type": "union",
+      "name": "RCData",
+      "items": [
+        {
+          "typ": "RCRule",
+          "id": 0
+        },
+        {
+          "typ": "RCCellVec",
+          "id": 1
+        }
+      ]
+    },
+    {
+      "type": "fixvec",
+      "name": "SmtProof",
+      "item": "byte"
+    },
+    {
+      "type": "table",
+      "name": "SmtProofEntry",
+      "fields": [
+        {
+          "name": "mask",
+          "type": "byte"
+        },
+        {
+          "name": "proof",
+          "type": "SmtProof"
+        }
+      ]
+    },
+    {
+      "type": "dynvec",
+      "name": "SmtProofEntryVec",
+      "item": "SmtProofEntry"
+    },
+    {
+      "type": "struct",
+      "name": "SmtUpdateItem",
+      "fields": [
+        {
+          "name": "key",
+          "type": "Byte32"
+        },
+        {
+          "name": "packed_values",
+          "type": "byte"
+        }
+      ]
+    },
+    {
+      "type": "fixvec",
+      "name": "SmtUpdateItemVec",
+      "item": "SmtUpdateItem"
+    },
+    {
+      "type": "table",
+      "name": "SmtUpdateAction",
+      "fields": [
+        {
+          "name": "updates",
+          "type": "SmtUpdateItemVec"
+        },
+        {
+          "name": "proof",
+          "type": "SmtProof"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "name": "XudtData",
+      "fields": [
+        {
+          "name": "lock",
+          "type": "Bytes"
+        },
+        {
+          "name": "data",
+          "type": "BytesVec"
+        }
+      ]
+    },
+    {
+      "type": "array",
+      "name": "Uint32",
+      "item": "byte",
+      "item_count": 4,
+      "imported_depth": 1
+    },
+    {
+      "type": "array",
+      "name": "Uint64",
+      "item": "byte",
+      "item_count": 8,
+      "imported_depth": 1
+    },
+    {
+      "type": "array",
+      "name": "Uint128",
+      "item": "byte",
+      "item_count": 16,
+      "imported_depth": 1
+    },
+    {
+      "type": "array",
+      "name": "Byte32",
+      "item": "byte",
+      "item_count": 32,
+      "imported_depth": 1
+    },
+    {
+      "type": "array",
+      "name": "Uint256",
+      "item": "byte",
+      "item_count": 32,
+      "imported_depth": 1
+    },
+    {
+      "type": "fixvec",
+      "name": "Bytes",
+      "item": "byte",
+      "imported_depth": 1
+    },
+    {
+      "type": "option",
+      "name": "BytesOpt",
+      "item": "Bytes",
+      "imported_depth": 1
+    },
+    {
+      "type": "dynvec",
+      "name": "BytesVec",
+      "item": "Bytes",
+      "imported_depth": 1
+    },
+    {
+      "type": "fixvec",
+      "name": "Byte32Vec",
+      "item": "Byte32",
+      "imported_depth": 1
+    },
+    {
+      "type": "option",
+      "name": "ScriptOpt",
+      "item": "Script",
+      "imported_depth": 1
+    },
+    {
+      "type": "array",
+      "name": "ProposalShortId",
+      "item": "byte",
+      "item_count": 10,
+      "imported_depth": 1
+    },
+    {
+      "type": "dynvec",
+      "name": "UncleBlockVec",
+      "item": "UncleBlock",
+      "imported_depth": 1
+    },
+    {
+      "type": "dynvec",
+      "name": "TransactionVec",
+      "item": "Transaction",
+      "imported_depth": 1
+    },
+    {
+      "type": "fixvec",
+      "name": "ProposalShortIdVec",
+      "item": "ProposalShortId",
+      "imported_depth": 1
+    },
+    {
+      "type": "fixvec",
+      "name": "CellDepVec",
+      "item": "CellDep",
+      "imported_depth": 1
+    },
+    {
+      "type": "fixvec",
+      "name": "CellInputVec",
+      "item": "CellInput",
+      "imported_depth": 1
+    },
+    {
+      "type": "dynvec",
+      "name": "CellOutputVec",
+      "item": "CellOutput",
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "Script",
+      "fields": [
+        {
+          "name": "code_hash",
+          "type": "Byte32"
+        },
+        {
+          "name": "hash_type",
+          "type": "byte"
+        },
+        {
+          "name": "args",
+          "type": "Bytes"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "struct",
+      "name": "OutPoint",
+      "fields": [
+        {
+          "name": "tx_hash",
+          "type": "Byte32"
+        },
+        {
+          "name": "index",
+          "type": "Uint32"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "struct",
+      "name": "CellInput",
+      "fields": [
+        {
+          "name": "since",
+          "type": "Uint64"
+        },
+        {
+          "name": "previous_output",
+          "type": "OutPoint"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "CellOutput",
+      "fields": [
+        {
+          "name": "capacity",
+          "type": "Uint64"
+        },
+        {
+          "name": "lock",
+          "type": "Script"
+        },
+        {
+          "name": "type_",
+          "type": "ScriptOpt"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "struct",
+      "name": "CellDep",
+      "fields": [
+        {
+          "name": "out_point",
+          "type": "OutPoint"
+        },
+        {
+          "name": "dep_type",
+          "type": "byte"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "RawTransaction",
+      "fields": [
+        {
+          "name": "version",
+          "type": "Uint32"
+        },
+        {
+          "name": "cell_deps",
+          "type": "CellDepVec"
+        },
+        {
+          "name": "header_deps",
+          "type": "Byte32Vec"
+        },
+        {
+          "name": "inputs",
+          "type": "CellInputVec"
+        },
+        {
+          "name": "outputs",
+          "type": "CellOutputVec"
+        },
+        {
+          "name": "outputs_data",
+          "type": "BytesVec"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "Transaction",
+      "fields": [
+        {
+          "name": "raw",
+          "type": "RawTransaction"
+        },
+        {
+          "name": "witnesses",
+          "type": "BytesVec"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "struct",
+      "name": "RawHeader",
+      "fields": [
+        {
+          "name": "version",
+          "type": "Uint32"
+        },
+        {
+          "name": "compact_target",
+          "type": "Uint32"
+        },
+        {
+          "name": "timestamp",
+          "type": "Uint64"
+        },
+        {
+          "name": "number",
+          "type": "Uint64"
+        },
+        {
+          "name": "epoch",
+          "type": "Uint64"
+        },
+        {
+          "name": "parent_hash",
+          "type": "Byte32"
+        },
+        {
+          "name": "transactions_root",
+          "type": "Byte32"
+        },
+        {
+          "name": "proposals_hash",
+          "type": "Byte32"
+        },
+        {
+          "name": "uncles_hash",
+          "type": "Byte32"
+        },
+        {
+          "name": "dao",
+          "type": "Byte32"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "struct",
+      "name": "Header",
+      "fields": [
+        {
+          "name": "raw",
+          "type": "RawHeader"
+        },
+        {
+          "name": "nonce",
+          "type": "Uint128"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "UncleBlock",
+      "fields": [
+        {
+          "name": "header",
+          "type": "Header"
+        },
+        {
+          "name": "proposals",
+          "type": "ProposalShortIdVec"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "Block",
+      "fields": [
+        {
+          "name": "header",
+          "type": "Header"
+        },
+        {
+          "name": "uncles",
+          "type": "UncleBlockVec"
+        },
+        {
+          "name": "transactions",
+          "type": "TransactionVec"
+        },
+        {
+          "name": "proposals",
+          "type": "ProposalShortIdVec"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "CellbaseWitness",
+      "fields": [
+        {
+          "name": "lock",
+          "type": "Script"
+        },
+        {
+          "name": "message",
+          "type": "Bytes"
+        }
+      ],
+      "imported_depth": 1
+    },
+    {
+      "type": "table",
+      "name": "WitnessArgs",
+      "fields": [
+        {
+          "name": "lock",
+          "type": "BytesOpt"
+        },
+        {
+          "name": "input_type",
+          "type": "BytesOpt"
+        },
+        {
+          "name": "output_type",
+          "type": "BytesOpt"
+        }
+      ],
+      "imported_depth": 1
+    }
+  ]
+}
