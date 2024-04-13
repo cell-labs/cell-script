@@ -87,10 +87,10 @@ func (c *Compiler) createExternalPackage() {
 		ir.NewParam("", i64.LLVM()),
 	), false)
 
-	// c.osFuncs.Exit = setExternal("exit", c.module.NewFunc("exit",
-	// 	llvmTypes.Void,
-	// 	ir.NewParam("", i32.LLVM()),
-	// ), false)
+	c.osFuncs.Exit = setExternal("exit", c.module.NewFunc("syscall_exit",
+		llvmTypes.Void,
+		ir.NewParam("", i8.LLVM()),
+	), false)
 
 	c.packages["debug"] = external
 }

@@ -214,3 +214,8 @@ cell_data_t get_utxo_outputs() {
   }
   return outputs;
 }
+
+void syscall_exit(int8_t code) {
+  ckb_exit(code);
+  return;
+}
