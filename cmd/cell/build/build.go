@@ -148,7 +148,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *Options) e
 				for _, packagePath := range importNode.PackagePaths {
 
 					// Is built in to the compiler
-					if packagePath == "debug" {
+					if packagePath == "os" {
 						continue
 					}
 					if c.IsPackageImported(packagePath) {

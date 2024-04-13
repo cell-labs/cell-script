@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
+	"github.com/llir/llvm/ir"
 )
 
 // Representation of a Go package
@@ -22,6 +23,20 @@ func NewPkg(name string) *pkg {
 
 func (p *pkg) DefinePkgVar(name string, val value.Value) {
 	p.vars[name] = val
+}
+
+func (p *pkg) setExternal(internalName string, fn *ir.Func, variadic bool) value.Value {
+	fn.Sig.Variadic = variadic
+	val := value.Value{
+		Type: &types.Function{
+			LlvmReturnType: types.Void,
+			FuncType:       fn.Type(),
+			IsExternal:     true,
+		},
+		Value: fn,
+	}
+	p.DefinePkgVar(internalName, val)
+	return val
 }
 
 func (p *pkg) GetPkgVar(name string, inSamePackage bool) (value.Value, bool) {

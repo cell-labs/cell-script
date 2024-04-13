@@ -1,8 +1,9 @@
 import "debug"
+import "os"
 
 function foo() int64 {
     debug.Printf("exit from foo")
-    debug.exit(123)
+    os.exit(123)
     return 0
 }
 
