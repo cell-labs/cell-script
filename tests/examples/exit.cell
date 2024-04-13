@@ -1,0 +1,11 @@
+import "debug"
+
+function foo() int64 {
+    debug.Printf("exit from foo")
+    debug.exit(123)
+    return 0
+}
+
+function main() {
+    return foo()
+}
