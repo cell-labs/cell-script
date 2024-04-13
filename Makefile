@@ -32,6 +32,10 @@ build:
 		-o ${CELL} ./cmd/cell
 	cp -r pkg/* output/pkg
 	@echo " >>> sussecfully build cell"
+build/tools:
+	go build -v -trimpath ./cmd/lexer
+	go build -v -trimpath ./cmd/parser
+	go build -v -trimpath ./cmd/codegen
 build/debug:
 	go build -gcflags=all="-N -l" ./cmd/cell
 sudt-c:
@@ -120,4 +124,7 @@ test/cross:
 		-Wl,--gc-sections \
 		-o main tests/examples/hi.ll
 	ckb-debugger --bin main
-
+test/tools: build/tools
+	./lexer tests/examples/hi.cell
+	./parser tests/examples/hi.cell
+	./codegen tests/examples/hi.cell

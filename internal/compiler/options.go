@@ -21,6 +21,7 @@ type Options struct {
 const (
 	STAGE_LEXED = iota
 	STAGE_PARSED
+	STAGE_CODEGENED
 	STAGE_FINAL
 	STAGE_EXIT
 )
