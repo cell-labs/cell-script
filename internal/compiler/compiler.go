@@ -94,7 +94,7 @@ func CompileFile(f string, options *Options) error {
 	}
 
 	// generate llvm ir
-	ir := codegen.NewIrBuilder()
+	ir := codegen.NewGenerator(parser)
 	if options.Stage == STAGE_CODEGENED {
 		EmitIR(options, ir)
 		return nil
@@ -115,7 +115,7 @@ func DumpAST(options *Options, parser *parse.CellScriptParser) {
 	fmt.Println(ast.Dump(parser))
 }
 
-func EmitIR(options *Options, codegen *codegen.IrBuilder) {
+func EmitIR(options *Options, codegen *codegen.Generator) {
 	fmt.Println("emit ir:")
 }
 

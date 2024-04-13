@@ -33,9 +33,9 @@ build:
 	cp -r pkg/* output/pkg
 	@echo " >>> sussecfully build cell"
 build/tools:
-	go build -v -trimpath ./cmd/lexer
-	go build -v -trimpath ./cmd/parser
-	go build -v -trimpath ./cmd/codegen
+	go build -v -trimpath -o ${RELEASE_DIR} ./cmd/lexer 
+	go build -v -trimpath -o ${RELEASE_DIR} ./cmd/parser
+	go build -v -trimpath -o ${RELEASE_DIR} ./cmd/codegen
 build/debug:
 	go build -gcflags=all="-N -l" ./cmd/cell
 sudt-c:
