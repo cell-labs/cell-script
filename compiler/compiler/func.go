@@ -118,7 +118,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes)
 
-	isTxFuncs := c.currentPackageName == "tx" && (compiledName == "is_owner_mode" || compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
+	isTxFFIFuncs := c.currentPackageName == "tx" && (compiledName == "is_owner_mode" || compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
 	var fn *ir.Func
 	var entry *ir.Block
 
@@ -136,8 +136,8 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		c.initGlobalsFunc.Blocks[0].NewCall(fn) // Setup call to init from the global init func
 	} else {
 		fn = c.module.NewFunc(compiledName, funcRetType.LLVM(), llvmParams...)
-		// regiester ffi function definnition for tx package
-		if isTxFuncs {
+		// register ffi function definnition for tx package and os package
+		if isTxFFIFuncs {
 			// do not generate block
 		} else {
 			entry = fn.NewBlock(name.Block())
@@ -152,9 +152,9 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		ArgumentTypes:  treParams,
 	}
 
-	// regiester ffi function definnition for tx package
+	// register ffi function definition for tx package
 	// without generate func body
-	if isTxFuncs {
+	if isTxFFIFuncs {
 		val := value.Value{
 			Type:  typesFunc,
 			Value: fn,
