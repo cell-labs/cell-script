@@ -1,0 +1,14 @@
+{
+    "path-mapper.match": "github.com/cell-labs/cell-script/",
+    "path-mapper.replace": "/Users/cedric/repos/cell-script/",
+    "files.associations": {
+        "*.ose": "viml",
+        "*.cell": "go",
+        "ckb_syscalls.h": "c",
+        "bigint.h": "c",
+        "stdio.h": "c",
+        "ckb_syscall_apis.h": "c",
+        "safe_math_impl.h": "c",
+        "stdlib.h": "c"
+    },
+}
