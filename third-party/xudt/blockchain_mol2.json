@@ -1,7 +1,4 @@
 {
-  "syntax_version": {
-    "version": 1
-  },
   "namespace": "xudt_rce",
   "imports": [
     {
@@ -66,14 +63,8 @@
       "type": "union",
       "name": "RCData",
       "items": [
-        {
-          "typ": "RCRule",
-          "id": 0
-        },
-        {
-          "typ": "RCCellVec",
-          "id": 1
-        }
+        "RCRule",
+        "RCCellVec"
       ]
     },
     {
