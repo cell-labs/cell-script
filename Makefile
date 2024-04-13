@@ -4,6 +4,10 @@ MKFILE_PATH := ${abspath $(lastword $(MAKEFILE_LIST))}
 MKFILE_DIR := $(dir $(MKFILE_PATH))
 RELEASE_DIR := ${MKFILE_DIR}/output
 
+# XUDT
+MOLECULEC := moleculec
+MOLECULEC2 := ${MKFILE_DIR}/third-party/molecule2-c2/target/release/moleculec-c2
+
 CELL := ${RELEASE_DIR}/cell
 .phony: clean antlr grammar dev build test test_cell_examples
 clean:
@@ -52,11 +56,14 @@ sudt-c:
 		-o sudt-c && \
 	cp sudt-c ../..
 	@echo " >>> sussecfully build sudt-c"
-xudt-c:
-	cd third-party/xudt && \
-	moleculec --language c --schema-file xudt_rce.mol > xudt_rce_mol.h
-	# moleculec --language - --schema-file xudt_rce.mol --format json > blockchain_mol2.json
-	# moleculec-c2 --input blockchain_mol2.json | clang-format -style=Google > xudt_rce_mol2.h
+molecule-xudt:
+	cd third-party/molecule2-c2 && cargo build --release
+	@echo "generate mol header files for xudt"
+	cd third-party/xudt && ${MOLECULEC} --language c --schema-file xudt_rce.mol > xudt_rce_mol.h
+	@echo "generate mol2 header files for xudt"
+	cd third-party/xudt && ${MOLECULEC} --language - --schema-file xudt_rce.mol --format json > blockchain_mol2.json
+	cd third-party/xudt && ${MOLECULEC2} --input blockchain_mol2.json | clang-format -style=Google > xudt_rce_mol2.h
+xudt-c: molecule-xudt
 	cd third-party && \
 	clang --target=riscv64 \
 		-march=rv64imc \

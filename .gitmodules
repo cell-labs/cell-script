@@ -19,3 +19,6 @@
 # 	path = third-party/secp256k1-20210801
 # 	url = https://github.com/nervosnetwork/secp256k1.git
 # 	branch = schnorr
+[submodule "third-party/molecule2-c2"]
+	path = third-party/molecule2-c2
+	url = https://github.com/XuJiandong/moleculec-c2.git
