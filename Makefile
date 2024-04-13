@@ -16,6 +16,8 @@ grammar: antlr
 
 antlr:
 	go generate ./...
+antlr/check:
+	antlr4-parse internal/grammar/CellScriptParser.g4 internal/grammar/CellScriptLexer.g4 sourceFile -tree tests/examples/hi.cell
 dev:
 	go run main.go
 fmt:
