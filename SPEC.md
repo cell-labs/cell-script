@@ -10,86 +10,179 @@ The first princple is keep Cell Script simple and easy to use.
 
 # Notation
 
-TODO
+The syntax is specified using Extended Backus-Naur Form (EBNF):
 
-# Source code representation
-
-The source code is Unicode text encoded in UTF-8, and the source code file is name as `.cell`. 
-
-Each code point is distinct, including uppercase and lowercase letters. There are implementation restrictions: the NUL character (U+0000) may be disallowed, and a UTF-8-encoded byte order mark (U+FEFF) may be ignored if it's the first code point in the source.
-
-## Characters
-
-
-
-```
-newline        = /* the Unicode code point U+000A */ .
-unicode_char   = /* an arbitrary Unicode code point except newline */ .
-unicode_letter = /* a Unicode code point categorized as "Letter" */ .
-unicode_digit  = /* a Unicode code point categorized as "Number, decimal digit" */ .
-```
-
-## Letters and digits
-
-```
-letter        = unicode_letter | "_" .
-decimal_digit = "0" … "9" .
-binary_digit  = "0" | "1" .
-octal_digit   = "0" … "7" .
-hex_digit     = "0" … "9" | "A" … "F" | "a" … "f" .
+```ebnf
+Syntax      = { Production } ;
+Production  = production_name "=" [ Expression ] "." ;
+Expression  = Term { "|" Term } ;
+Term        = Factor { Factor } ;
+Factor      = production_name | token [ "…" token ] | Group | Option | Repetition ;
+Group       = "(" Expression ")" ;
+Option      = "[" Expression "]" ;
+Repetition  = "{" Expression "}" ;
 ```
 
 # Lexical elements
 
+## Source code representation
+
+The source code is Unicode code points encoded in UTF-8.
+
 ## Comments
 
 There are two forms of comments:
-1. Line comments start with the character sequence // and stop at the end of the line.
-2. General comments start with the character sequence /* and stop with the first subsequent character sequence */.
+
+1. Line comments start with the character sequence `//` and stop at the end of the line.
+2. Block comments start with the character sequence `/*` and stop with the first subsequent character sequence `*/`.
 
 A comment cannot start inside string literal, or inside a comment. A general comment containing no newlines acts like a space. Any other comment acts like a newline.
 
-## Tokens
-
-Tokens form the vocabulary of Cell Script. There are four classes: identifiers, keywords, operators and punctuation, and literals. White space, formed from spaces (U+0020), horizontal tabs (U+0009), carriage returns (U+000D), and newlines (U+000A), is ignored except as it separates tokens that would otherwise combine into a single token. Also, a newline or end of file may trigger the insertion of a semicolon. While breaking the input into tokens, the next token is the longest sequence of characters that form a valid token.
-
-## Semicolons
-
-The formal syntax uses semicolons ";" as terminators in a number of productions.
-
-## Identifiers
-
-Identifiers name program entities such as variables and types. An identifier is a sequence of one or more letters and digits. The first character in an identifier must be a letter.
-
 ## Keywords
 
-```
+```c
 break
-continue
+bool
 const
+continue
 else
 for
 function
-if  
-import  
+if
+import
+package
+public
 return
 range
-var  
+table
+union
+var
 ```
 
-## Operators and punctuation
+## Identifiers
+
+Identifiers name program entities such as variables and types. An identifier is a sequence of one or more letters and digits. The first character in an identifier must be a letter in regex expression [a-zA-Z_].
+
+## Whitespace
+
+Whitespace is defined as following Unicode code points:
+
+```
+U+0009 (horizontal tab, '\t')
+U+000A (line feed, '\n')
+U+000D (carriage return, '\r')
+U+0020 (space, ' ')
+```
+
+All forms of whitespace serve only to separate tokens in the grammar, and have no semantic significance.
+It means all whitespace can be replaced with other whitespace in a program.
+
+## Tokens
+
+Tokens form the vocabulary of Cell Script. There are four classes:
+
+- [Keywords](#keywords)
+- [Identifiers](#identifiers)
+- [Operators and punctuation](#operators-and-punctuation)
+- [Literals](#literal-expressions)
+
+While breaking the input into tokens, the next token is the longest sequence of characters that form a valid token.
+
+### Operators and punctuation
 
 The following character sequences represent operators and punctuation.
 
-```
+```text
 +    &     &&    ==    !=    (    )
 -    |     ||    <     <=    [    ]
 *    ^     >     ,     ;     {    }
 /    <<    =     .     >=   
-%    >>    !      
+%    >>    !     ;
 ```
 
-## Integer literals
+The formal syntax uses semicolons ";" as terminators in a number of productions.
+
+# Module and source files
+
+```ebnf
+Module = Definition* ;
+```
+
+Source files has the extension `.cell`.
+Each source file contains a sequence of zero or more [Declaration](#declarations) definitions.
+
+## Prelude
+
+TODO
+
+## Main Function
+
+A Module contains a main function can be compiled to an executable.
+
+If a main function is present, it must take no arguments, and its return type must be `int8`.
+
+# Declarations
+
+```ebnf
+Declaration = Package
+            | Import
+            | Constant
+            | Variable
+            | Function
+            | Table
+            | Union ;
+```
+
+## Packages
+
+```ebnf
+Package = package Identifier ;
+```
+
+## Imports
+
+```ebnf
+Import = import Identifier ;
+```
+
+## Constants
+
+```ebnf
+Constant = const Identifier Type (= Expression)? ;
+```
+
+## Variables
+
+```ebnf
+Variable = var Identifier Type (= Expression)? ;
+```
+
+## Functions
+
+```ebnf
+Function = function Identifier ( FunctionParameters? ) FunctionReturnType (BlockExpression)? ;
+```
+
+## Tables
+
+```ebnf
+Table = table Identifier { TablFields? } ;
+TablFields = TablField (, TablField)* ,? ;
+TableField = Visibility?
+           | Identifier Type ;
+```
+
+## Unions
+
+```ebnf
+Union = union Identifier { TableFields } ;
+```
+
+# Expressions
+
+## Literal Expressions
+
+### Integer literals
 
 Cell Script only supports unsigned integer to simplify the language itself.
 
@@ -124,10 +217,9 @@ _42         // an identifier, not an integer literal
 0_xBadFace  // invalid: _ must separate successive digits
 ```
 
+### String literals
 
-## String literals
-
-A string literal represents a string constant obtained from concatenating a sequence of characters. 
+A string literal represents a string constant obtained from concatenating a sequence of characters.
 
 ```
 string_lit         = "`" { unicode_char | newline } "`" .
@@ -142,23 +234,9 @@ These examples all represent the same string:
 "\xe6\x97\xa5\xe6\x9c\xac\xe8\xaa\x9e"  // the explicit UTF-8 bytes
 ```
 
-# Constants
+## Expression statements
 
-There are boolean constants, integer constants, and string constants. integer, and complex constants are collectively called numeric constants.
-
-TODO
-
-# Variables
-
-A variable is a storage location for holding a value. The set of permissible values is determined by the variable's type.
-
-A variable declaration or, for function parameters and results, the signature of a function declaration or function literal reserves storage for a named variable.
-
-The static type (or just type) of a variable is the type given in its declaration, the type provided in the new call or composite literal, or the type of an element of a structured variable.
-
-```
-var v *T           // v has value nil, static type *T
-```
+An expression statement is one that evaluates an expression and ignores its result. As a rule, an expression statement's purpose is to trigger the effects of evaluating its expression.
 
 # Types
 
@@ -181,7 +259,8 @@ Predeclared types, defined types, and type parameters are called named types. An
 Cell Script provides the following primitive types.
 
 ## Boolean types
-A boolean type represents the set of Boolean truth values denoted by the predeclared constants true and false. The predeclared boolean type is bool; it is a defined type.
+
+A boolean type represents the set of Boolean truth values denoted by the predeclared constants true and false. The predeclared boolean type is `bool`; it is a defined type.
 
 ## Numeric types
 
@@ -197,9 +276,10 @@ uint256     the set of all unsigned 256-bit integers (0 to 115792089237316195423
 ```
 
 ## String types
+
 A string type represents the set of string values. A string value is a (possibly empty) sequence of bytes. The number of bytes is called the length of the string and is never negative. Strings are immutable: once created, it is impossible to change the contents of a string. The predeclared string type is string; it is a defined type.
 
-The length of a string s can be discovered using the built-in function len. The length is a compile-time constant if the string is a constant. 
+The length of a string s can be discovered using the built-in function len. The length is a compile-time constant if the string is a constant.
 
 ## Byte types
 
@@ -214,6 +294,7 @@ TODO
 TODO
 
 ## Function types
+
 A function type denotes the set of all functions with the same parameter and result types.
 
 ```
@@ -224,6 +305,7 @@ Parameters     = "(" [ ParameterList [ "," ] ] ")" .
 ParameterList  = ParameterDecl { "," ParameterDecl } .
 ParameterDecl  = [ IdentifierList ] [ "..." ] Type .
 ```
+
 Within a list of parameters or results, the names (IdentifierList) must all be present. Each name stands for one item (parameter or result) of the specified type and all non-blank names in the signature must be unique. Parameter and result lists are always parenthesized except that if there is exactly one unnamed result it may be written as an unparenthesized type.
 
 ```
@@ -239,6 +321,7 @@ function(a, _ uint32, z uint64) bool
 TODO
 
 ## Vector types
+
 An vector is a numbered sequence of elements of a single type, called the element type. The number of elements is called the length of the vector and is never negative.
 
 ```
@@ -259,7 +342,6 @@ A table is a sequence of named elements, called fields, each of which has a name
 
 TODO
 
-
 # Blocks
 
 A block is a possibly empty sequence of declarations and statements within matching brace brackets.
@@ -274,7 +356,6 @@ StatementList = { Statement ";" } .
 A declaration binds a non-blank identifier to a constant, type, type parameter, variable, function, label, or package. Every identifier in a program must be declared. No identifier may be declared twice in the same block, and no identifier may be declared in both the file and package block.
 
 The blank identifier may be used like any other identifier in a declaration, but it does not introduce a binding and thus is not declared. In the package block, the identifier init may only be used for init function declarations, and like the blank identifier it does not introduce a new binding.
-
 
 ```
 Declaration   = ConstDecl | TypeDecl | VarDecl .
@@ -297,17 +378,17 @@ The following identifiers are implicitly declared in the universe block
 
 ```
 Types:
-	bool byte string
-	uint8 uint16 uint32 uint64 uint128 uint256
+ bool byte string
+ uint8 uint16 uint32 uint64 uint128 uint256
 
 Constants:
-	true false
+ true false
 
 Zero value:
-	null
+ null
 
 Functions:
-	append len max min  
+ append len max min  
 ```
 
 TODO
@@ -317,6 +398,7 @@ TODO
 ```
 const a, b, c = 3, 4, "foo" // a = 3, b = 4, c = "foo", untyped integer and string constants
 ```
+
 TODO
 
 ## Type declarations
@@ -369,10 +451,10 @@ If the function's signature declares result parameters, the function body's stat
 
 ```
 func min(x uint8, y uint8) uint8{
-	if x < y {
-		return x
-	}
-	return y
+ if x < y {
+  return x
+ }
+ return y
 }
 ```
 
@@ -453,10 +535,11 @@ x[2], p.x = 6, 7  // set x[2] = 6, then panic setting p.x = 7
 i = 2
 x = []int{3, 5, 7}
 for i, x[i] = range x {  // set i, x[2] = 0, x[0]
-	break
+ break
 }
 // after this loop, i == 0 and x is []int{3, 5, 3}
 ```
+
 ## If statements
 
 "If" statements specify the conditional execution of two branches according to the value of a boolean expression. If the expression evaluates to true, the "if" branch is executed, otherwise, if present, the "else" branch is executed.
@@ -467,34 +550,33 @@ IfStmt = "if" [ SimpleStmt ";" ] Expression Block [ "else" ( IfStmt | Block ) ] 
 
 ```
 if x > max {
-	x = max
+ x = max
 }
 ```
-
 
 ## For statements
 
 A "for" statement specifies repeated execution of a block. There are three forms: The iteration may be controlled by a single condition, a "for" clause, or a "range" clause.
 
-```
+```cell
 for a < b {
-	a *= 2
+ a *= 2
 }
 ```
 
 ```
 for i := 0; i < 10; i++ {
-	f(i)
+ f(i)
 }
 ```
 
 ```
 var a [10]string
 for i, s := range a {
-	// type of i is int
-	// type of s is string
-	// s == a[i]
-	g(i, s)
+ // type of i is int
+ // type of s is string
+ // s == a[i]
+ g(i, s)
 }
 
 ```
@@ -509,16 +591,16 @@ BreakStmt = "break" [ Label ] .
 
 ```
 for i = 0; i < n; i++ {
-		for j = 0; j < m; j++ {
-			if a[i][j] == nil {
-				state = Error
-				break OuterLoop
+  for j = 0; j < m; j++ {
+   if a[i][j] == nil {
+    state = Error
+    break OuterLoop
             } else if a[i][j] == item {
-				state = Found
-				break OuterLoop
-			}
-		}
-	}
+    state = Found
+    break OuterLoop
+   }
+  }
+ }
 ```
 
 ## Continue statements
@@ -531,13 +613,13 @@ ContinueStmt = "continue" [ Label ] .
 
 ```
 for y, row := range rows {
-		for x, data := range row {
-			if data == endOfRow {
-				continue RowLoop
-			}
-			row[x] = data + bias(x, y)
-		}
-	}
+  for x, data := range row {
+   if data == endOfRow {
+    continue RowLoop
+   }
+   row[x] = data + bias(x, y)
+  }
+ }
 ```
 
 ## Return statements
@@ -552,7 +634,7 @@ In a function without a result type, a "return" statement must not specify any r
 
 ```
 func noResult() {
-	return
+ return
 }
 ```
 
@@ -593,9 +675,13 @@ _ = min(s...)               // invalid: slice arguments are not permitted
 t := max("", "foo", "bar")  // t == "foo" (string kind)
 ```
 
-# Packages
+# Names
 
-TODO
+## Visibility
+
+```ebnf
+Visibility = pub ;
+```
 
 # Program initialization and execution
 
