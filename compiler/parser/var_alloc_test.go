@@ -120,6 +120,7 @@ func TestAllocConstGroup(t *testing.T) {
 	a = 10
 	b, c = "bbb", "ccc"
 	d = 20
+	e, f = '\t', '\''
 )`)
 
 	expected := &FileNode{
@@ -139,6 +140,11 @@ func TestAllocConstGroup(t *testing.T) {
 					{
 						Name:    []string{"d"},
 						Val:     []Node{&ConstantNode{Type: NUMBER, Value: 20}},
+						IsConst: true,
+					},
+					{
+						Name:    []string{"e", "f"},
+						Val:     []Node{&ConstantNode{Type: BYTE, ValueStr: "\t"}, &ConstantNode{Type: BYTE, ValueStr: "'"}},
 						IsConst: true,
 					},
 				},

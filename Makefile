@@ -124,6 +124,10 @@ test/example:
 
 	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files
 	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package
+	
+	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin import-package
+	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin import-package
+
 test/cross:
 	@echo " >>> test cross compiling"
 	@echo cross hi.ll with linking dummy.c

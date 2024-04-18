@@ -59,7 +59,8 @@ brew install openjdk@21
 brew install llvm@16
 brew tap riscv-software-src/riscv
 brew install riscv-tools
-export PATH=/opt/homebrew/bin:$PATH
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"
 brew install --cask spike
 make build
 source install.sh

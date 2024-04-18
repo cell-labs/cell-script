@@ -1,9 +1,9 @@
 package compiler
 
 import (
-	"github.com/llir/llvm/ir"
+	// "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
-	"github.com/llir/llvm/ir/enum"
+	// "github.com/llir/llvm/ir/enum"
 	llvmTypes "github.com/llir/llvm/ir/types"
 	llvmValue "github.com/llir/llvm/ir/value"
 
@@ -143,7 +143,7 @@ func (c *Compiler) compileLoadArrayElement(v *parser.LoadArrayElement) value.Val
 		panic("unable to LoadArrayElement: could not calculate max length")
 	}
 
-	isCheckedAtCompileTime := false
+	// isCheckedAtCompileTime := false
 
 	if lengthKnownAtCompileTime {
 		if compileTimeLength < 0 {
@@ -152,7 +152,7 @@ func (c *Compiler) compileLoadArrayElement(v *parser.LoadArrayElement) value.Val
 
 		if intType, ok := index.Value.(*constant.Int); ok {
 			if intType.X.IsInt64() {
-				isCheckedAtCompileTime = true
+				// isCheckedAtCompileTime = true
 
 				if intType.X.Uint64() > compileTimeLength {
 					compilePanic("index out of range")
@@ -161,29 +161,30 @@ func (c *Compiler) compileLoadArrayElement(v *parser.LoadArrayElement) value.Val
 		}
 	}
 
-	if !isCheckedAtCompileTime {
-		outsideOfLengthBlock := c.contextBlock.Parent.NewBlock(name.Block() + "-array-index-out-of-range")
-		c.panic(outsideOfLengthBlock, "index out of range")
-		outsideOfLengthBlock.NewUnreachable()
+	// if !isCheckedAtCompileTime {
+	// 	outsideOfLengthBlock := c.contextBlock.Parent.NewBlock(name.Block() + "-array-index-out-of-range")
+	// 	c.panic(outsideOfLengthBlock, "index out of range")
+	// 	outsideOfLengthBlock.NewUnreachable()
 
-		safeBlock := c.contextBlock.Parent.NewBlock(name.Block() + "-after-array-index-check")
+	// 	safeBlock := c.contextBlock.Parent.NewBlock(name.Block() + "-after-array-index-check")
+	// 	safeBlock.Term = ir.NewUnreachable()
 
-		var runtimeOrCompiletimeCmp *ir.InstICmp
-		if lengthKnownAtCompileTime {
-			runtimeOrCompiletimeCmp = c.contextBlock.NewICmp(enum.IPredSGE, indexVal, constant.NewInt(llvmTypes.I32, int64(compileTimeLength)))
-		} else {
-			runtimeOrCompiletimeCmp = c.contextBlock.NewICmp(enum.IPredSGE, indexVal, runtimeLength)
-		}
+	// 	var runtimeOrCompiletimeCmp *ir.InstICmp
+	// 	if lengthKnownAtCompileTime {
+	// 		runtimeOrCompiletimeCmp = c.contextBlock.NewICmp(enum.IPredSGE, indexVal, constant.NewInt(llvmTypes.I32, int64(compileTimeLength)))
+	// 	} else {
+	// 		runtimeOrCompiletimeCmp = c.contextBlock.NewICmp(enum.IPredSGE, indexVal, runtimeLength)
+	// 	}
 
-		outOfRangeCmp := c.contextBlock.NewOr(
-			c.contextBlock.NewICmp(enum.IPredSLT, indexVal, constant.NewInt(llvmTypes.I64, 0)),
-			runtimeOrCompiletimeCmp,
-		)
+	// 	outOfRangeCmp := c.contextBlock.NewOr(
+	// 		c.contextBlock.NewICmp(enum.IPredSLT, indexVal, constant.NewInt(llvmTypes.I64, 0)),
+	// 		runtimeOrCompiletimeCmp,
+	// 	)
 
-		c.contextBlock.NewCondBr(outOfRangeCmp, outsideOfLengthBlock, safeBlock)
+	// 	c.contextBlock.NewCondBr(outOfRangeCmp, outsideOfLengthBlock, safeBlock)
 
-		c.contextBlock = safeBlock
-	}
+	// 	c.contextBlock = safeBlock
+	// }
 
 	var indicies []llvmValue.Value
 	if isLlvmArrayBased {

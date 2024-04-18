@@ -112,6 +112,30 @@ func TestEscapedString(t *testing.T) {
 	assert.Equal(t, expected, r)
 }
 
+func TestChar(t *testing.T) {
+	r := Lex(`'a'`)
+
+	expected := []Item{
+		{Type: BYTE, Val: "a", Line: 1},
+		{Type: EOL},
+		{Type: EOF},
+	}
+
+	assert.Equal(t, expected, r)
+}
+
+func TestEscapedChar(t *testing.T) {
+	r := Lex(`'\''`)
+
+	expected := []Item{
+		{Type: BYTE, Val: "'", Line: 1},
+		{Type: EOL},
+		{Type: EOF},
+	}
+
+	assert.Equal(t, expected, r)
+}
+
 func TestLexerSimpleCallWithTwoStrings(t *testing.T) {
 	r := Lex(`foo("bar", "baz")`)
 
