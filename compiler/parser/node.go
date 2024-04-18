@@ -132,6 +132,7 @@ type DataType uint8
 
 const (
 	STRING DataType = iota
+	BYTE
 	NUMBER
 	BOOL
 )

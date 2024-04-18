@@ -14,6 +14,12 @@ import (
 
 func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 	switch v.Type {
+	case parser.BYTE:
+		return value.Value{
+			Value:      constant.NewInt(i8.Type, v.Value),
+			Type:       i8,
+			IsVariable: false,
+		}
 	case parser.NUMBER:
 		var intType *types.Int = i64
 

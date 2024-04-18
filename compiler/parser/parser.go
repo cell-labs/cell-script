@@ -80,8 +80,8 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		}
 		return
 
-		// NUMBER always returns a ConstantNode
-		// Convert string representation to int64
+	// NUMBER always returns a ConstantNode
+	// Convert string representation to int64
 	case lexer.NUMBER:
 		val, err := strconv.ParseInt(current.Val, 10, 64)
 		if err != nil {
@@ -97,11 +97,20 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		}
 		return
 
-		// STRING is always a ConstantNode, the value is not modified
+	// STRING is always a ConstantNode, the value is not modified
 	case lexer.STRING:
 		res = &ConstantNode{
 			Type:     STRING,
 			ValueStr: current.Val,
+		}
+		if withAheadParse {
+			res = p.aheadParse(res)
+		}
+		return
+	case lexer.BYTE:
+		res = &ConstantNode{
+			Type:     BYTE,
+			Value: int64(current.Val[0]),
 		}
 		if withAheadParse {
 			res = p.aheadParse(res)

@@ -12,6 +12,7 @@ const (
 	KEYWORD
 	NUMBER
 	STRING
+	BYTE
 	OPERATOR
 	EOF
 	EOL
@@ -34,6 +35,8 @@ func (i Item) String() string {
 		t = "NUMBER"
 	case STRING:
 		t = "STRING"
+	case BYTE:
+		t = "BYTE"
 	case OPERATOR:
 		t = "OPERATOR"
 	case EOF:
@@ -98,6 +101,8 @@ var operations = map[string]struct{}{
 	// TODO: Remove
 	"..": {}, // is not a real operation. Is there so that ... can be found.
 }
+
+var escapedChar = map[byte]byte{'t': '\t', 'n': '\n', 'r': '\r', '\'': '\''}
 
 func Lex(inputFullSource string) []Item {
 	var res []Item
@@ -171,6 +176,40 @@ func Lex(inputFullSource string) []Item {
 
 				i++
 				res = append(res, Item{Type: STRING, Val: str, Line: line})
+				continue
+			}
+
+			if input[i] == '\'' {
+				// String continues until next unescaped '
+				var str string
+
+				i++
+
+				for i < len(input) {
+					if input[i] == '\'' {
+						break
+					}
+					// parse escape char
+					if input[i] == '\\' {
+						i++
+						va, exist := escapedChar[input[i]]
+						if !exist {
+							panic("Unsupported escaped character")
+						}
+						str = string(va)
+						i++
+						continue
+					}
+
+					str = string(input[i])
+					i++
+				}
+
+				i++
+				if str == "" {
+					panic("Ilegal byte")
+				}
+				res = append(res, Item{Type: BYTE, Val: string(str), Line: line})
 				continue
 			}
 

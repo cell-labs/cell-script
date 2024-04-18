@@ -1,0 +1,53 @@
+// Test simulating a Turing machine.
+package main
+
+import "debug"
+
+// brainfuck
+var p, pc int64 = 0, 0 // p for position
+var a [30000]uint8
+var r string
+
+var prog = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
+
+function scan(dir int64) {
+	for nest := dir;  (nest * dir) != 0 ; pc += dir {
+		if prog[pc+dir] == ']' {
+			nest--
+		} else if prog[pc+dir] == '[' {
+			nest++
+		}
+	}
+}
+ 
+function main() {
+	j := 0
+	for pc = 0; pc < len(prog); pc++ { 
+		if prog[pc] == '>' {
+			p++
+        } else if prog[pc] == '<' {
+			p--
+		} else if prog[pc] == '+' {
+			a[p]++
+		} else if prog[pc] == '-' {
+			a[p]--
+		} else if prog[pc] == '.' {
+			r[j] = a[p]
+			j++
+			debug.Printf("%c", a[p])
+		} else if prog[pc] == '[' {
+			if a[p] == uint8(0) {
+				scan(1)
+			}
+		} else if prog[pc] == ']' {
+			if a[p] != uint8(0) {
+				scan(-1)
+			}
+        } else {
+			debug.Printf("%s", r)
+			return 0
+		}
+	}
+	debug.Printf("%s", r)
+	return 0
+}
