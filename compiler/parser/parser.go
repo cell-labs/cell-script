@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"log"
+	"math/big"
 	"strconv"
 
 	"errors"
@@ -83,9 +84,9 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	// NUMBER always returns a ConstantNode
 	// Convert string representation to int64
 	case lexer.NUMBER:
-		val, err := strconv.ParseInt(current.Val, 10, 64)
-		if err != nil {
-			panic(err)
+		val, ok := new(big.Int).SetString(current.Val, 10)
+		if !ok {
+			panic("parse interger literal failed")
 		}
 
 		res = &ConstantNode{
@@ -109,8 +110,8 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		return
 	case lexer.BYTE:
 		res = &ConstantNode{
-			Type:     BYTE,
-			Value: int64(current.Val[0]),
+			Type:  BYTE,
+			Value: big.NewInt(int64(current.Val[0])),
 		}
 		if withAheadParse {
 			res = p.aheadParse(res)
@@ -272,7 +273,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					Left: condNodes[0],
 					Right: &ConstantNode{
 						Type:  BOOL,
-						Value: 1,
+						Value: big.NewInt(1),
 					},
 					Operator: OP_EQ,
 				}
@@ -607,7 +608,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 			return &ConstantNode{
 				Type:  BOOL,
-				Value: v,
+				Value: big.NewInt(v),
 			}
 		}
 

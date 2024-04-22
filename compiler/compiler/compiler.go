@@ -39,6 +39,7 @@ type Compiler struct {
 	contextFunc *types.Function
 
 	initGlobalsFunc *ir.Func
+	bigIntFuncs     *BigIntFuncs
 	mainFunc        *ir.Func
 
 	// Stack of return values pointers, is used both used if a function returns more
@@ -75,7 +76,11 @@ var (
 	boolean = types.Bool
 	i8      = types.I8
 	i32     = types.I32
+	u32     = types.U32
 	i64     = types.I64
+	U256    = types.U256
+	Uintptr = types.Uintptr
+	strTy   = types.String
 )
 
 func NewCompiler(options *Options) *Compiler {

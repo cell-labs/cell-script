@@ -16,7 +16,7 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 	switch v.Type {
 	case parser.BYTE:
 		return value.Value{
-			Value:      constant.NewInt(i8.Type, v.Value),
+			Value:      constant.NewInt(i8.Type, v.Value.Int64()),
 			Type:       i8,
 			IsVariable: false,
 		}
@@ -36,7 +36,7 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 		}
 
 		return value.Value{
-			Value:      constant.NewInt(intType.Type, v.Value),
+			Value:      &constant.Int{Typ: intType.Type, X: v.Value},
 			Type:       intType,
 			IsVariable: false,
 		}
@@ -76,7 +76,7 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 	case parser.BOOL:
 		return value.Value{
 			// todo: optimise bool memory
-			Value:      constant.NewInt(llvmTypes.I1, v.Value),
+			Value:      &constant.Int{llvmTypes.I1, v.Value},
 			Type:       types.Bool,
 			IsVariable: false,
 		}
