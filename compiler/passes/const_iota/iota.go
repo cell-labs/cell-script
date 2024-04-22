@@ -2,6 +2,7 @@ package const_iota
 
 import (
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"math/big"
 )
 
 func Iota(root *parser.FileNode) *parser.FileNode {
@@ -35,7 +36,7 @@ func (i *iotaAllocGroupVisitor) Visit(node parser.Node) (n parser.Node, w parser
 			a.Val = []parser.Node{
 				&parser.ConstantNode{
 					Type:  parser.NUMBER,
-					Value: i.count - 1,
+					Value: big.NewInt(i.count - 1),
 				},
 			}
 			return a, nil // nil to not scan deeper
@@ -46,7 +47,7 @@ func (i *iotaAllocGroupVisitor) Visit(node parser.Node) (n parser.Node, w parser
 		if a.Name == "iota" {
 			n = &parser.ConstantNode{
 				Type:  parser.NUMBER,
-				Value: i.count - 1,
+				Value: big.NewInt(i.count - 1),
 			}
 		}
 	}

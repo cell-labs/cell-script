@@ -1,0 +1,9 @@
+package bigint
+
+type bigint table {
+	str uintptr
+	digit uint32
+	capacity uint32
+	isNeg int8
+}
+

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 )
 
@@ -123,9 +124,9 @@ func (on OperatorNode) String() string {
 type ConstantNode struct {
 	baseNode
 
-	Type     DataType
-	Value    int64
-	ValueStr string
+	Type       DataType
+	Value      *big.Int
+	ValueStr   string
 }
 
 type DataType uint8

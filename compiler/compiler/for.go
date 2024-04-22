@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"math/big"
 
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
 	"github.com/cell-labs/cell-script/compiler/parser"
@@ -126,7 +127,7 @@ func (c *Compiler) compileForRange(v *parser.ForNode) {
 	}
 
 	c.compileForThreeType(&parser.ForNode{
-		BeforeLoop: &parser.AllocNode{Name: []string{forKeyName}, Val: []parser.Node{&parser.ConstantNode{Type: parser.NUMBER, Value: 0}}},
+		BeforeLoop: &parser.AllocNode{Name: []string{forKeyName}, Val: []parser.Node{&parser.ConstantNode{Type: parser.NUMBER, Value: big.NewInt(0)}}},
 
 		Condition: &parser.OperatorNode{
 			Left:     typeCastedKey,
@@ -141,7 +142,7 @@ func (c *Compiler) compileForRange(v *parser.ForNode) {
 			Val: []parser.Node{&parser.OperatorNode{
 				Left:     &parser.NameNode{Name: forKeyName},
 				Operator: parser.OP_ADD,
-				Right:    &parser.ConstantNode{Type: parser.NUMBER, Value: 1},
+				Right:    &parser.ConstantNode{Type: parser.NUMBER, Value: big.NewInt(1)},
 			}},
 		},
 

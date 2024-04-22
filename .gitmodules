@@ -22,3 +22,6 @@
 [submodule "third-party/molecule2-c2"]
 	path = third-party/molecule2-c2
 	url = https://github.com/XuJiandong/moleculec-c2.git
+[submodule "third-party/bigint"]
+	path = third-party/bigint
+	url = https://github.com/dandclark/BigInt.git

@@ -161,7 +161,7 @@ func (c *Compiler) compileAllocConstNode(v *parser.AllocNode) {
 		cnst := v.Val[i].(*parser.ConstantNode)
 		c.setVar(varName, value.Value{
 			Type:  &types.UntypedConstantNumber{},
-			Value: constant.NewInt(i64.LLVM().(*irTypes.IntType), cnst.Value),
+			Value: &constant.Int{i64.LLVM().(*irTypes.IntType), cnst.Value},
 		})
 	}
 }
