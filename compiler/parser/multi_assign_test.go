@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,11 +47,11 @@ func TestMultiAssignVar(t *testing.T) {
 			&DeclarePackageNode{PackageName: "main"},
 			&DefineFuncNode{Name: "main", IsNamed: true,
 				Body: []Node{
-					&AllocNode{Name: []string{"a"}, Val: []Node{&ConstantNode{Type: NUMBER, Value: 100}}},
-					&AllocNode{Name: []string{"b"}, Val: []Node{&ConstantNode{Type: NUMBER, Value: 200}}},
+					&AllocNode{Name: []string{"a"}, Val: []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(100)}}},
+					&AllocNode{Name: []string{"b"}, Val: []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(200)}}},
 					&AssignNode{
 						Target: []Node{&NameNode{Name: "a"}, &NameNode{Name: "b"}},
-						Val:    []Node{&ConstantNode{Type: NUMBER, Value: 300}, &ConstantNode{Type: NUMBER, Value: 400}},
+						Val:    []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(300)}, &ConstantNode{Type: NUMBER, Value: big.NewInt(400)}},
 					},
 				},
 			},
@@ -91,7 +92,7 @@ func TestMultiAllocVar(t *testing.T) {
 				Body: []Node{
 					&AllocNode{
 						Name: []string{"a", "b"},
-						Val:  []Node{&ConstantNode{Type: NUMBER, Value: 300}, &ConstantNode{Type: NUMBER, Value: 400}},
+						Val:  []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(300)}, &ConstantNode{Type: NUMBER, Value: big.NewInt(400)}},
 					},
 				},
 			},

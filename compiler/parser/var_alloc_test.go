@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestAllocTypeWithValue(t *testing.T) {
 			&AllocNode{
 				Name: []string{"a"},
 				Type: &SingleTypeNode{TypeName: "int"},
-				Val:  []Node{&ConstantNode{Type: NUMBER, Value: 10}},
+				Val:  []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(10)}},
 			},
 		},
 	}
@@ -46,7 +47,7 @@ func TestAllocImplicitTypeValue(t *testing.T) {
 		Instructions: []Node{
 			&AllocNode{
 				Name: []string{"a"},
-				Val:  []Node{&ConstantNode{Type: NUMBER, Value: 10}},
+				Val:  []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(10)}},
 			},
 		},
 	}
@@ -90,7 +91,7 @@ func TestAllocGroup(t *testing.T) {
 					},
 					{
 						Name: []string{"d"},
-						Val:  []Node{&ConstantNode{Type: NUMBER, Value: 10}},
+						Val:  []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(10)}},
 					},
 				},
 			},
@@ -107,7 +108,7 @@ func TestConstAlloc(t *testing.T) {
 			&AllocNode{
 				IsConst: true,
 				Name:    []string{"a"},
-				Val:     []Node{&ConstantNode{Type: NUMBER, Value: 30}},
+				Val:     []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(30)}},
 			},
 		},
 	}
@@ -130,7 +131,7 @@ func TestAllocConstGroup(t *testing.T) {
 					{
 						IsConst: true,
 						Name:    []string{"a"},
-						Val:     []Node{&ConstantNode{Type: NUMBER, Value: 10}},
+						Val:     []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(10)}},
 					},
 					{
 						Name:    []string{"b", "c"},
@@ -139,12 +140,12 @@ func TestAllocConstGroup(t *testing.T) {
 					},
 					{
 						Name:    []string{"d"},
-						Val:     []Node{&ConstantNode{Type: NUMBER, Value: 20}},
+						Val:     []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(20)}},
 						IsConst: true,
 					},
 					{
 						Name:    []string{"e", "f"},
-						Val:     []Node{&ConstantNode{Type: BYTE, ValueStr: "\t"}, &ConstantNode{Type: BYTE, ValueStr: "'"}},
+						Val:     []Node{&ConstantNode{Type: BYTE, Value: big.NewInt(int64('\t'))}, &ConstantNode{Type: BYTE, Value: big.NewInt(int64('\''))}},
 						IsConst: true,
 					},
 				},
