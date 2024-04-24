@@ -123,7 +123,7 @@ func Lex(inputFullSource string) []Item {
 			if input[i] == '/' && input[i+1] == '/' {
 				break
 			}
-
+			// TODO: handle /0
 			if _, ok := operations[string(input[i])]; ok {
 
 				operator := string(input[i])

@@ -10,9 +10,11 @@ var I32 = &Int{Type: types.I32, TypeName: "int32", TypeSize: 32 / 8, Signed: tru
 var U32 = &Int{Type: types.I32, TypeName: "uint32", TypeSize: 32 / 8}
 var I64 = &Int{Type: types.I64, TypeName: "int64", TypeSize: 64 / 8, Signed: true}
 var U64 = &Int{Type: types.I64, TypeName: "uint64", TypeSize: 64 / 8}
-var U128 = &Int{Type: types.I128, TypeName: "uint128", TypeSize: 128 / 8}
-var U256 = &Int{Type: types.I256, TypeName: "uint256", TypeSize: 256 / 8}
 var Uintptr = &Int{Type: types.I64, TypeName: "uintptr", TypeSize: 64 / 8}
+
+
+var BigInt = &Struct{Members:map[string]Type{"capacity":U32, "digit":U32, "isNeg":U8, "str":Uintptr}, MemberIndexes:map[string]int{"capacity":2, "digit":1, "isNeg":3, "str":0}, IsHeapAllocated:false, SourceName:"", Type:&types.StructType{
+	Fields: []types.Type{Uintptr.Type, U32.Type, U32.Type, I8.Type}}}
 
 var Void = &VoidType{}
 var String = &StringType{}

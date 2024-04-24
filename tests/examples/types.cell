@@ -1,5 +1,12 @@
 import "debug"
 
+type bigint table {
+	str uintptr
+	digit uint32
+	capacity uint32
+	isNeg int8
+}
+
 function main() {
     var v1 uint128
     var v2 uint128
@@ -10,9 +17,10 @@ function main() {
     v2 = 184467440737095516151
     r1 := v1 + v2
 
-    debug.Printf("%lld", r1 / uint128(3))
+    // uint128(3) typecast not allowed
+    debug.Printf("%lld", r1 / 3)
 
-    // v3 = 3402823669209384634633746074317682114551
+    v3 = 3402823669209384634633746074317682114551
     // v4 = 3402823669209384634633746074317682114552
     // r2 := v3 + v4
     // debug.Printf(r2)

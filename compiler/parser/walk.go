@@ -42,7 +42,10 @@ func Walk(v Visitor, node Node) (r Node) {
 			n.False[i] = Walk(v, a)
 		}
 	case *DefineFuncNode:
-		for i, a := range n.Body {
+		if n.IsCompilerAdd {
+			return
+		}
+ 		for i, a := range n.Body {
 			n.Body[i] = Walk(v, a)
 		}
 	case *NameNode:
