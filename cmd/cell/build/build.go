@@ -12,6 +12,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler"
 	"github.com/cell-labs/cell-script/compiler/lexer"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/passes/bigint"
 	"github.com/cell-labs/cell-script/compiler/passes/const_iota"
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
 )
@@ -215,6 +216,7 @@ func parseFile(path string, options *Options) parser.FileNode {
 	passes := []func(*parser.FileNode) *parser.FileNode{
 		const_iota.Iota,
 		escape.Escape,
+		bigint.BigInt,
 	}
 	for _, pass := range passes {
 		parsed = pass(parsed)

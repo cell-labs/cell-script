@@ -78,7 +78,7 @@ var (
 	i32     = types.I32
 	u32     = types.U32
 	i64     = types.I64
-	U256    = types.U256
+	bigInt  = types.BigInt
 	Uintptr = types.Uintptr
 	strTy   = types.String
 )
@@ -212,8 +212,8 @@ func (c *Compiler) addGlobal() {
 	global.DefinePkgType("uint32", types.U32)
 	global.DefinePkgType("int64", types.I64)
 	global.DefinePkgType("uint64", types.U64)
-	global.DefinePkgType("uint128", types.U128)
-	global.DefinePkgType("uint256", types.U256)
+	global.DefinePkgType("uint128", types.BigInt)
+	global.DefinePkgType("uint256", types.BigInt)
 	global.DefinePkgType("uintptr", types.Uintptr)
 	global.DefinePkgType("string", types.String)
 

@@ -15,7 +15,7 @@ type Node interface {
 // baseNode implements the Node interface, to recuce code duplication
 type baseNode struct{}
 
-func (n *baseNode) Node() {
+func (n baseNode) Node() {
 
 }
 
@@ -124,9 +124,9 @@ func (on OperatorNode) String() string {
 type ConstantNode struct {
 	baseNode
 
-	Type       DataType
-	Value      *big.Int
-	ValueStr   string
+	Type     DataType
+	Value    *big.Int
+	ValueStr string
 }
 
 type DataType uint8
@@ -167,6 +167,8 @@ type DefineFuncNode struct {
 	IsNamed bool
 
 	IsMethod bool
+
+	IsCompilerAdd bool
 
 	MethodOnType      *SingleTypeNode
 	IsPointerReceiver bool

@@ -82,11 +82,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		return
 
 	// NUMBER always returns a ConstantNode
-	// Convert string representation to int64
+	// Convert string representation to bigint
 	case lexer.NUMBER:
 		val, ok := new(big.Int).SetString(current.Val, 10)
 		if !ok {
-			panic("parse interger literal failed")
+			panic("parse integer literal failed")
 		}
 
 		res = &ConstantNode{
