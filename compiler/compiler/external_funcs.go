@@ -4,6 +4,7 @@ import (
 	"github.com/llir/llvm/ir"
 	llvmTypes "github.com/llir/llvm/ir/types"
 
+	"github.com/cell-labs/cell-script/compiler/compiler/internal"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 )
 
@@ -105,8 +106,11 @@ func (c *Compiler) createExternalPackage() {
 func (c *Compiler) createBigInt() {
 	globalPkg := c.packages["global"]
 	newBigIntType := func() *llvmTypes.StructType {
-		return llvmTypes.NewStruct(Uintptr.Type, i32.Type, i32.Type, i8.Type)
+		s := llvmTypes.NewStruct(Uintptr.Type, i32.Type, i32.Type, i8.Type)
+		s.TypeName = "bigint"
+		return s
 	}
+	stringType := internal.String()
 	c.bigIntFuncs.New = globalPkg.setExternal("bigIntNew", c.module.NewFunc("big_init_new",
 		newBigIntType(),
 	), false)
@@ -120,7 +124,7 @@ func (c *Compiler) createBigInt() {
 	), false)
 	c.bigIntFuncs.New = globalPkg.setExternal("bigIntFromString", c.module.NewFunc("big_init_from_string",
 		newBigIntType(),
-		ir.NewParam("", strTy.Type),
+		ir.NewParam("", stringType),
 	), false)
 	c.bigIntFuncs.New = globalPkg.setExternal("bigIntPrint", c.module.NewFunc("big_init_print",
 		llvmTypes.Void,
@@ -131,7 +135,7 @@ func (c *Compiler) createBigInt() {
 		ir.NewParam("", newBigIntType()),
 	), false)
 	c.bigIntFuncs.New = globalPkg.setExternal("bigIntToString", c.module.NewFunc("big_init_to_string",
-		strTy.Type,
+		stringType,
 		ir.NewParam("", newBigIntType()),
 	), false)
 	c.bigIntFuncs.New = globalPkg.setExternal("bigIntAssign", c.module.NewFunc("big_init_assign",

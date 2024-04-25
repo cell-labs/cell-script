@@ -41,7 +41,7 @@ build/tools:
 	go build -v -trimpath -o ${RELEASE_DIR} ./cmd/parser
 	go build -v -trimpath -o ${RELEASE_DIR} ./cmd/codegen
 build/debug:
-	go build -gcflags=all="-N -l" ./cmd/cell
+	go build -gcflags=all="-N -l" -o ${CELL} ./cmd/cell
 sudt-c:
 	@echo " >>> build sudt-c"
 	cd third-party/ckb-c-stdlib && \
