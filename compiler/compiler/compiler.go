@@ -39,7 +39,7 @@ type Compiler struct {
 	contextFunc *types.Function
 
 	initGlobalsFunc *ir.Func
-	bigIntFuncs     *BigIntFuncs
+	bigIntFuncs     BigIntFuncs
 	mainFunc        *ir.Func
 
 	// Stack of return values pointers, is used both used if a function returns more
@@ -80,7 +80,6 @@ var (
 	i64     = types.I64
 	bigInt  = types.BigInt
 	Uintptr = types.Uintptr
-	strTy   = types.String
 )
 
 func NewCompiler(options *Options) *Compiler {
@@ -104,6 +103,7 @@ func NewCompiler(options *Options) *Compiler {
 
 	c.createExternalPackage()
 	c.addGlobal()
+	c.createBigInt()
 	c.pushVariablesStack()
 
 	// Triple examples:

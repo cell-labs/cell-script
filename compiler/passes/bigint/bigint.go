@@ -72,6 +72,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 						Name:          "big_int_from_string",
 						IsNamed:       true,
 						IsCompilerAdd: true,
+						ReturnValues: []*parser.NameNode{&parser.NameNode{Type: parser.SingleTypeNode{TypeName: "bigint"}}},
 					},
 					Arguments: a.Val,
 				},

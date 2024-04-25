@@ -34,7 +34,7 @@ build:
 	cp -r pkg/* output/pkg
 	@echo " >>> sussecfully build cell"
 build/debug:
-	go build -gcflags=all="-N -l" ./cmd/cell
+	go build -gcflags=all="-N -l" -o ${CELL} ./cmd/cell
 sudt-c:
 	@echo " >>> build sudt-c"
 	cd third-party/ckb-c-stdlib && \
