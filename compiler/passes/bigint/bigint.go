@@ -5,6 +5,7 @@ import (
 	"math/big"
 
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/passes/intrinsic"
 )
 
 func BigInt(root *parser.FileNode) *parser.FileNode {
@@ -17,6 +18,7 @@ type bigIntVisitor struct{}
 func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor) {
 	v = b
 	n = node
+	var bigIntNode = intrisinc.GetTypeNodeByName("bigint")
 
 	if _, ok := node.(*parser.StructTypeNode); ok {
 		fmt.Printf("%#v\n", node)
@@ -72,7 +74,12 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 						Name:          "big_int_from_string",
 						IsNamed:       true,
 						IsCompilerAdd: true,
-						ReturnValues: []*parser.NameNode{&parser.NameNode{Type: parser.SingleTypeNode{TypeName: "bigint"}}},
+						ReturnValues: []*parser.NameNode{
+							{
+								Name: "bigint",
+								Type: bigIntNode,
+							},
+						},
 					},
 					Arguments: a.Val,
 				},
