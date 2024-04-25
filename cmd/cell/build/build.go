@@ -15,6 +15,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/passes/bigint"
 	"github.com/cell-labs/cell-script/compiler/passes/const_iota"
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
+	"github.com/cell-labs/cell-script/compiler/passes/intrinsic"
 )
 
 type Options struct {
@@ -216,6 +217,7 @@ func parseFile(path string, options *Options) parser.FileNode {
 	passes := []func(*parser.FileNode) *parser.FileNode{
 		const_iota.Iota,
 		escape.Escape,
+		intrisinc.BigIntCollect,
 		bigint.BigInt,
 	}
 	for _, pass := range passes {

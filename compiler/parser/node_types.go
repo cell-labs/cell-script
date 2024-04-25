@@ -66,7 +66,7 @@ func (stn StructTypeNode) Variadic() bool {
 	return stn.IsVariadic
 }
 
-func (stn StructTypeNode) SetName(name string) {
+func (stn *StructTypeNode) SetName(name string) {
 	stn.SourceName = name
 }
 
@@ -96,7 +96,7 @@ func (atn ArrayTypeNode) Variadic() bool {
 	return atn.IsVariadic
 }
 
-func (atn ArrayTypeNode) SetName(name string) {
+func (atn *ArrayTypeNode) SetName(name string) {
 	atn.SourceName = name
 }
 
@@ -124,7 +124,7 @@ func (stn SliceTypeNode) Variadic() bool {
 	return stn.IsVariadic
 }
 
-func (stn SliceTypeNode) SetName(name string) {
+func (stn *SliceTypeNode) SetName(name string) {
 	stn.SourceName = name
 }
 
@@ -152,7 +152,7 @@ func (itn InterfaceTypeNode) Variadic() bool {
 	return itn.IsVariadic
 }
 
-func (itn InterfaceTypeNode) SetName(name string) {
+func (itn *InterfaceTypeNode) SetName(name string) {
 	itn.SourceName = name
 }
 
@@ -181,7 +181,7 @@ func (ptn PointerTypeNode) String() string {
 	return ptn.Type()
 }
 
-func (ptn PointerTypeNode) SetName(name string) {
+func (ptn *PointerTypeNode) SetName(name string) {
 	ptn.SourceName = name
 }
 
@@ -211,7 +211,7 @@ func (ftn FuncTypeNode) String() string {
 	return ftn.Type()
 }
 
-func (ftn FuncTypeNode) SetName(name string) {
+func (ftn *FuncTypeNode) SetName(name string) {
 	ftn.SourceName = name
 }
 
