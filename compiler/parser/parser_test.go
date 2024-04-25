@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func TestCall(t *testing.T) {
 		Instructions: []Node{
 			&CallNode{
 				Function:  &NameNode{Name: "printf"},
-				Arguments: []Node{&ConstantNode{Type: NUMBER, Value: 1}},
+				Arguments: []Node{&ConstantNode{Type: NUMBER, Value: big.NewInt(1)}},
 			},
 		},
 	}
@@ -43,11 +44,11 @@ func TestAdd(t *testing.T) {
 				Operator: OP_ADD,
 				Left: &ConstantNode{
 					Type:  NUMBER,
-					Value: 1,
+					Value: big.NewInt(1),
 				},
 				Right: &ConstantNode{
 					Type:  NUMBER,
-					Value: 2,
+					Value: big.NewInt(2),
 				},
 			},
 		},
@@ -72,17 +73,17 @@ func TestInfixPriority(t *testing.T) {
 				Operator: OP_ADD,
 				Left: &ConstantNode{
 					Type:  NUMBER,
-					Value: 1,
+					Value: big.NewInt(1),
 				},
 				Right: &OperatorNode{
 					Operator: OP_MUL,
 					Left: &ConstantNode{
 						Type:  NUMBER,
-						Value: 2,
+						Value: big.NewInt(2),
 					},
 					Right: &ConstantNode{
 						Type:  NUMBER,
-						Value: 3,
+						Value: big.NewInt(3),
 					},
 				},
 			},
@@ -110,16 +111,16 @@ func TestInfixPriority2(t *testing.T) {
 					Operator: OP_MUL,
 					Left: &ConstantNode{
 						Type:  NUMBER,
-						Value: 1,
+						Value: big.NewInt(1),
 					},
 					Right: &ConstantNode{
 						Type:  NUMBER,
-						Value: 2,
+						Value: big.NewInt(2),
 					},
 				},
 				Right: &ConstantNode{
 					Type:  NUMBER,
-					Value: 3,
+					Value: big.NewInt(3),
 				},
 			},
 		},
@@ -148,22 +149,22 @@ func TestInfixPriority3(t *testing.T) {
 					Operator: OP_MUL,
 					Left: &ConstantNode{
 						Type:  NUMBER,
-						Value: 1,
+						Value: big.NewInt(1),
 					},
 					Right: &ConstantNode{
 						Type:  NUMBER,
-						Value: 2,
+						Value: big.NewInt(2),
 					},
 				},
 				Right: &OperatorNode{
 					Operator: OP_MUL,
 					Left: &ConstantNode{
 						Type:  NUMBER,
-						Value: 3,
+						Value: big.NewInt(3),
 					},
 					Right: &ConstantNode{
 						Type:  NUMBER,
-						Value: 4,
+						Value: big.NewInt(4),
 					},
 				},
 			},
@@ -199,13 +200,13 @@ func TestInfixPriority4(t *testing.T) {
 					Operator: OP_DIV,
 					Left: &OperatorNode{
 						Operator: OP_DIV,
-						Left:     &ConstantNode{Type: NUMBER, Value: 100},
-						Right:    &ConstantNode{Type: NUMBER, Value: 3},
+						Left:     &ConstantNode{Type: NUMBER, Value: big.NewInt(100)},
+						Right:    &ConstantNode{Type: NUMBER, Value: big.NewInt(3)},
 					},
-					Right: &ConstantNode{Type: NUMBER, Value: 4},
+					Right: &ConstantNode{Type: NUMBER, Value: big.NewInt(4)},
 				},
 
-				Right: &ConstantNode{Type: NUMBER, Value: 7},
+				Right: &ConstantNode{Type: NUMBER, Value: big.NewInt(7)},
 			},
 		},
 	}
@@ -240,16 +241,16 @@ func TestInfixPriority4Load(t *testing.T) {
 					Operator: OP_DIV,
 					Left: &OperatorNode{
 						Operator: OP_DIV,
-						Left:     &ConstantNode{Type: NUMBER, Value: 100},
+						Left:     &ConstantNode{Type: NUMBER, Value: big.NewInt(100)},
 						Right: &StructLoadElementNode{
 							Struct:      &NameNode{Name: "f"},
 							ElementName: "a",
 						},
 					},
-					Right: &ConstantNode{Type: NUMBER, Value: 4},
+					Right: &ConstantNode{Type: NUMBER, Value: big.NewInt(4)},
 				},
 
-				Right: &ConstantNode{Type: NUMBER, Value: 7},
+				Right: &ConstantNode{Type: NUMBER, Value: big.NewInt(7)},
 			},
 		},
 	}
