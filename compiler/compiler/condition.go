@@ -6,10 +6,10 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/internal"
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
-
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 
 	"github.com/llir/llvm/ir/constant"
 	"github.com/llir/llvm/ir/enum"
@@ -31,7 +31,9 @@ func getConditionLLVMpred(operator parser.Operator) enum.IPred {
 		return op
 	}
 
-	panic("unknown op: " + string(operator))
+	utils.Ice("unknown op: " + string(operator))
+	// TODO: is that ok to return this
+	return enum.IPredEQ
 }
 
 func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
@@ -52,7 +54,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 	rightLLVM := internal.LoadIfVariable(c.contextBlock, right)
 
 	if !leftLLVM.Type().Equal(rightLLVM.Type()) && !rightIsUntyped && !leftIsUntyped {
-		panic(fmt.Sprintf("Different types in operation: %T and %T (%+v and %+v)", left.Type, right.Type, leftLLVM.Type(), rightLLVM.Type()))
+		utils.Ice(fmt.Sprintf("Different types in operation: %T and %T (%+v and %+v)", left.Type, right.Type, leftLLVM.Type(), rightLLVM.Type()))
 	}
 
 	switch leftLLVM.Type().Name() {
@@ -73,7 +75,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 
 			sType, ok := c.packages["global"].GetPkgType("string", true)
 			if !ok {
-				panic("string type not found")
+				utils.Ice("string type not found")
 			}
 			alloc := c.contextBlock.NewAlloca(sType.LLVM())
 
@@ -92,7 +94,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 			}
 		}
 
-		panic("string does not implement operation " + v.Operator)
+		utils.Ice("string does not implement operation " + v.Operator)
 	}
 
 	var opRes llvmValue.Value
@@ -214,7 +216,8 @@ func (c *Compiler) compileDecrementNode(v *parser.DecrementNode) value.Value {
 		c.contextBlock.NewStore(added, input.Value)
 		return input
 	} else {
-		panic("not implemented")
+		utils.Ice("not implemented")
+		return value.Value{}
 	}
 }
 
@@ -227,7 +230,8 @@ func (c *Compiler) compileIncrementNode(v *parser.IncrementNode) value.Value {
 		c.contextBlock.NewStore(added, input.Value)
 		return input
 	} else {
-		panic("not implemented")
+		utils.Ice("not implemented")
+		return value.Value{}
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
+	"github.com/cell-labs/cell-script/compiler/utils"
 
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
@@ -73,5 +74,6 @@ func (c *Compiler) compileDereferenceNode(v *parser.DereferenceNode) value.Value
 		}
 	}
 
-	panic(fmt.Sprintf("invalid indirect of TODO (type %s)", val.Type))
+	utils.Ice(fmt.Sprintf("invalid indirect of TODO (type %s)", val.Type))
+	return value.Value{}
 }

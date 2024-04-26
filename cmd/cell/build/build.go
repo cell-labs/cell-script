@@ -16,6 +16,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/passes/const_iota"
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
 	"github.com/cell-labs/cell-script/compiler/passes/intrinsic"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 type Options struct {
@@ -51,13 +52,13 @@ func Build(options *Options) error {
 	// Get dir to save temporary dirs in
 	tmpDir, err := os.MkdirTemp("", ".tpircsllec")
 	if err != nil {
-		panic(err)
+		utils.Ice(err)
 	}
 
 	// Write LLVM IR to disk
 	err = os.WriteFile(tmpDir+"/main.ll", []byte(compiled), 0666)
 	if err != nil {
-		panic(err)
+		utils.Ice(err)
 	}
 
 	if outputBinaryPath == "" {
@@ -120,7 +121,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *Options) e
 	if f.IsDir() {
 		files, err := ioutil.ReadDir(path)
 		if err != nil {
-			panic(path + ": " + err.Error())
+			utils.Ice(path + ": " + err.Error())
 		}
 
 		for _, file := range files {
@@ -204,7 +205,7 @@ func parseFile(path string, options *Options) parser.FileNode {
 	// Read specified input file
 	fileContents, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(err)
+		utils.Ice(err)
 	}
 
 	// Run input code through the lexer. A list of tokens is returned.

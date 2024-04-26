@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/cell-labs/cell-script/compiler/utils"
 	"github.com/llir/llvm/ir/types"
 )
 
@@ -29,7 +30,8 @@ func (p *PackageInstance) GetFunc(name string) (*Function, bool) {
 func (PackageInstance) LLVM() types.Type {
 	// TODO: Packages are not values, and should be represented some other way
 	// Maybe via LLVM IR modules?
-	panic("Package does not have LLVM defined")
+	utils.Ice("Package does not have LLVM defined")
+	return nil
 }
 
 func (p PackageInstance) Name() string {

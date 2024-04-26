@@ -7,6 +7,7 @@ import (
 
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
+	"github.com/cell-labs/cell-script/compiler/utils"
 
 	"github.com/cell-labs/cell-script/compiler/compiler/internal"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
@@ -40,7 +41,7 @@ func (c *Compiler) parserTypeToType(typeNode parser.TypeNode) types.Type {
 		if len(t.PackageName) > 0 {
 			tp, ok := c.packages[t.PackageName].GetPkgType(t.TypeName, false)
 			if !ok {
-				panic("unknown type: " + t.PackageName + "." + t.TypeName)
+				utils.Ice("unknown type: " + t.PackageName + "." + t.TypeName)
 			}
 			return tp
 		}
@@ -54,7 +55,7 @@ func (c *Compiler) parserTypeToType(typeNode parser.TypeNode) types.Type {
 			return res
 		}
 
-		panic("unknown type: " + t.TypeName)
+		utils.Ice("unknown type: " + t.TypeName)
 
 	case *parser.ArrayTypeNode:
 		itemType := c.parserTypeToType(t.ItemType)
@@ -132,7 +133,8 @@ func (c *Compiler) parserTypeToType(typeNode parser.TypeNode) types.Type {
 		}
 	}
 
-	panic(fmt.Sprintf("unknown typeNode: %T", typeNode))
+	utils.Ice(fmt.Sprintf("unknown typeNode: %T", typeNode))
+	return nil
 }
 
 func (c *Compiler) compileTypeCastNode(v *parser.TypeCastNode) value.Value {
@@ -143,13 +145,13 @@ func (c *Compiler) compileTypeCastNode(v *parser.TypeCastNode) value.Value {
 
 	current, ok = val.Type.LLVM().(*llvmTypes.IntType)
 	if !ok {
-		panic("TypeCast origin must be int type")
+		utils.Ice("TypeCast origin must be int type")
 	}
 
 	targetType := c.parserTypeToType(v.Type)
 	target, ok := targetType.LLVM().(*llvmTypes.IntType)
 	if !ok {
-		panic("TypeCast target must be int type")
+		utils.Ice("TypeCast target must be int type")
 	}
 
 	llvmVal := internal.LoadIfVariable(c.contextBlock, val)

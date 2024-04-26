@@ -6,6 +6,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
@@ -55,7 +56,7 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 
 		sType, ok := c.packages["global"].GetPkgType("string", true)
 		if !ok {
-			panic("string type not found")
+			utils.Ice("string type not found")
 		}
 		alloc := c.contextBlock.NewAlloca(sType.LLVM())
 
@@ -82,6 +83,7 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 		}
 
 	default:
-		panic("Unknown constant Type")
+		utils.Ice("Unknown constant Type")
 	}
+	return value.Value{}
 }

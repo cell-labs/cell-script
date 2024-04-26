@@ -1,9 +1,7 @@
 package compiler
 
 import (
-	// "github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
-	// "github.com/llir/llvm/ir/enum"
 	llvmTypes "github.com/llir/llvm/ir/types"
 	llvmValue "github.com/llir/llvm/ir/value"
 
@@ -13,6 +11,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) compileInitializeArrayNode(v *parser.InitializeArrayNode) value.Value {
@@ -140,7 +139,7 @@ func (c *Compiler) compileLoadArrayElement(v *parser.LoadArrayElement) value.Val
 	}
 
 	if !lengthKnownAtCompileTime && !lengthKnownAtRunTime {
-		panic("unable to LoadArrayElement: could not calculate max length")
+		utils.Ice("unable to LoadArrayElement: could not calculate max length")
 	}
 
 	// isCheckedAtCompileTime := false

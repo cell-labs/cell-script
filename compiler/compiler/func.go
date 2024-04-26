@@ -12,6 +12,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType types.Type, treReturnTypes []types.Type, argTypes []*ir.Param, treParams []types.Type, isVariadicFunc bool, argumentReturnValuesCount int) {
@@ -35,7 +36,7 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 
 		if par.Variadic() {
 			if k < len(params)-1 {
-				panic("Only the last parameter can be varadic")
+				utils.Ice("Only the last parameter can be varadic")
 			}
 			isVariadicFunc = true
 		}
@@ -124,7 +125,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	if c.currentPackageName == "main" && v.Name == "main" {
 		if len(v.ReturnValues) != 0 {
-			panic("main func have a default return type int64")
+			utils.Ice("main func have a default return type int64")
 		}
 
 		funcRetType = types.I64
@@ -173,7 +174,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 				MethodName:      v.Name,
 			})
 		} else {
-			panic("save method on type failed")
+			utils.Ice("save method on type failed")
 		}
 
 		// Make this method available in interfaces via a jump function
@@ -446,7 +447,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		}
 		fn = ifaceMethod.LlvmJumpFunction
 	} else {
-		panic("expected function or method, got something else")
+		utils.Ice("expected function or method, got something else")
 	}
 
 	// If the last argument is a slice that is "de variadicified"

@@ -9,6 +9,7 @@ import (
 	"errors"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 type parser struct {
@@ -63,7 +64,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	switch current.Type {
 
 	case lexer.EOF:
-		panic("unexpected EOF")
+		utils.Ice("unexpected EOF")
 
 	case lexer.EOL:
 		// Ignore the EOL, continue further
@@ -86,7 +87,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	case lexer.NUMBER:
 		val, ok := new(big.Int).SetString(current.Val, 10)
 		if !ok {
-			panic("parse integer literal failed")
+			utils.Ice("parse integer literal failed")
 		}
 
 		res = &ConstantNode{
@@ -158,7 +159,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 				sliceItemType, err := p.parseOneType()
 				if err != nil {
-					panic(err)
+					utils.Ice(err)
 				}
 
 				p.i++
@@ -166,7 +167,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				next = p.lookAhead(0)
 				if next.Type != lexer.OPERATOR || next.Val != "{" {
 					log.Printf("%+v", next)
-					panic("expected { after type in slice init")
+					utils.Ice("expected { after type in slice init")
 				}
 
 				p.i++
@@ -191,11 +192,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			// TODO: Support for compile-time artimethic ("[1+2]int{1,2,3}")
 			arraySize := p.lookAhead(0)
 			if arraySize.Type != lexer.NUMBER {
-				panic("expected number in array size")
+				utils.Ice("expected number in array size")
 			}
 			size, err := strconv.Atoi(arraySize.Val)
 			if err != nil {
-				panic("expected number in array size")
+				utils.Ice("expected number in array size")
 			}
 
 			p.i++
@@ -207,7 +208,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			p.i++
 			arrayItemType, err := p.parseOneType()
 			if err != nil {
-				panic(err)
+				utils.Ice(err)
 			}
 
 			p.i++
@@ -239,7 +240,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			p.i++
 			i := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
 			if len(i) != 1 {
-				panic("Expected exactly one item in GroupNode '('")
+				utils.Ice("Expected exactly one item in GroupNode '('")
 			}
 			return p.aheadParseWithOptions(&GroupNode{Item: i[0]}, true, false)
 		}
@@ -259,7 +260,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 				condNodes := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "{"})
 				if len(condNodes) != 1 {
-					panic("could not parse if-condition")
+					utils.Ice("could not parse if-condition")
 				}
 
 				p.i++
@@ -314,7 +315,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 				expectOpenBrack := p.lookAhead(0)
 				if expectOpenBrack.Type != lexer.OPERATOR || expectOpenBrack.Val != "{" {
-					panic("Expected { after else")
+					utils.Ice("Expected { after else")
 				}
 
 				p.i++
@@ -364,7 +365,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				defineFunc.Name = checkIfIdentifier.Val
 
 				if len(argsOrMethodType) != 1 {
-					panic("Unexpected count of types in method")
+					utils.Ice("Unexpected count of types in method")
 				}
 
 				defineFunc.InstanceName = argsOrMethodType[0].Name
@@ -379,7 +380,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				if singleTypeNode, ok := methodOnType.(*SingleTypeNode); ok {
 					defineFunc.MethodOnType = singleTypeNode
 				} else {
-					panic(fmt.Sprintf("could not find type in method defitition: %T", methodOnType))
+					utils.Ice(fmt.Sprintf("could not find type in method defitition: %T", methodOnType))
 				}
 			}
 
@@ -421,7 +422,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					// Support both named return values and when we only get the type
 					retTypeOrNamed, err := p.parseOneType()
 					if err != nil {
-						panic(err)
+						utils.Ice(err)
 					}
 					p.i++
 
@@ -430,7 +431,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					if isType.Type == lexer.IDENTIFIER {
 						retType, err := p.parseOneType()
 						if err != nil {
-							panic(err)
+							utils.Ice(err)
 						}
 						p.i++
 
@@ -457,7 +458,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 						p.i++
 						break
 					}
-					panic("Could not parse function return types")
+					utils.Ice("Could not parse function return types")
 				}
 			}
 
@@ -465,7 +466,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 			openBracket := p.lookAhead(0)
 			if openBracket.Type != lexer.OPERATOR || openBracket.Val != "{" {
-				panic("func arguments must be followed by {. Got " + openBracket.Val)
+				utils.Ice("func arguments must be followed by {. Got " + openBracket.Val)
 			}
 
 			p.i++
@@ -510,14 +511,14 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		if current.Val == "type" {
 			name := p.lookAhead(1)
 			if name.Type != lexer.IDENTIFIER {
-				panic("type must beb followed by IDENTIFIER")
+				utils.Ice("type must beb followed by IDENTIFIER")
 			}
 
 			p.i += 2
 
 			typeType, err := p.parseOneType()
 			if err != nil {
-				panic(err)
+				utils.Ice(err)
 			}
 
 			// Save the name of the type
@@ -570,7 +571,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			packageName := p.lookAhead(1)
 
 			if packageName.Type != lexer.IDENTIFIER {
-				panic("package must be followed by a IDENTIFIER")
+				utils.Ice("package must be followed by a IDENTIFIER")
 			}
 
 			p.i += 1
@@ -619,7 +620,8 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 	p.printInput()
 	log.Panicf("unable to handle default: %d - %+v", p.i, current)
-	panic("")
+	utils.Ice("")
+	return
 }
 
 func (p *parser) parseVarDecl(isConst bool) *AllocNode {
@@ -628,12 +630,12 @@ func (p *parser) parseVarDecl(isConst bool) *AllocNode {
 	isEq := p.lookAhead(0)
 	if (isEq.Type != lexer.OPERATOR || isEq.Val != "=") && isEq.Type != lexer.EOL {
 		if isConst {
-			// panic("unexpected type in const declaration")
+			// utils.Ice("unexpected type in const declaration")
 		}
 
 		tp, err := p.parseOneType()
 		if err != nil {
-			panic(err)
+			utils.Ice(err)
 		}
 		allocNode.Type = tp
 		p.i++
@@ -717,7 +719,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 
 				castToType, err := p.parseOneType()
 				if err != nil {
-					panic(err)
+					utils.Ice(err)
 				}
 
 				p.i++
@@ -733,7 +735,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 				})
 			}
 
-			panic(fmt.Sprintf("Expected IDENTFIER or ( after . Got: %+v", next))
+			utils.Ice(fmt.Sprintf("Expected IDENTFIER or ( after . Got: %+v", next))
 		}
 
 		if next.Val == ":=" || next.Val == "=" {
@@ -765,7 +767,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 				}
 			}
 
-			panic(fmt.Sprintf("%s can only be used after a name. Got: %+v", next.Val, input))
+			utils.Ice(fmt.Sprintf("%s can only be used after a name. Got: %+v", next.Val, input))
 		}
 
 		if next.Val == "+=" || next.Val == "-=" || next.Val == "*=" || next.Val == "/=" {
@@ -842,7 +844,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 				return p.aheadParse(res)
 			}
 
-			panic(fmt.Sprintf("Unexpected %+v, expected ]", expectEndBracket))
+			utils.Ice(fmt.Sprintf("Unexpected %+v, expected ]", expectEndBracket))
 		}
 
 		// Handle "Operations" both arith and comparision
@@ -890,7 +892,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 		if _, ok := p.types[current.Val]; ok {
 			val := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
 			if len(val) != 1 {
-				panic("type conversion must take only one argument")
+				utils.Ice("type conversion must take only one argument")
 			}
 			return p.aheadParse(&TypeCastNode{
 				Type: &SingleTypeNode{
@@ -942,7 +944,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 
 					key := p.lookAhead(0)
 					if key.Type != lexer.IDENTIFIER {
-						panic("Expected IDENTIFIER in struct initialization")
+						utils.Ice("Expected IDENTIFIER in struct initialization")
 					}
 
 					col := p.lookAhead(1)
@@ -1038,7 +1040,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 				return p.aheadParse(inAssignValue)
 			}
 
-			panic("unexpected in alloc right hand")
+			utils.Ice("unexpected in alloc right hand")
 		}
 	}
 
@@ -1096,7 +1098,7 @@ func (p *parser) parseFunctionArguments() []*NameNode {
 
 		if i > 0 {
 			if current.Type != lexer.OPERATOR && current.Val != "," {
-				panic("arguments must be separated by commas. Got: " + fmt.Sprintf("%+v", current))
+				utils.Ice("arguments must be separated by commas. Got: " + fmt.Sprintf("%+v", current))
 			}
 
 			p.i++
@@ -1105,13 +1107,13 @@ func (p *parser) parseFunctionArguments() []*NameNode {
 
 		name := p.lookAhead(0)
 		if name.Type != lexer.IDENTIFIER {
-			panic("function arguments: variable name must be identifier. Got: " + fmt.Sprintf("%+v", name))
+			utils.Ice("function arguments: variable name must be identifier. Got: " + fmt.Sprintf("%+v", name))
 		}
 		p.i++
 
 		argType, err := p.parseOneType()
 		if err != nil {
-			panic(err)
+			utils.Ice(err)
 		}
 		p.i++
 
@@ -1140,7 +1142,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 		p.i++
 		valType, err := p.parseOneType()
 		if err != nil {
-			panic(err)
+			utils.Ice(err)
 		}
 		return &PointerTypeNode{
 			ValueType:  valType,
@@ -1160,7 +1162,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 
 		current = p.lookAhead(0)
 		if current.Type != lexer.OPERATOR || current.Val != "{" {
-			panic("struct must be followed by {")
+			utils.Ice("struct must be followed by {")
 		}
 		p.i++
 
@@ -1179,13 +1181,13 @@ func (p *parser) parseOneType() (TypeNode, error) {
 			}
 
 			if itemName.Type != lexer.IDENTIFIER {
-				panic("expected IDENTIFIER in struct{}, got " + fmt.Sprintf("%+v", itemName))
+				utils.Ice("expected IDENTIFIER in struct{}, got " + fmt.Sprintf("%+v", itemName))
 			}
 			p.i++
 
 			itemType, err := p.parseOneType()
 			if err != nil {
-				panic("expected TYPE in struct{}, got: " + err.Error())
+				utils.Ice("expected TYPE in struct{}, got: " + err.Error())
 			}
 			p.i++
 
@@ -1243,7 +1245,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 
 				argumentType, err := p.parseOneType()
 				if err != nil {
-					panic(err)
+					utils.Ice(err)
 				}
 
 				methodDef.ArgumentTypes = append(methodDef.ArgumentTypes, argumentType)
@@ -1259,7 +1261,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 
 				returnType, err := p.parseOneType()
 				if err != nil {
-					panic(err)
+					utils.Ice(err)
 				}
 
 				methodDef.ReturnTypes = append(methodDef.ReturnTypes, returnType)
@@ -1438,10 +1440,10 @@ func (p *parser) parseOneType() (TypeNode, error) {
 // panics if check fails
 func (p *parser) expect(input lexer.Item, expected lexer.Item) {
 	if expected.Type != input.Type {
-		panic(fmt.Sprintf("Expected %+v got %+v", expected, input))
+		utils.Ice(fmt.Sprintf("Expected %+v got %+v", expected, input))
 	}
 
 	if expected.Val != "" && expected.Val != input.Val {
-		panic(fmt.Sprintf("Expected %+v got %+v", expected, input))
+		utils.Ice(fmt.Sprintf("Expected %+v got %+v", expected, input))
 	}
 }

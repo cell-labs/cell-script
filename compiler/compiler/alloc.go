@@ -12,6 +12,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
@@ -84,10 +85,10 @@ func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
 
 		if _, ok := val.Type.(*types.MultiValue); ok {
 			if len(v.Name) != len(val.MultiValues) {
-				panic("Variable count on left and right side does not match")
+				utils.Ice("Variable count on left and right side does not match")
 			}
 			if c.contextBlock == nil {
-				panic("Multi alloc pkg vars is not yet supported")
+				utils.Ice("Multi alloc pkg vars is not yet supported")
 			}
 
 			// Is currently expecting that the variables are already allocated in this block.

@@ -3,6 +3,8 @@ package lexer
 import (
 	"fmt"
 	"strings"
+
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 type lexType uint8
@@ -194,7 +196,7 @@ func Lex(inputFullSource string) []Item {
 						i++
 						va, exist := escapedChar[input[i]]
 						if !exist {
-							panic("Unsupported escaped character")
+							utils.Ice("Unsupported escaped character")
 						}
 						str = string(va)
 						i++
@@ -207,7 +209,7 @@ func Lex(inputFullSource string) []Item {
 
 				i++
 				if str == "" {
-					panic("Ilegal byte")
+					utils.Ice("Ilegal byte")
 				}
 				res = append(res, Item{Type: BYTE, Val: string(str), Line: line})
 				continue
@@ -253,7 +255,7 @@ func Lex(inputFullSource string) []Item {
 				continue
 			}
 
-			panic("Unexpected char in Lexer: " + string(input[i]))
+			utils.Ice("Unexpected char in Lexer: " + string(input[i]))
 		}
 	}
 

@@ -2,8 +2,9 @@ package parser
 
 import (
 	"fmt"
-
+	
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 // ForNode creates a new for-loop
@@ -32,7 +33,7 @@ func (p *parser) parseFor() *ForNode {
 	})
 
 	if len(beforeLoop) != 1 {
-		panic("Expected only one beforeLoop in for loop")
+		utils.Ice("Expected only one beforeLoop in for loop")
 	}
 
 	isThreeTypeFor := false
@@ -47,19 +48,19 @@ func (p *parser) parseFor() *ForNode {
 		p.i++
 		loopCondition := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ";"})
 		if len(loopCondition) != 1 {
-			panic("Expected only one condition in for loop")
+			utils.Ice("Expected only one condition in for loop")
 		}
 
 		if conditionNode, ok := loopCondition[0].(*OperatorNode); ok {
 			res.Condition = conditionNode
 		} else {
-			panic(fmt.Sprintf("Expected OperatorNode in for loop. Got: %T: %+v", loopCondition[0], loopCondition[0]))
+			utils.Ice(fmt.Sprintf("Expected OperatorNode in for loop. Got: %T: %+v", loopCondition[0], loopCondition[0]))
 		}
 
 		p.i++
 		afterIteration := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "{"})
 		if len(afterIteration) != 1 {
-			panic("Expected only one afterIteration in for loop")
+			utils.Ice("Expected only one afterIteration in for loop")
 		}
 		res.AfterIteration = afterIteration[0]
 	}

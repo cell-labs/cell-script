@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"github.com/cell-labs/cell-script/compiler/utils"
 	"sort"
 
 	"github.com/llir/llvm/ir/types"
@@ -82,7 +83,8 @@ type InterfaceMethod struct {
 }
 
 func (InterfaceMethod) LLVM() types.Type {
-	panic("InterfaceMethod has no LLVM value")
+	utils.Ice("InterfaceMethod has no LLVM value")
+	return nil
 }
 
 func (InterfaceMethod) Name() string {

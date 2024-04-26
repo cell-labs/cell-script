@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"github.com/cell-labs/cell-script/compiler/utils"
 	"math/big"
 
 	"github.com/llir/llvm/ir"
@@ -47,7 +48,8 @@ func (b *backingType) GetMethod(name string) (*Method, bool) {
 }
 
 func (backingType) Size() int64 {
-	panic("Type does not have size set")
+	utils.Ice("Type does not have size set")
+	return 0
 }
 
 func (backingType) Zero(*ir.Block, llvmValue.Value) {
@@ -341,7 +343,8 @@ func (m MultiValue) Name() string {
 }
 
 func (m MultiValue) LLVM() types.Type {
-	panic("MutliValue has no LLVM type")
+	utils.Ice("MutliValue has no LLVM type")
+	return nil
 }
 
 type UntypedConstantNumber struct {
@@ -353,5 +356,6 @@ func (m UntypedConstantNumber) Name() string {
 }
 
 func (m UntypedConstantNumber) LLVM() types.Type {
-	panic("UntypedConstantNumber has no LLVM type")
+	utils.Ice("UntypedConstantNumber has no LLVM type")
+	return nil
 }

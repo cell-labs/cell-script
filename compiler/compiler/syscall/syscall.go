@@ -1,5 +1,7 @@
 package syscall
 
+import "github.com/cell-labs/cell-script/compiler/utils"
+
 // https://opensource.apple.com/source/xnu/xnu-2782.20.48/bsd/kern/syscalls.master
 type fn string
 
@@ -25,6 +27,7 @@ func Convert(f fn, goos string) int64 {
 	case "linux":
 		return convLinux[f]
 	default:
-		panic("unknown goos")
+		utils.Ice("unknown goos")
 	}
+	return 0
 }

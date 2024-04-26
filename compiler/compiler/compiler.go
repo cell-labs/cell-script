@@ -3,7 +3,6 @@ package compiler
 import (
 	"fmt"
 	"runtime"
-	"runtime/debug"
 
 	"github.com/cell-labs/cell-script/compiler/compiler/internal"
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
@@ -11,6 +10,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 
 	"errors"
 
@@ -117,7 +117,7 @@ func NewCompiler(options *Options) *Compiler {
 	case "arm64":
 		targetTriple[0] = "aarch64"
 	default:
-		panic("unsupported GOARCH: " + runtime.GOARCH)
+		utils.Ice("unsupported GOARCH: " + runtime.GOARCH)
 	}
 
 	switch runtime.GOOS {
@@ -128,7 +128,7 @@ func NewCompiler(options *Options) *Compiler {
 	case "windows":
 		targetTriple[1] = "pc-windows"
 	default:
-		panic("unsupported GOOS: " + runtime.GOOS)
+		utils.Ice("unsupported GOOS: " + runtime.GOOS)
 	}
 
 	if options.Target != "native" {
@@ -155,10 +155,7 @@ func (c *Compiler) Compile(root parser.PackageNode) (err error) {
 			}
 
 			// Bugs in the compiler
-			err = fmt.Errorf("%s\n\nInternal compiler stacktrace:\n%s",
-				fmt.Sprint(r),
-				string(debug.Stack()),
-			)
+			utils.Ice(fmt.Sprint(r))
 		}
 	}()
 
@@ -292,7 +289,7 @@ func (c *Compiler) compileNameNode(v *parser.NameNode) value.Value {
 			pkg = p
 			inSamePackage = false
 		} else {
-			panic(fmt.Sprintf("package %s does not exist", v.Package))
+			utils.Ice(fmt.Sprintf("package %s does not exist", v.Package))
 		}
 	}
 
@@ -307,7 +304,8 @@ func (c *Compiler) compileNameNode(v *parser.NameNode) value.Value {
 		return pkgVar
 	}
 
-	panic(fmt.Sprintf("package %s has no memeber %s", v.Package, v.Name))
+	utils.Ice(fmt.Sprintf("package %s has no memeber %s", v.Package, v.Name))
+	return value.Value{}
 }
 
 func (c *Compiler) setVar(name string, val value.Value) {
@@ -373,7 +371,8 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 		return c.compileGroupNode(v)
 	}
 
-	panic("compileValue fail: " + fmt.Sprintf("%T: %+v", node, node))
+	utils.Ice("compileValue fail: " + fmt.Sprintf("%T: %+v", node, node))
+	return value.Value{}
 }
 
 func (c *Compiler) panic(block *ir.Block, message string) {

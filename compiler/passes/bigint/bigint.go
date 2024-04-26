@@ -103,7 +103,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 	// transform a == 12345
 	// to		 big_int_equal(a, 12345) == true
 	if c, ok := node.(*parser.ConditionNode); ok {
-		transformTo := func (funcName string) {
+		transformTo := func(funcName string) {
 			l := c.Cond.Left
 			r := c.Cond.Right
 			c.Cond.Left = &parser.CallNode{
@@ -111,7 +111,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 					Name:          funcName,
 					IsNamed:       true,
 					IsCompilerAdd: true,
-					ReturnValues: []*parser.NameNode{&parser.NameNode{Type: parser.SingleTypeNode{TypeName: "bool"}}},
+					ReturnValues:  []*parser.NameNode{&parser.NameNode{Type: parser.SingleTypeNode{TypeName: "bool"}}},
 				},
 				Arguments: []parser.Node{l, r},
 			}

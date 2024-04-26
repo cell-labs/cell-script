@@ -6,6 +6,7 @@ import (
 
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) compileForNode(v *parser.ForNode) {
@@ -78,7 +79,7 @@ func (c *Compiler) compileForRange(v *parser.ForNode) {
 	} else if forRange, ok := v.BeforeLoop.(*parser.RangeNode); ok {
 		rangeItem = forRange.Item
 	} else {
-		panic("unexpected for/range beforeLoop type: " + fmt.Sprintf("%T %+v", v.BeforeLoop, v.BeforeLoop))
+		utils.Ice("unexpected for/range beforeLoop type: " + fmt.Sprintf("%T %+v", v.BeforeLoop, v.BeforeLoop))
 	}
 
 	// Alloc the value of rangeItem and save it in a variable

@@ -6,6 +6,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
+	"github.com/cell-labs/cell-script/compiler/utils"
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	llvmTypes "github.com/llir/llvm/ir/types"
@@ -71,7 +72,7 @@ func (c *Compiler) valueToInterfaceValue(v value.Value, targetType types.Type) v
 
 		m, ok := useFuncsFromType.GetMethod(methodName)
 		if !ok {
-			panic(fmt.Sprintf("%s can not be used as %s, is missing %s method", useFuncsFromType.Name(), targetType.Name(), methodName))
+			utils.Ice(fmt.Sprintf("%s can not be used as %s, is missing %s method", useFuncsFromType.Name(), targetType.Name(), methodName))
 		}
 		c.contextBlock.NewStore(m.Function.JumpFunction, functionPointer)
 	}
