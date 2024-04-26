@@ -9,36 +9,74 @@
 lexer grammar CellScriptLexer;
 
 // Keywords
-FUNC     : 'function';
 PACKAGE  : 'package';
+IMPORT   : 'import';
+FUNC     : 'function';
 IF       : 'if';
 ELSE     : 'else';
 FOR      : 'for';
 CONTINUE : 'continue';
 BREAK    : 'break';
-IMPORT   : 'import';
 RETURN   : 'return';
-VECTOR   : 'vector';
-TABLE    : 'table';
-UNION    : 'union';
+TYPEDEF  : 'type';
 VAR      : 'var';
+CONST    : 'const';
+
+// Types
+TYPE: TYPE_TABLE | TYPE_VECTOR | TYPE_UNION | TYPE_OPTION | TYPE_SLICE;
+// Primitive
+TYPE_BOOL    : 'bool';
+TYPE_UINT8   : 'uint8';
+TYPE_UINT16  : 'uint16';
+TYPE_UINT32  : 'uint32';
+TYPE_UINT64  : 'uint64';
+TYPE_UINT128 : 'uint128';
+TYPE_UINT256 : 'uint256';
+// Sequence
+TYPE_VECTOR : 'vector';
+TYPE_SLICE  : '[' TYPE ']';
+// User-defined
+TYPE_TABLE  : 'table';
+TYPE_UNION  : 'union';
+TYPE_OPTION : 'option';
+// Function
+
+// Identifiers
+IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 
 // Tokens
-L_CURLY    : '{';
-R_CURLY    : '}';
-L_BRACKET  : '(';
-R_BRACKET  : ')';
-COMMA      : ',';
-IDENTIFIER : [a-zA-Z_][a-zA-Z0-9_]*;
-TYPE       : TYPE_INT | TYPE_BOOL;
-TYPE_INT   : 'int';
-TYPE_BOOL  : 'bool';
+// Delimeters
+L_CURLY      : '{';
+R_CURLY      : '}';
+L_SQURAE     : '[';
+R_SQUARE     : ']';
+L_PARENTHESE : '(';
+R_PARENTHESE : ')';
+// Puctuations
 ADD        : '+';
 SUB        : '-';
 MUL        : '*';
 DIV        : '/';
 MOD        : '%';
-ASSIGN     : '=';
+XOR        : '^';
+AND        : '&';
+OR         : '|';
+NOT        : '!';
+ANDAND     : '&&';
+OROR       : '||';
+EQUAL      : '=';
+EQUALEQUAL : '==';
+NOTEQUAL   : '!=';
+GT         : '>';
+LT         : '<';
+GE         : '>=';
+LE         : '<=';
+UNDERSCORE : '_';
+DOT        : '.';
+DOTDOT     : '..';
+COMMA      : ',';
+SEMI       : ';';
+COLON      : ':'; // type seperator in varDecl
 
 // Literal
 LITERAL    : STRING_LIT | BOOL_LIT | NUMBER;
@@ -51,20 +89,14 @@ RAW_STRING_LIT         : '`' ~'`'* '`';
 INTERPRETED_STRING_LIT : '"' (~["\\] | ESCAPED_VALUE)* '"';
 
 // Hidden tokens
-WS           : [ \t]+        -> skip;
-COMMENT      : '/*' .*? '*/' -> skip;
-TERMINATOR   : [\r\n]+       -> skip;
-LINE_COMMENT : '//' ~[\r\n]* -> skip;
+WS           : [ \t\n\r]+                          -> skip;
+COMMENT      : '/*' .*? '*/'                       -> skip;
+EOS          : [\r\n]+ | ';' | '/*' .*? '*/' | EOF -> skip;
+LINE_COMMENT : '//' ~[\r\n]*                       -> skip;
 
 // Fragments
 fragment ESCAPED_VALUE:
-    '\\' (
-        'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-        | 'U' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
-        | [abfnrtv\\'"]
-        | OCTAL_DIGIT OCTAL_DIGIT OCTAL_DIGIT
-        | 'x' HEX_DIGIT HEX_DIGIT
-    )
+    '\\' ([abfnrtv\\'"] | OCTAL_DIGIT OCTAL_DIGIT OCTAL_DIGIT | 'x' HEX_DIGIT HEX_DIGIT)
 ;
 
 fragment DECIMALS: [0-9] ('_'? [0-9])*;
@@ -76,12 +108,3 @@ fragment HEX_DIGIT: [0-9a-fA-F];
 fragment BIN_DIGIT: [01];
 
 fragment LETTER: [a-zA-Z] | '_';
-
-// Treat whitespace as normal
-WS_DEFAULT: [ \t]+ -> skip;
-// Ignore any comments that only span one line
-COMMENT_DEFAULT      : '/*' ~[\r\n]*? '*/' -> skip;
-LINE_COMMENT_DEFAULT : '//' ~[\r\n]*       -> skip;
-// Emit an EOS token for any newlines, semicolon, multiline comments or the EOF and 
-//return to normal lexing
-EOS: ([\r\n]+ | ';' | '/*' .*? '*/' | EOF);
