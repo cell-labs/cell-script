@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (p *parser) parseImport() *ImportNode {
@@ -39,7 +40,7 @@ func (p *parser) parseImport() *ImportNode {
 			continue
 		}
 
-		panic(fmt.Sprintf("Failed to parse import: %+v", checkIfEndParen))
+		utils.Ice(fmt.Sprintf("Failed to parse import: %+v", checkIfEndParen))
 	}
 
 	return &ImportNode{

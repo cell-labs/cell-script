@@ -12,6 +12,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) compileStructLoadElementNode(v *parser.StructLoadElementNode) value.Value {
@@ -97,7 +98,8 @@ func (c *Compiler) compileStructLoadElementNode(v *parser.StructLoadElementNode)
 		}
 	}
 
-	panic(fmt.Sprintf("%T internal error: no such type map indexing: %s", src, v.ElementName))
+	utils.Ice(fmt.Sprintf("%T internal error: no such type map indexing: %s", src, v.ElementName))
+	return value.Value{}
 }
 
 func (c *Compiler) compileInitStructWithValues(v *parser.InitializeStructNode) value.Value {
@@ -105,7 +107,7 @@ func (c *Compiler) compileInitStructWithValues(v *parser.InitializeStructNode) v
 
 	structType, ok := treType.(*types.Struct)
 	if !ok {
-		panic("Expected struct type in compileInitStructWithValues")
+		utils.Ice("Expected struct type in compileInitStructWithValues")
 	}
 
 	var alloc llvmValue.Value
@@ -124,7 +126,7 @@ func (c *Compiler) compileInitStructWithValues(v *parser.InitializeStructNode) v
 	for key, val := range v.Items {
 		keyIndex, ok := structType.MemberIndexes[key]
 		if !ok {
-			panic("Unknown struct key: " + key)
+			utils.Ice("Unknown struct key: " + key)
 		}
 
 		itemPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, int64(keyIndex)))

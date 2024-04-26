@@ -1,6 +1,7 @@
 package value
 
 import (
+	"github.com/cell-labs/cell-script/compiler/utils"
 	"github.com/llir/llvm/ir/constant"
 	llvmValue "github.com/llir/llvm/ir/value"
 
@@ -35,8 +36,9 @@ func UntypedConstAs(val Value, context Value) Value {
 				},
 			}
 		}
-		panic("unexpected type in UntypedConstAs")
+		utils.Ice("unexpected type in UntypedConstAs")
 	default:
-		panic("unexpected type in UntypedConstAs")
+		utils.Ice("unexpected type in UntypedConstAs")
 	}
+	return Value{}
 }

@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 type Visitor interface {
@@ -45,7 +46,7 @@ func Walk(v Visitor, node Node) (r Node) {
 		if n.IsCompilerAdd {
 			return
 		}
- 		for i, a := range n.Body {
+		for i, a := range n.Body {
 			n.Body[i] = Walk(v, a)
 		}
 	case *NameNode:
@@ -136,7 +137,7 @@ func Walk(v Visitor, node Node) (r Node) {
 			n.Items[i] = Walk(v, a)
 		}
 	default:
-		panic(fmt.Sprintf("unexpected type in Walk(): %T", node))
+		utils.Ice(fmt.Sprintf("unexpected type in Walk(): %T", node))
 	}
 	return
 }

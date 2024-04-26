@@ -11,6 +11,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) lenFuncCall(v *parser.CallNode) value.Value {
@@ -19,7 +20,7 @@ func (c *Compiler) lenFuncCall(v *parser.CallNode) value.Value {
 	if arg.Type.Name() == "string" {
 		f, ok := c.packages["global"].GetPkgVar("len_string", true)
 		if !ok {
-			panic("could not find len_string func")
+			utils.Ice("could not find len_string func")
 		}
 		val := internal.LoadIfVariable(c.contextBlock, arg)
 
@@ -57,5 +58,6 @@ func (c *Compiler) lenFuncCall(v *parser.CallNode) value.Value {
 		}
 	}
 
-	panic(fmt.Sprintf("Can not call len() on type %s (%+v)", arg.Type.Name(), v.Arguments[0]))
+	utils.Ice(fmt.Sprintf("Can not call len() on type %s (%+v)", arg.Type.Name(), v.Arguments[0]))
+	return value.Value{}
 }

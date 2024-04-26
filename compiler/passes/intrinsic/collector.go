@@ -1,9 +1,8 @@
 package intrisinc
 
 import (
-	"fmt"
-
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 var collector = map[string]parser.TypeNode{}
@@ -11,7 +10,7 @@ var collector = map[string]parser.TypeNode{}
 func GetTypeNodeByName(name string) parser.TypeNode {
 	v, ok := collector[name]
 	if !ok {
-		panic("the node is not exist")
+		utils.Ice("the node is not exist")
 	}
 	return v
 }
@@ -23,7 +22,6 @@ func BigIntCollect(input *parser.FileNode) *parser.FileNode {
 			if s, ok := td.Type.(*parser.StructTypeNode); ok {
 				if s.GetName() == "bigint" {
 					collector["bigint"] = s
-					fmt.Println("gotcha")
 				}
 			}
 		}

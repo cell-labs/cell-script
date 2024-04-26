@@ -15,6 +15,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) value.Value {
@@ -69,7 +70,7 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	// Convert *i8 to %string
 	sType, ok := c.packages["global"].GetPkgType("string", true)
 	if !ok {
-		panic("string type not found")
+		utils.Ice("string type not found")
 	}
 	alloc := c.contextBlock.NewAlloca(sType.LLVM())
 

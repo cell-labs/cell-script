@@ -1,5 +1,7 @@
 package parser
 
+import "github.com/cell-labs/cell-script/compiler/utils"
+
 /*
 https://golang.org/ref/spec#Operator_precedence
 
@@ -42,7 +44,8 @@ func infixPrio(input Operator) int {
 		return prio
 	}
 
-	panic("unknown infixPrio: " + string(input))
+	utils.Ice("unknown infixPrio: " + string(input))
+	return 0
 }
 
 // sortInfix maxes sure that the infix operators are applied in the correct order
