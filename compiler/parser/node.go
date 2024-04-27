@@ -135,6 +135,7 @@ const (
 	STRING DataType = iota
 	BYTE
 	NUMBER
+	BIGNUMBER
 	BOOL
 )
 
