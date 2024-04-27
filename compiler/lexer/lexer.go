@@ -13,6 +13,7 @@ const (
 	IDENTIFIER lexType = iota
 	KEYWORD
 	NUMBER
+	BIGNUMBER
 	STRING
 	BYTE
 	OPERATOR
@@ -21,9 +22,10 @@ const (
 )
 
 type Item struct {
-	Type lexType
-	Val  string
-	Line int
+	Type   lexType
+	Val    string
+	Line   int
+	Suffix string
 }
 
 func (i Item) String() string {
@@ -246,6 +248,18 @@ func Lex(inputFullSource string) []Item {
 					i++
 				}
 				res = append(res, Item{Type: NUMBER, Val: val, Line: line})
+				if i < len(input) && input[i] == 'u' {
+					suffix := ""
+					i++
+					for i < len(input) && input[i] >= '0' && input[i] <= '9' {
+						suffix += string(input[i])
+						i++
+					}
+					if suffix == "128" || suffix == "256" {
+						res[len(res) - 1].Type = BIGNUMBER
+						res[len(res) - 1].Suffix = suffix
+					}
+				}
 				continue
 			}
 

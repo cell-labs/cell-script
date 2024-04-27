@@ -99,6 +99,21 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		}
 		return
 
+	case lexer.BIGNUMBER:
+		val, ok := new(big.Int).SetString(current.Val, 10)
+		if !ok {
+			utils.Ice("parse integer literal failed")
+		}
+		res = &ConstantNode{
+			Type:     BIGNUMBER,
+			Value:    val,
+			ValueStr: current.Val,
+		}
+		if withAheadParse {
+			res = p.aheadParse(res)
+		}
+		return
+
 	// STRING is always a ConstantNode, the value is not modified
 	case lexer.STRING:
 		res = &ConstantNode{

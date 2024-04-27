@@ -21,6 +21,8 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 			Type:       i8,
 			IsVariable: false,
 		}
+	case parser.BIGNUMBER:
+		utils.Ice("not be handled properly")
 	case parser.NUMBER:
 		var intType *types.Int = i64
 

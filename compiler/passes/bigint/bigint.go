@@ -6,6 +6,7 @@ import (
 
 	"github.com/cell-labs/cell-script/compiler/parser"
 	"github.com/cell-labs/cell-script/compiler/passes/intrinsic"
+	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func BigInt(root *parser.FileNode) *parser.FileNode {
@@ -35,22 +36,83 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		// fmt.Println(a.Val)
 		if a.Type == nil {
 
-		} else if a.Type.Type() == "uint128" || a.Type.Type() == "uint256" {
+		} else if a.Type.Type() == "bigint" {
 			a.Type.SetName("bigint")
-			a.Val = []parser.Node{
-				&parser.CallNode{
-					Function: &parser.DefineFuncNode{
-						Name:          "big_int_new",
-						IsNamed:       true,
-						IsCompilerAdd: true,
+			if len(a.Val) > 0 {
+				c, ok := a.Val[0].(*parser.ConstantNode)
+				if !ok {
+					utils.Ice("type error")
+				}
+				a.Val = []parser.Node{
+					&parser.CallNode{
+						Function: &parser.DefineFuncNode{
+							Name:          "big_int_new",
+							IsNamed:       true,
+							IsCompilerAdd: true,
+							ReturnValues: []*parser.NameNode{
+								&parser.NameNode{
+									Name: "bigint",
+									Type: bigIntNode,
+								},
+							},
+						},
+						Arguments: []parser.Node{
+							&parser.ConstantNode{
+								Type:     parser.STRING,
+								Value:    c.Value,
+								ValueStr: c.ValueStr,
+							},
+						},
 					},
-					Arguments: a.Val,
-				},
+				}
+			} else {
+				a.Val = []parser.Node{
+					&parser.CallNode{
+						Function: &parser.DefineFuncNode{
+							Name:          "big_int_new",
+							IsNamed:       true,
+							IsCompilerAdd: true,
+							ReturnValues: []*parser.NameNode{
+								&parser.NameNode{
+									Name: "bigint",
+									Type: bigIntNode,
+								},
+							},
+						},
+						Arguments: []parser.Node{},
+					},
+				}
 			}
-			fmt.Println(a)
 			return a, nil
 		}
 
+	}
+
+	// parser.ConstantNode
+	if a, ok := node.(*parser.ConstantNode); ok {
+		if a.Type == parser.BIGNUMBER {
+			// fmt.Println(a)
+			return &parser.CallNode{
+				Function: &parser.DefineFuncNode{
+					Name:          "big_int_from_string",
+					IsNamed:       true,
+					IsCompilerAdd: true,
+					ReturnValues: []*parser.NameNode{
+						&parser.NameNode{
+							Name: "bigint",
+							Type: bigIntNode,
+						},
+					},
+				},
+				Arguments: []parser.Node{
+					&parser.ConstantNode{
+						Type:     parser.STRING,
+						Value:    a.Value,
+						ValueStr: a.ValueStr,
+					},
+				},
+			}, nil
+		}
 	}
 
 	// transform a = 123456
@@ -67,7 +129,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		// TODO: check the target type is bigint
 		if len(a.Val) == 0 {
 			return
-		} else if _, ok := a.Val[0].(*parser.ConstantNode); ok {
+		} else if c, ok := a.Val[0].(*parser.ConstantNode); ok {
 			a.Val = []parser.Node{
 				&parser.CallNode{
 					Function: &parser.DefineFuncNode{
@@ -81,7 +143,13 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 							},
 						},
 					},
-					Arguments: a.Val,
+					Arguments: []parser.Node{
+						&parser.ConstantNode{
+							Type:     parser.STRING,
+							Value:    c.Value,
+							ValueStr: c.ValueStr,
+						},
+					},
 				},
 			}
 		} else {
@@ -111,7 +179,9 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 					Name:          funcName,
 					IsNamed:       true,
 					IsCompilerAdd: true,
-					ReturnValues:  []*parser.NameNode{&parser.NameNode{Type: parser.SingleTypeNode{TypeName: "bool"}}},
+					ReturnValues: []*parser.NameNode{
+						{Type: parser.SingleTypeNode{TypeName: "bool"}},
+					},
 				},
 				Arguments: []parser.Node{l, r},
 			}
