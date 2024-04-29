@@ -18,6 +18,7 @@ clean:
 	rm -f third-party/ckb-c-stdlib/*.a
 grammar: antlr
 
+all: build install
 antlr:
 	go generate ./...
 dev:
@@ -31,7 +32,6 @@ build:
 	make ckb-libc
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
-	cp -r pkg/* output/pkg
 	@echo " >>> sussecfully build cell"
 build/debug:
 	go build -gcflags=all="-N -l" -o ${CELL} ./cmd/cell
@@ -70,7 +70,7 @@ xudt-c: molecule-xudt
 		-o xudt-c && \
 	cp xudt-c ..
 	@echo " >>> sussecfully build xudt-c"
-ckb-libc: ckb-libc-debug ckb-libc-release
+ckb-libc: ckb-libc-debug ckb-libc-release install
 ckb-libc-debug:
 	@echo " >>> build libdummylibc-debug.a"
 	cd third-party/ckb-c-stdlib && \
@@ -79,14 +79,11 @@ ckb-libc-debug:
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
 		-I . \
+		-I ../bigint \
 		-c ../wrapper.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
-		-DCKB_PRINTF_DECLARATION_ONLY=1 \
-		-o wrapper.o && \
+		-DCKB_PRINTF_DECLARATION_ONLY=1 && \
 	riscv64-unknown-elf-ar rcs libdummylibc-debug.a wrapper.o
-	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
-	@echo " >>> sussecfully build libdummylibc-debug.a"
 ckb-libc-release:
 	@echo " >>> build libdummylibc.a"
 	cd third-party/ckb-c-stdlib && \
@@ -95,12 +92,18 @@ ckb-libc-release:
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
 		-I libc \
 		-I . \
+		-I ../bigint \
 		-c ../wrapper.c && \
 	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
-	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
-	@echo " >>> sussecfully build libdummylibc.a"
 install:
+	mkdir -p output/pkg
+	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
+	@echo " >>> sussecfully install libdummylibc-debug.a"
+	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
+	@echo " >>> sussecfully install libdummylibc.a"
+	cp -r pkg/* output/pkg
+	@echo " >>> sussecfully install stdlib"
+
 	@echo " >>> manually run following command"
 	@echo "source ./install.sh"
 test:
