@@ -1,4 +1,4 @@
-package bigint
+package global
 
 type bigint table {
 	str uintptr
@@ -6,4 +6,3 @@ type bigint table {
 	capacity uint32
 	isNeg int8
 }
-

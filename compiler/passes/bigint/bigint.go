@@ -1,11 +1,9 @@
 package bigint
 
 import (
-	"fmt"
 	"math/big"
 
 	"github.com/cell-labs/cell-script/compiler/parser"
-	"github.com/cell-labs/cell-script/compiler/passes/intrinsic"
 	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
@@ -19,11 +17,6 @@ type bigIntVisitor struct{}
 func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor) {
 	v = b
 	n = node
-	var bigIntNode = intrisinc.GetTypeNodeByName("bigint")
-
-	if _, ok := node.(*parser.StructTypeNode); ok {
-		fmt.Printf("%#v\n", node)
-	}
 
 	// transform var a uint128 = 123456
 	// to		 var a bigint = bigIntFromString("123456")
@@ -45,17 +38,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 				}
 				a.Val = []parser.Node{
 					&parser.CallNode{
-						Function: &parser.DefineFuncNode{
-							Name:          "big_int_new",
-							IsNamed:       true,
-							IsCompilerAdd: true,
-							ReturnValues: []*parser.NameNode{
-								&parser.NameNode{
-									Name: "bigint",
-									Type: bigIntNode,
-								},
-							},
-						},
+						Function: &parser.NameNode{Package: "global", Name:"bigIntFromString"},
 						Arguments: []parser.Node{
 							&parser.ConstantNode{
 								Type:     parser.STRING,
@@ -68,17 +51,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 			} else {
 				a.Val = []parser.Node{
 					&parser.CallNode{
-						Function: &parser.DefineFuncNode{
-							Name:          "big_int_new",
-							IsNamed:       true,
-							IsCompilerAdd: true,
-							ReturnValues: []*parser.NameNode{
-								&parser.NameNode{
-									Name: "bigint",
-									Type: bigIntNode,
-								},
-							},
-						},
+						Function: &parser.NameNode{Package: "global", Name:"bigIntNew"},
 						Arguments: []parser.Node{},
 					},
 				}
@@ -93,17 +66,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		if a.Type == parser.BIGNUMBER {
 			// fmt.Println(a)
 			return &parser.CallNode{
-				Function: &parser.DefineFuncNode{
-					Name:          "big_int_from_string",
-					IsNamed:       true,
-					IsCompilerAdd: true,
-					ReturnValues: []*parser.NameNode{
-						&parser.NameNode{
-							Name: "bigint",
-							Type: bigIntNode,
-						},
-					},
-				},
+				Function: &parser.NameNode{Package: "global", Name:"bigIntFromString"},
 				Arguments: []parser.Node{
 					&parser.ConstantNode{
 						Type:     parser.STRING,
@@ -132,17 +95,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		} else if c, ok := a.Val[0].(*parser.ConstantNode); ok {
 			a.Val = []parser.Node{
 				&parser.CallNode{
-					Function: &parser.DefineFuncNode{
-						Name:          "big_int_from_string",
-						IsNamed:       true,
-						IsCompilerAdd: true,
-						ReturnValues: []*parser.NameNode{
-							{
-								Name: "bigint",
-								Type: bigIntNode,
-							},
-						},
-					},
+					Function:  &parser.NameNode{Package: "global", Name:"bigIntFromString"},
 					Arguments: []parser.Node{
 						&parser.ConstantNode{
 							Type:     parser.STRING,
@@ -156,11 +109,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 
 			a.Val = []parser.Node{
 				&parser.CallNode{
-					Function: &parser.DefineFuncNode{
-						Name:          "big_int_assign",
-						IsNamed:       true,
-						IsCompilerAdd: true,
-					},
+					Function:  &parser.NameNode{Package: "global", Name:"bigIntAssign"},
 					Arguments: a.Val,
 				},
 			}
@@ -175,14 +124,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 			l := c.Cond.Left
 			r := c.Cond.Right
 			c.Cond.Left = &parser.CallNode{
-				Function: &parser.DefineFuncNode{
-					Name:          funcName,
-					IsNamed:       true,
-					IsCompilerAdd: true,
-					ReturnValues: []*parser.NameNode{
-						{Type: parser.SingleTypeNode{TypeName: "bool"}},
-					},
-				},
+				Function:  &parser.NameNode{Package: "global", Name: funcName},
 				Arguments: []parser.Node{l, r},
 			}
 			c.Cond.Right = &parser.ConstantNode{
@@ -191,15 +133,15 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 			}
 		}
 		if c.Cond.Operator == "==" {
-			transformTo("big_int_equal")
+			transformTo("bigIntEqual")
 		} else if c.Cond.Operator == ">" {
-			transformTo("big_int_gt")
+			transformTo("bigIntGT")
 		} else if c.Cond.Operator == ">=" {
-			transformTo("big_int_gte")
+			transformTo("bigIntGTE")
 		} else if c.Cond.Operator == "<" {
-			transformTo("big_int_lt")
+			transformTo("bigIntLT")
 		} else if c.Cond.Operator == "<=" {
-			transformTo("big_int_lte")
+			transformTo("bigIntLTE")
 		}
 	}
 	return

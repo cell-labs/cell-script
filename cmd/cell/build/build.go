@@ -138,6 +138,9 @@ func compilePackage(c *compiler.Compiler, path, name string, options *Options) e
 		parsedFiles = append(parsedFiles, parseFile(path, options))
 	}
 
+	// add intrinsic in prelude file
+	parsedFiles = append(parsedFiles, parseFile(stdroot+"/"+"global/bigint.cell", options))
+
 	// Scan for ImportNodes
 	// Use importNodes to import more packages
 	for _, file := range parsedFiles {

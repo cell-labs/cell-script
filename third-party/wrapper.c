@@ -219,3 +219,6 @@ void syscall_exit(int8_t code) {
   ckb_exit(code);
   return;
 }
+
+#include "bigint_wrapper.c"
+#include "bigint/BigInt.c"
