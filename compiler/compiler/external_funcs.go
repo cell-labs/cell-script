@@ -111,71 +111,71 @@ func (c *Compiler) createBigInt() {
 		return s
 	}
 	stringType := internal.String()
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntNew", c.module.NewFunc("big_init_new",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntNew", c.module.NewFunc("big_int_new",
 		newBigIntType(),
 	), false)
-	c.bigIntFuncs.Clone = globalPkg.setExternal("bigIntClone", c.module.NewFunc("big_init_clone",
+	c.bigIntFuncs.Clone = globalPkg.setExternal("bigIntClone", c.module.NewFunc("big_int_clone",
 		newBigIntType(),
 		ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntFree", c.module.NewFunc("big_init_free",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntFree", c.module.NewFunc("big_int_free",
 		llvmTypes.Void,
 		ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntFromString", c.module.NewFunc("big_init_from_string",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntFromString", c.module.NewFunc("big_int_from_string",
 		newBigIntType(),
 		ir.NewParam("", stringType),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntPrint", c.module.NewFunc("big_init_print",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntPrint", c.module.NewFunc("big_int_print",
 		llvmTypes.Void,
 		ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLen", c.module.NewFunc("big_init_len",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLen", c.module.NewFunc("big_int_len",
 		u32.Type,
 		ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntToString", c.module.NewFunc("big_init_to_string",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntToString", c.module.NewFunc("big_int_to_string",
 		stringType,
 		ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntAssign", c.module.NewFunc("big_init_assign",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntAssign", c.module.NewFunc("big_int_assign",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntGT", c.module.NewFunc("big_init_gt",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntGT", c.module.NewFunc("big_int_gt",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntGTE", c.module.NewFunc("big_init_gte",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntGTE", c.module.NewFunc("big_int_gte",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLT", c.module.NewFunc("big_init_lt",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLT", c.module.NewFunc("big_int_lt",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLTE", c.module.NewFunc("big_init_lte",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntLTE", c.module.NewFunc("big_int_lte",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntEqual", c.module.NewFunc("big_init_equal",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntEqual", c.module.NewFunc("big_int_equal",
 		boolean.LLVM(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
 
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntAdd", c.module.NewFunc("big_init_add",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntAdd", c.module.NewFunc("big_int_add",
 		newBigIntType(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntSub", c.module.NewFunc("big_init_sub",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntSub", c.module.NewFunc("big_int_sub",
 		newBigIntType(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntMul", c.module.NewFunc("big_init_mul",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntMul", c.module.NewFunc("big_int_mul",
 		newBigIntType(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)
-	c.bigIntFuncs.New = globalPkg.setExternal("bigIntDiv", c.module.NewFunc("big_init_div",
+	c.bigIntFuncs.New = globalPkg.setExternal("bigIntDiv", c.module.NewFunc("big_int_div",
 		newBigIntType(),
 		ir.NewParam("", newBigIntType()), ir.NewParam("", newBigIntType()),
 	), false)

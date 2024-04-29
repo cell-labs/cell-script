@@ -213,7 +213,7 @@ func (c *Compiler) addGlobal() {
 	global.DefinePkgType("uint256", types.BigInt)
 	global.DefinePkgType("uintptr", types.Uintptr)
 	global.DefinePkgType("string", types.String)
-
+	global.DefinePkgType("bigint", types.BigInt)
 	c.packages["global"] = global
 
 	c.module.Funcs = append(c.module.Funcs, strLen)
