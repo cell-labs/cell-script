@@ -1,10 +1,10 @@
 package bigint
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/cell-labs/cell-script/compiler/parser"
-	"github.com/cell-labs/cell-script/compiler/utils"
 )
 
 func BigInt(root *parser.FileNode) *parser.FileNode {
@@ -19,62 +19,28 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 	n = node
 
 	// transform var a uint128 = 123456
-	// to		 var a bigint = bigIntFromString("123456")
+	// to		 var a bigint = "123456"
 	// transform var b uint128
-	// to		 var b bigint = bigIntNew()
+	// to		 var b bigint
 	// transform var c := a + b
-	// to		 var c bigint = bigIntAdd()
-	if a, ok := node.(*parser.AllocNode); ok {
-		// fmt.Println(a)
-		// fmt.Println(a.Val)
+	// to		 var c bigint = a + b
+	if a, ok := n.(*parser.AllocNode); ok {
+		fmt.Println(a)
 		if a.Type == nil {
 
-		} else if a.Type.Type() == "bigint" {
-			a.Type.SetName("bigint")
-			if len(a.Val) > 0 {
-				c, ok := a.Val[0].(*parser.ConstantNode)
-				if !ok {
-					utils.Ice("type error")
-				}
-				a.Val = []parser.Node{
-					&parser.CallNode{
-						Function: &parser.NameNode{Package: "global", Name:"bigIntFromString"},
-						Arguments: []parser.Node{
-							&parser.ConstantNode{
-								Type:     parser.STRING,
-								Value:    c.Value,
-								ValueStr: c.ValueStr,
-							},
-						},
-					},
-				}
-			} else {
-				a.Val = []parser.Node{
-					&parser.CallNode{
-						Function: &parser.NameNode{Package: "global", Name:"bigIntNew"},
-						Arguments: []parser.Node{},
-					},
+		} else if typeName := a.Type.Type(); typeName == "uint128" || typeName == "uint256" {
+			if s, ok := a.Type.(*parser.SingleTypeNode); ok {
+				s.TypeName = "bigint"
+			}
+		}
+		if len(a.Val) > 0 {
+			for _, v := range a.Val {
+				if c, ok := v.(*parser.ConstantNode); ok {
+					c.Type = parser.STRING
+					c.ValueStr = c.Value.Text(10)
+					c.Value = nil
 				}
 			}
-			return a, nil
-		}
-
-	}
-
-	// parser.ConstantNode
-	if a, ok := node.(*parser.ConstantNode); ok {
-		if a.Type == parser.BIGNUMBER {
-			// fmt.Println(a)
-			return &parser.CallNode{
-				Function: &parser.NameNode{Package: "global", Name:"bigIntFromString"},
-				Arguments: []parser.Node{
-					&parser.ConstantNode{
-						Type:     parser.STRING,
-						Value:    a.Value,
-						ValueStr: a.ValueStr,
-					},
-				},
-			}, nil
 		}
 	}
 
@@ -95,7 +61,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		} else if c, ok := a.Val[0].(*parser.ConstantNode); ok {
 			a.Val = []parser.Node{
 				&parser.CallNode{
-					Function:  &parser.NameNode{Package: "global", Name:"bigIntFromString"},
+					Function: &parser.NameNode{Package: "global", Name: "bigIntFromString"},
 					Arguments: []parser.Node{
 						&parser.ConstantNode{
 							Type:     parser.STRING,
@@ -109,7 +75,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 
 			a.Val = []parser.Node{
 				&parser.CallNode{
-					Function:  &parser.NameNode{Package: "global", Name:"bigIntAssign"},
+					Function:  &parser.NameNode{Package: "global", Name: "bigIntAssign"},
 					Arguments: a.Val,
 				},
 			}
@@ -118,7 +84,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 	}
 
 	// transform a == 12345
-	// to		 big_int_equal(a, 12345) == true
+	// to		 bigIntEqual(a, 12345) == true
 	if c, ok := node.(*parser.ConditionNode); ok {
 		transformTo := func(funcName string) {
 			l := c.Cond.Left
@@ -144,5 +110,33 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 			transformTo("bigIntLTE")
 		}
 	}
+
+	// transform sum := a + b
+	// to		 sum = bigIntAdd(a, b)
+	if c, ok := node.(*parser.OperatorNode); ok {
+		transformTo := func(funcName string) {
+			l := c.Left
+			r := c.Right
+			n = &parser.CallNode{
+				Function:  &parser.NameNode{Package: "global", Name: funcName},
+				Arguments: []parser.Node{l, r},
+			}
+		}
+		switch c.Operator {
+		case "+":
+			transformTo("bigIntAdd")
+		case "-":
+			transformTo("bigIntSub")
+		case "*":
+			transformTo("bigIntMul")
+		case "/":
+			transformTo("bigIntDiv")
+		case "%":
+			transformTo("bigIntMod")
+		}
+	}
+
+	// transform print(a)
+	// to		 sum = bigIntPrint(a, b)
 	return
 }
