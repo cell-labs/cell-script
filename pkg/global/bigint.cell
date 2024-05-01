@@ -2,7 +2,7 @@ package global
 
 type bigint table {
 	str uintptr
-	digit uint32
+	digits uint32
 	capacity uint32
 	isNeg int8
 }

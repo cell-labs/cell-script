@@ -634,8 +634,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	}
 
 	p.printInput()
-	log.Panicf("unable to handle default: %d - %+v", p.i, current)
-	utils.Ice("")
+	utils.Ice(fmt.Sprintf("syntax error at line: %d", current.Line))
 	return
 }
 
