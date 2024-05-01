@@ -56,6 +56,8 @@ The internal discussion can be found [here](./DISCUSSION.md).
 brew install go@1.22
 brew install antlr@4
 brew install openjdk@21
+brew install pipx
+pipx install antlr4-tools
 brew install llvm@16
 brew tap riscv-software-src/riscv
 brew install riscv-tools

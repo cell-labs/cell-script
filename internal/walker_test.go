@@ -9,7 +9,7 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 )
 
-func parseAndCompare(src string) string {
+func walkAndCompare(t *testing.T, src string) string {
 	lexer := lex.NewCellScriptLexer(antlr.NewInputStream(src))
 	// generate AST using parser
 	parser := parse.NewCellScriptParser(antlr.NewCommonTokenStream(lexer, 0))
@@ -21,5 +21,5 @@ func parseAndCompare(src string) string {
 }
 
 func TestWalker(t *testing.T) {
-	parseAndCompare(`import "tx" function foo() bool { return a+b }`)
+	walkAndCompare(`import "tx" function foo() bool { return a+b }`)
 }
