@@ -9,7 +9,7 @@ MOLECULEC := moleculec
 MOLECULEC2 := ${MKFILE_DIR}/third-party/molecule2-c2/target/release/moleculec-c2
 
 CELL := ${RELEASE_DIR}/cell
-.phony: clean antlr grammar dev build test test_cell_examples
+.PHONY: clean antlr grammar dev build test test_cell_examples
 clean:
 	# rm -rf internal/parser
 	# rm -rf internal/lexer
@@ -18,6 +18,8 @@ clean:
 	rm -f third-party/ckb-c-stdlib/*.a
 grammar: antlr
 
+all: build install
+debug: build/debug install
 antlr:
 	go generate ./...
 dev:
@@ -31,10 +33,9 @@ build:
 	make ckb-libc
 	go build -v -trimpath \
 		-o ${CELL} ./cmd/cell
-	cp -r pkg/* output/pkg
 	@echo " >>> sussecfully build cell"
 build/debug:
-	go build -gcflags=all="-N -l" ./cmd/cell
+	go build -gcflags=all="-N -l" -o ${CELL} ./cmd/cell
 sudt-c:
 	@echo " >>> build sudt-c"
 	cd third-party/ckb-c-stdlib && \
@@ -70,7 +71,7 @@ xudt-c: molecule-xudt
 		-o xudt-c && \
 	cp xudt-c ..
 	@echo " >>> sussecfully build xudt-c"
-ckb-libc: ckb-libc-debug ckb-libc-release
+ckb-libc: ckb-libc-debug ckb-libc-release install
 ckb-libc-debug:
 	@echo " >>> build libdummylibc-debug.a"
 	cd third-party/ckb-c-stdlib && \
@@ -79,14 +80,11 @@ ckb-libc-debug:
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
 		-I . \
+		-I ../bigint \
 		-c ../wrapper.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
-		-DCKB_PRINTF_DECLARATION_ONLY=1 \
-		-o wrapper.o && \
+		-DCKB_PRINTF_DECLARATION_ONLY=1 && \
 	riscv64-unknown-elf-ar rcs libdummylibc-debug.a wrapper.o
-	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
-	@echo " >>> sussecfully build libdummylibc-debug.a"
 ckb-libc-release:
 	@echo " >>> build libdummylibc.a"
 	cd third-party/ckb-c-stdlib && \
@@ -95,20 +93,29 @@ ckb-libc-release:
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
 		-I libc \
 		-I . \
+		-I ../bigint \
 		-c ../wrapper.c && \
 	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
-	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
-	@echo " >>> sussecfully build libdummylibc.a"
 install:
+	mkdir -p output/pkg
+	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
+	@echo " >>> sussecfully install libdummylibc-debug.a"
+	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
+	@echo " >>> sussecfully install libdummylibc.a"
+	cp -r pkg/* output/pkg
+	@echo " >>> sussecfully install stdlib"
+
 	@echo " >>> manually run following command"
 	@echo "source ./install.sh"
-test:
+test: unittest test/example
+unittest:
 	@echo "unit test"
 	go mod tidy
 	git diff --exit-code go.mod go.sum
 	go mod verify
-	go test -v -gcflag "all=-l" ${MKFILE_DIR}
+	go test -v ${MKFILE_DIR}/compiler/lexer/*.go
+	go test -v ${MKFILE_DIR}/compiler/parser/*.go
+	go test -v ${MKFILE_DIR}/compiler/passes/bigint/*.go
 test/example:
 	@echo " >>> test cell examples"
 	make build
