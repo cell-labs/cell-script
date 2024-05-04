@@ -8,8 +8,50 @@ import (
 )
 
 func BigInt(root *parser.FileNode) *parser.FileNode {
+	parser.Walk(&bigIntConstantVisitor{}, root)
 	parser.Walk(&bigIntVisitor{}, root)
 	return root
+}
+
+func getBigIntStruct(c *parser.ConstantNode) *parser.InitializeStructNode {
+	return &parser.InitializeStructNode{
+		Type: &parser.SingleTypeNode{
+			TypeName: "bigint",
+		},
+		Items: map[string]parser.Node{
+			"str": &parser.ConstantNode{
+				Type: parser.STRING,
+				ValueStr: c.ValueStr,
+			},
+			"digits": &parser.ConstantNode{
+				Type: parser.NUMBER,
+				Value: big.NewInt(int64(len(c.ValueStr))),
+			},
+			"capacity": &parser.ConstantNode{
+				Type: parser.NUMBER,
+				Value: big.NewInt(0),
+			},
+			"isNeg": &parser.ConstantNode{
+				Type: parser.NUMBER,
+				Value: big.NewInt(0),
+			},
+		},
+	}
+}
+
+type bigIntConstantVisitor struct{}
+
+func (b *bigIntConstantVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor) {
+	v = b
+	n = node
+
+	if c, ok := n.(*parser.ConstantNode); ok {
+		if c.Type == parser.BIGNUMBER {
+			return getBigIntStruct(c), v
+		}
+	}
+
+	return
 }
 
 type bigIntVisitor struct{}
@@ -18,11 +60,17 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 	v = b
 	n = node
 
+	// if c, ok := n.(*parser.ConstantNode); ok {
+	// 	if c.Type == parser.BIGNUMBER {
+	// 		return getBigIntStruct(c), v
+	// 	}
+	// }
+
 	// transform var a uint128 = 123456
 	// to		 var a bigint = "123456"
 	// transform var b uint128
 	// to		 var b bigint
-	// transform var c := a + b
+	// transform c := a + b
 	// to		 var c bigint = a + b
 	if a, ok := n.(*parser.AllocNode); ok {
 		fmt.Println(a)
@@ -61,7 +109,7 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 		} else if c, ok := a.Val[0].(*parser.ConstantNode); ok {
 			a.Val = []parser.Node{
 				&parser.CallNode{
-					Function: &parser.NameNode{Package: "global", Name: "bigIntFromString"},
+					Function: &parser.NameNode{Name: "bigIntFromString"},
 					Arguments: []parser.Node{
 						&parser.ConstantNode{
 							Type:     parser.STRING,
@@ -85,28 +133,28 @@ func (b *bigIntVisitor) Visit(node parser.Node) (n parser.Node, v parser.Visitor
 
 	// transform a == 12345
 	// to		 bigIntEqual(a, 12345) == true
-	if c, ok := node.(*parser.ConditionNode); ok {
+	if op, ok := node.(*parser.OperatorNode); ok {
 		transformTo := func(funcName string) {
-			l := c.Cond.Left
-			r := c.Cond.Right
-			c.Cond.Left = &parser.CallNode{
-				Function:  &parser.NameNode{Package: "global", Name: funcName},
+			l := op.Left
+			r := op.Right
+			op.Left = &parser.CallNode{
+				Function:  &parser.NameNode{Name: funcName},
 				Arguments: []parser.Node{l, r},
 			}
-			c.Cond.Right = &parser.ConstantNode{
+			op.Right = &parser.ConstantNode{
 				Type:  parser.BOOL,
 				Value: big.NewInt(1), // set true
 			}
 		}
-		if c.Cond.Operator == "==" {
-			transformTo("bigIntEqual")
-		} else if c.Cond.Operator == ">" {
+		if op.Operator == "==" {
+			// transformTo("bigIntEqual")
+		} else if op.Operator == ">" {
 			transformTo("bigIntGT")
-		} else if c.Cond.Operator == ">=" {
+		} else if op.Operator == ">=" {
 			transformTo("bigIntGTE")
-		} else if c.Cond.Operator == "<" {
+		} else if op.Operator == "<" {
 			transformTo("bigIntLT")
-		} else if c.Cond.Operator == "<=" {
+		} else if op.Operator == "<=" {
 			transformTo("bigIntLTE")
 		}
 	}

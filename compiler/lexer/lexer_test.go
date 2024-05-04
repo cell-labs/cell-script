@@ -169,3 +169,49 @@ func TestLexerSimpleCallWithStringNum(t *testing.T) {
 
 	assert.Equal(t, expected, r)
 }
+
+func TestLexerConstantIntegerWithSuffix(t *testing.T) {
+	r := Lex(`printf("%d\n", 123u128)`)
+	expected := []Item{
+		{Type: IDENTIFIER, Val: "printf", Line: 1},
+		{Type: OPERATOR, Val: "(", Line: 1},
+		{Type: STRING, Val: "%d\n", Line: 1},
+		{Type: OPERATOR, Val: ",", Line: 1},
+		{Type: BIGNUMBER, Val: "123", Line: 1, Suffix: "u128"},
+		{Type: OPERATOR, Val: ")", Line: 1},
+		{Type: EOL},
+		{Type: EOF},
+	}
+	assert.Equal(t, expected, r)
+
+	r = Lex(`a := 100u128`)
+	expected = []Item{
+		{Type: IDENTIFIER, Val: "a", Line: 1},
+		{Type: OPERATOR, Val: ":=", Line: 1},
+		{Type: BIGNUMBER, Val: "100", Line: 1, Suffix: "u128"},
+		{Type: EOL},
+		{Type: EOF},
+	}
+
+	assert.Equal(t, expected, r)
+
+	r = Lex(`a = 100u256`)
+	expected = []Item{
+		{Type: IDENTIFIER, Val: "a", Line: 1},
+		{Type: OPERATOR, Val: "=", Line: 1},
+		{Type: BIGNUMBER, Val: "100", Line: 1, Suffix: "u256"},
+		{Type: EOL},
+		{Type: EOF},
+	}
+	assert.Equal(t, expected, r)
+
+	r = Lex(`a = 100u64`)
+	expected = []Item{
+		{Type: IDENTIFIER, Val: "a", Line: 1},
+		{Type: OPERATOR, Val: "=", Line: 1},
+		{Type: NUMBER, Val: "100", Line: 1, Suffix: "u64"},
+		{Type: EOL},
+		{Type: EOF},
+	}
+	assert.Equal(t, expected, r)
+}

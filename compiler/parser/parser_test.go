@@ -257,3 +257,60 @@ func TestInfixPriority4Load(t *testing.T) {
 
 	assert.Equal(t, expected, Parse(input, false))
 }
+
+func TestAllocConstantWithSuffix(t *testing.T) {
+	input := []lexer.Item{
+		{Type: lexer.IDENTIFIER, Val: "a"},
+		{Type: lexer.OPERATOR, Val: ":="},
+		{Type: lexer.BIGNUMBER, Val: "3"},
+		{Type: lexer.EOF},
+	}
+
+	expected := &FileNode{
+		Instructions: []Node{
+			&AllocNode{
+				Escapes: false,
+				Name: []string{"a"},
+				Val: []Node{
+					&ConstantNode{
+						Type: BIGNUMBER,
+						Value: big.NewInt(3),
+						ValueStr: "3",
+					},
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, Parse(input, false))
+}
+
+func TestAssignConstantWithSuffix(t *testing.T) {
+	input := []lexer.Item{
+		{Type: lexer.IDENTIFIER, Val: "a"},
+		{Type: lexer.OPERATOR, Val: "="},
+		{Type: lexer.BIGNUMBER, Val: "3", Suffix: "u128"},
+		{Type: lexer.EOF},
+	}
+
+	expected := &FileNode{
+		Instructions: []Node{
+			&AssignNode{
+				Target: []Node{
+					&NameNode{
+						Name: "a",
+					},
+				},
+				Val: []Node{
+					&ConstantNode{
+						Type: BIGNUMBER,
+						Value: big.NewInt(3),
+						ValueStr: "3",
+					},
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, Parse(input, false))
+}

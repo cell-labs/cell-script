@@ -249,16 +249,16 @@ func Lex(inputFullSource string) []Item {
 				}
 				res = append(res, Item{Type: NUMBER, Val: val, Line: line})
 				if i < len(input) && input[i] == 'u' {
-					suffix := ""
+					suffix := string(input[i])
 					i++
 					for i < len(input) && input[i] >= '0' && input[i] <= '9' {
 						suffix += string(input[i])
 						i++
 					}
-					if suffix == "128" || suffix == "256" {
+					if suffix == "u128" || suffix == "u256" {
 						res[len(res) - 1].Type = BIGNUMBER
-						res[len(res) - 1].Suffix = suffix
 					}
+					res[len(res) - 1].Suffix = suffix
 				}
 				continue
 			}
