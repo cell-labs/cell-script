@@ -9,7 +9,7 @@ MOLECULEC := moleculec
 MOLECULEC2 := ${MKFILE_DIR}/third-party/molecule2-c2/target/release/moleculec-c2
 
 CELL := ${RELEASE_DIR}/cell
-.phony: clean antlr grammar dev build test test_cell_examples
+.PHONY: clean antlr grammar dev build test test_cell_examples
 clean:
 	# rm -rf internal/parser
 	# rm -rf internal/lexer
@@ -19,6 +19,7 @@ clean:
 grammar: antlr
 
 all: build install
+debug: build/debug install
 antlr:
 	go generate ./...
 dev:
@@ -106,12 +107,15 @@ install:
 
 	@echo " >>> manually run following command"
 	@echo "source ./install.sh"
-test:
+test: unittest test/example
+unittest:
 	@echo "unit test"
 	go mod tidy
 	git diff --exit-code go.mod go.sum
 	go mod verify
-	go test -v -gcflag "all=-l" ${MKFILE_DIR}
+	go test -v ${MKFILE_DIR}/compiler/lexer/*.go
+	go test -v ${MKFILE_DIR}/compiler/parser/*.go
+	go test -v ${MKFILE_DIR}/compiler/passes/bigint/*.go
 test/example:
 	@echo " >>> test cell examples"
 	make build

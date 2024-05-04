@@ -222,3 +222,30 @@ func (ftn FuncTypeNode) GetName() string {
 func (ftn FuncTypeNode) Variadic() bool {
 	return ftn.IsVariadic
 }
+
+type BigIntTypeNode struct {
+	baseNode
+
+	SourceName string
+	IsVariadic bool
+}
+
+func (bitn BigIntTypeNode) Type() string {
+	return fmt.Sprintf("bigint(%+v)", bitn.SourceName)
+}
+
+func (bitn BigIntTypeNode) String() string {
+	return bitn.Type()
+}
+
+func (bitn *BigIntTypeNode) SetName(name string) {
+	bitn.SourceName = name
+}
+
+func (bitn BigIntTypeNode) GetName() string {
+	return bitn.SourceName
+}
+
+func (bitn BigIntTypeNode) Variadic() bool {
+	return bitn.IsVariadic
+}

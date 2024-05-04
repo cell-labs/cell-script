@@ -44,6 +44,7 @@ func Parse(input []lexer.Item, debug bool) *FileNode {
 			"uint64":  {},
 			"uint128": {},
 			"uint256": {},
+			"bigint":  {},
 			"uintptr": {},
 			"string":  {},
 		},
@@ -284,7 +285,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					return cond
 				}
 
-				// Add implicit == true
+				// Add implicit == true, desugar
 				return &OperatorNode{
 					Left: condNodes[0],
 					Right: &ConstantNode{
