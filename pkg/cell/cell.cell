@@ -1,3 +1,32 @@
 package cell
 
 type Cell uint64
+
+type byte uint8
+type SudtData uint128
+
+type XudtData table {
+	amount uint128
+	lock   []byte
+	data   [][]byte
+}
+
+type Script table {
+	codeHash [32]byte
+	hashType byte
+	args	 []byte
+}
+
+// type XudtArgs table {
+// 	flags uint32
+// }
+
+type XudtArgs table {
+	flags uint32
+	scriptVec []Script
+}
+
+// type XudtArgs table {
+// 	flags		  uint32 = 2
+// 	scriptVecHash []byte // blake160 hash 20bytes
+// }

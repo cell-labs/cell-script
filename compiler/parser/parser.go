@@ -916,8 +916,13 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 		nameNode, isNamedNode := input.(*NameNode)
 		if isNamedNode {
 			_, isType := p.types[nameNode.Name]
+			// TODO: handle imported types properly
+			if nameNode.Package == "cell" {
+				isType = true
+			}
 			if isType {
 				inputType := &SingleTypeNode{
+					PackageName: nameNode.Package,
 					TypeName: nameNode.Name,
 				}
 
