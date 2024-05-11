@@ -77,25 +77,29 @@ ckb-libc-debug:
 	cd third-party/ckb-c-stdlib && \
 	clang --target=riscv64 -v \
 		-march=rv64imc \
+		-nostdlib \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
 		-I libc \
+		-I molecule \
 		-I . \
-		-I ../bigint \
-		-c ../wrapper.c \
+		-I ../sparse-merkle-tree/c \
+		-c ../xudt/xudt.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
 		-DCKB_PRINTF_DECLARATION_ONLY=1 && \
-	riscv64-unknown-elf-ar rcs libdummylibc-debug.a wrapper.o
+	riscv64-unknown-elf-ar rcs libdummylibc-debug.a xudt.o
 ckb-libc-release:
 	@echo " >>> build libdummylibc.a"
 	cd third-party/ckb-c-stdlib && \
 	clang --target=riscv64 \
 		-march=rv64imc \
+		-nostdlib \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
 		-I libc \
+		-I molecule \
 		-I . \
-		-I ../bigint \
-		-c ../wrapper.c && \
-	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
+		-I ../sparse-merkle-tree/c \
+		-c ../xudt/xudt.c && \
+	riscv64-unknown-elf-ar rcs libdummylibc.a xudt.o
 install:
 	mkdir -p output/pkg
 	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
