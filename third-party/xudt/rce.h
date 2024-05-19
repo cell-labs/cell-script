@@ -92,6 +92,13 @@ typedef struct RceState {
   bool rcrules_in_input_cell;
 } RceState;
 
+typedef struct FuncParam {
+    int is_owner_mode;
+    size_t extension_index;
+    const uint8_t *args;
+    size_t args_len;
+} FuncParam;
+
 void rce_init_state(RceState* state) {
   state->rcrules_count = 0;
   state->has_wl = false;
@@ -443,8 +450,12 @@ exit:
   return err;
 }
 
-int rce_validate(int is_owner_mode, size_t extension_index, const uint8_t* args,
-                 size_t args_len) {
+int rce_validate(void* ptr) {
+  FuncParam* fp = (FuncParam*)ptr;
+  int is_owner_mode = fp->is_owner_mode;
+  size_t extension_index = fp->extension_index;
+  const uint8_t* args = fp->args;
+  size_t args_len = fp->args_len;
   int err = 0;
   RceState rce_state;
   rce_init_state(&rce_state);
