@@ -17,16 +17,7 @@ type Script table {
 	args	 []byte
 }
 
-// type XudtArgs table {
-// 	flags uint32
-// }
-
 type XudtArgs table {
 	flags uint32
 	scriptVec []Script
 }
-
-// type XudtArgs table {
-// 	flags		  uint32 = 2
-// 	scriptVecHash []byte // blake160 hash 20bytes
-// }

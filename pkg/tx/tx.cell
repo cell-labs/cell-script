@@ -2,6 +2,8 @@ package tx
 
 import "cell"
 
+const XUDTFlagsPlain = 0
+
 function script_verify() bool {
 	return true
 }
@@ -29,3 +31,48 @@ function get_utxo_outputs() []cell.Cell {
 function outputs() []cell.Cell {
 	return get_utxo_outputs()
 }
+
+// xudt related API and ffi functions
+function parse_args() uintptr {
+	return 0
+}
+function xudtArgs(args uintptr) uintptr {
+	return parse_args(args)
+}
+
+function check_enhanced_owner_mode(args uintptr) bool {
+	return false
+}
+function checkEnhancedOwnerMode(args uintptr) bool {
+	return check_enhanced_owner_mode(args)
+}
+
+function simple_udt(owner_mode bool) int64 {
+	return 0
+}
+function sudt(owner_mode bool) int64 {
+	return simple_udt(owner_mode)
+}
+
+function get_flags(args uintptr) int64 {
+	return 0
+}
+function getFlags(args uintptr) int64 {
+	return get_flags(args)
+}
+
+function get_owner_mode(args uintptr) int64 {
+	return 0
+}
+function getOwnerMode(args uintptr) int64 {
+	return get_owner_mode(args)
+}
+
+function execute_scripts(args uintptr) bool {
+	return false
+}
+function executeScripts(args uintptr) bool {
+	return execute_scripts(args)
+}
+
+

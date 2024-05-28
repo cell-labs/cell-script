@@ -10,6 +10,14 @@ int ckb_exit(signed char);
 #include "blockchain-api2.h"
 
 #include "ckb_consts.h"
+#include "molecule/blockchain.h"
+// We are limiting the script size loaded to be 32KB at most. This should be
+// more than enough. We are also using blake2b with 256-bit hash here, which is
+// the same as CKB.
+const uint32_t BLAKE2B_BLOCK_SIZE = 32;
+const uint32_t SCRIPT_SIZE = 32768;
+const uint32_t MAX_CELLS = 16; //todo
+const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 
 #if defined(CKB_USE_SIM)
 #include <stdio.h>
@@ -448,15 +456,15 @@ bool check_enhanced_owner_mode(Args* args) {
 
 // *var_data will point to "Raw Extension Data", which can be in args or witness
 // *var_data will refer to a memory location of g_script or g_raw_extension_data
-Args parse_args() {
-  Args args;
-  args.flags = XUDTFlagsPlain;
-  uint8_t *g_script = args.g_script;
-  XUDTFlags *flags = &args.flags;
-  uint8_t **var_data = &args.var_data;
-  uint32_t *var_len = &args.var_len;
-  uint8_t *hashes = args.hashes;
-  uint32_t *hashes_count = &args.hashes_count;
+Args* parse_args() {
+  Args *args = (Args*)malloc(sizeof(Args));
+  args->flags = XUDTFlagsPlain;
+  uint8_t *g_script = args->g_script;
+  XUDTFlags *flags = &args->flags;
+  uint8_t **var_data = &args->var_data;
+  uint32_t *var_len = &args->var_len;
+  uint8_t *hashes = args->hashes;
+  uint32_t *hashes_count = &args->hashes_count;
 
   bool owner_mode_for_input_type = false;
   bool owner_mode_for_output_type = false;
@@ -464,12 +472,12 @@ Args parse_args() {
   bool owner_mode_for_input_lock = true;
 
   uint64_t len = SCRIPT_SIZE;
-  args.err = ckb_checked_load_script(g_script, &len, 0);
-  if (args.err != 0) {
+  args->err = ckb_checked_load_script(g_script, &len, 0);
+  if (args->err != 0) {
     return args;
   }
   if (len > SCRIPT_SIZE) {
-    args.err = ERROR_SCRIPT_TOO_LONG;
+    args->err = ERROR_SCRIPT_TOO_LONG;
     return args;
   }
 
@@ -479,14 +487,14 @@ Args parse_args() {
 
   mol_errno mol_err = MolReader_Script_verify(&script_seg, false);
   if (mol_err != MOL_OK) {
-    args.err = ERROR_ENCODING;
+    args->err = ERROR_ENCODING;
     return args;
   }
 
   mol_seg_t args_seg = MolReader_Script_get_args(&script_seg);
   mol_seg_t args_bytes_seg = MolReader_Bytes_raw_bytes(&args_seg);
   if (args_bytes_seg.size < BLAKE2B_BLOCK_SIZE) {
-    args.err = ERROR_ARGUMENTS_LEN;
+    args->err = ERROR_ARGUMENTS_LEN;
     return args;
   }
 
@@ -510,16 +518,16 @@ Args parse_args() {
   while (1) {
     uint8_t buffer[BLAKE2B_BLOCK_SIZE];
     uint64_t len2 = BLAKE2B_BLOCK_SIZE;
-    args.err = ckb_checked_load_cell_by_field(buffer, &len2, 0, i, CKB_SOURCE_INPUT,
+    args->err = ckb_checked_load_cell_by_field(buffer, &len2, 0, i, CKB_SOURCE_INPUT,
                                          CKB_CELL_FIELD_LOCK_HASH);
-    if (args.err == CKB_INDEX_OUT_OF_BOUND) {
+    if (args->err == CKB_INDEX_OUT_OF_BOUND) {
       break;
     }
-    if (args.err != 0) {
+    if (args->err != 0) {
       return args;
     }
     if (*hashes_count >= MAX_LOCK_SCRIPT_HASH_COUNT) {
-      args.err = ERROR_TOO_MANY_LOCK;
+      args->err = ERROR_TOO_MANY_LOCK;
       return args;
     }
 
@@ -529,14 +537,14 @@ Args parse_args() {
     i += 1;
   }
 
-  bool *owner_mode = &args.owner_mode;
+  bool *owner_mode = &args->owner_mode;
   *owner_mode = false;
   int err = 0;
   if (owner_mode_for_input_lock && *owner_mode == 0) {
     err = check_owner_mode(CKB_SOURCE_INPUT, CKB_CELL_FIELD_LOCK_HASH,
                            args_bytes_seg, owner_mode);
     if (err!=0) {
-      args.err = err;
+      args->err = err;
       return args;
     }
   }
@@ -545,7 +553,7 @@ Args parse_args() {
     err = check_owner_mode(CKB_SOURCE_INPUT, CKB_CELL_FIELD_TYPE_HASH,
                            args_bytes_seg, owner_mode);
     if (err!=0) {
-      args.err = err;
+      args->err = err;
       return args;
     }
   }
@@ -553,7 +561,7 @@ Args parse_args() {
     err = check_owner_mode(CKB_SOURCE_OUTPUT, CKB_CELL_FIELD_TYPE_HASH,
                            args_bytes_seg, owner_mode);
     if (err!=0) {
-      args.err = err;
+      args->err = err;
       return args;
     }
   }
@@ -577,28 +585,28 @@ Args parse_args() {
 
       err = verify_script_vec(*var_data, *var_len, &real_size);
       if (err!=0) {
-        args.err = err;
+        args->err = err;
         return args;
       }                     
       // note, it's different than "flag = 2"
       if (real_size != *var_len) {
-        args.err = ERROR_INVALID_ARGS_FORMAT;
+        args->err = ERROR_INVALID_ARGS_FORMAT;
       }
     } else if (temp_flags == XUDTFlagsInWitness) {
       *flags = XUDTFlagsInWitness;
       uint32_t hash_size =
           args_bytes_seg.size - BLAKE2B_BLOCK_SIZE - FLAGS_SIZE;
       if (hash_size != BLAKE160_SIZE) {
-        args.err = ERROR_INVALID_FLAG;
+        args->err = ERROR_INVALID_FLAG;
       }
 
       err = load_raw_extension_data(var_data, var_len);
       if (err!=0) {
-        args.err = err;
+        args->err = err;
         return args;
       }
       if (var_len <= 0){
-        args.err = ERROR_INVALID_MOL_FORMAT;
+        args->err = ERROR_INVALID_MOL_FORMAT;
         return args;
       }
       // verify the hash
@@ -607,19 +615,19 @@ Args parse_args() {
           args_bytes_seg.ptr + BLAKE2B_BLOCK_SIZE + FLAGS_SIZE;
       err = blake2b(hash, BLAKE2B_BLOCK_SIZE, *var_data, *var_len, NULL, 0);
       if (err != 0) {
-        args.err = ERROR_BLAKE2B_ERROR;
+        args->err = ERROR_BLAKE2B_ERROR;
         return args;
       }
       if (memcmp(blake160_hash, hash, BLAKE160_SIZE) != 0) {
-        args.err = ERROR_HASH_MISMATCHED;
+        args->err = ERROR_HASH_MISMATCHED;
         return args;
       }
     } else {
-      args.err = ERROR_INVALID_FLAG;
+      args->err = ERROR_INVALID_FLAG;
       return args;
     }
   }
-  args.err = 0;
+  args->err = 0;
   return args;
 }
 
@@ -811,16 +819,230 @@ bool execute_scripts(Args *arg) {
   return true;
 }
 
+/// sUDT interface
+typedef struct {
+  uint64_t data;
+}cell_meta_data;
+
+typedef struct {
+  uint32_t size;
+  uint32_t cap;
+  uint32_t offset;
+  cell_meta_data* ptr;
+}cell_data_t;
+
+cell_data_t EMPTY_CELL_DATA = {0};
+
+bool script_verify() {
+  mol_seg_t script_seg;
+  mol_seg_t args_seg;
+  mol_seg_t args_bytes_seg;
+  // First, let's load current running script, so we can extract owner lock
+  // script hash from script args.
+  unsigned char script[SCRIPT_SIZE];
+  uint64_t len = SCRIPT_SIZE;
+  int ret = ckb_load_script(script, &len, 0);
+  if (ret != CKB_SUCCESS) {
+    return false;
+  }
+  if (len > SCRIPT_SIZE) {
+    return false;
+  }
+  
+  script_seg.ptr = (uint8_t *)script;
+  script_seg.size = len;
+  if (MolReader_Script_verify(&script_seg, false) != MOL_OK) {
+    return false;
+  }
+  args_seg = MolReader_Script_get_args(&script_seg);
+  args_bytes_seg = MolReader_Bytes_raw_bytes(&args_seg);
+  if (args_bytes_seg.size != BLAKE2B_BLOCK_SIZE) {
+    return false;
+  }
+  return true;
+}
+
+bool is_owner_mode() {
+  unsigned char script[SCRIPT_SIZE];
+  uint64_t len = SCRIPT_SIZE;
+  int ret = ckb_load_script(script, &len, 0);
+  if (ret != CKB_SUCCESS) {
+    return false;
+  }
+  if (len > SCRIPT_SIZE) {
+    return false;
+  }
+
+  mol_seg_t script_seg;
+  script_seg.ptr = (uint8_t *)script;
+  script_seg.size = len;
+  if (MolReader_Script_verify(&script_seg, false) != MOL_OK) {
+    return false;
+  }
+
+  mol_seg_t args_seg = MolReader_Script_get_args(&script_seg);
+  mol_seg_t args_bytes_seg = MolReader_Bytes_raw_bytes(&args_seg);
+  if (args_bytes_seg.size != BLAKE2B_BLOCK_SIZE) {
+    return false;
+  }
+
+  // With owner lock script extracted, we will look through each input in the
+  // current transaction to see if any unlocked cell uses owner lock.
+  int owner_mode = 0;
+  size_t i = 0;
+  while (1) {
+    uint8_t buffer[BLAKE2B_BLOCK_SIZE];
+    uint64_t len = BLAKE2B_BLOCK_SIZE;
+    // There are 2 points worth mentioning here:
+    //
+    // * First, we are using the checked version of CKB syscalls, the checked
+    // versions will return an error if our provided buffer is not enough to
+    // hold all returned data. This can help us ensure that we are processing
+    // enough data here.
+    // * Second, `CKB_CELL_FIELD_LOCK_HASH` is used here to directly load the
+    // lock script hash, so we don't have to manually calculate the hash again
+    // here.
+    ret = ckb_checked_load_cell_by_field(buffer, &len, 0, i, CKB_SOURCE_INPUT,
+                                         CKB_CELL_FIELD_LOCK_HASH);
+    if (ret == CKB_INDEX_OUT_OF_BOUND) {
+      break;
+    }
+    if (ret != CKB_SUCCESS) {
+      return false;
+    }
+    if (len != BLAKE2B_BLOCK_SIZE) {
+      return false;
+    }
+    if (memcmp(buffer, args_bytes_seg.ptr, BLAKE2B_BLOCK_SIZE) == 0) {
+      owner_mode = 1;
+      break;
+    }
+    i += 1;
+  }
+  return (owner_mode == 1);
+}
+
+uint64_t get_input_cell_data_len(int i) {
+  uint64_t len = 0;
+  int ret =
+      ckb_load_cell_data(NULL, &len, 0, i, CKB_SOURCE_GROUP_INPUT);
+  if (ret == CKB_INDEX_OUT_OF_BOUND) {
+    return 0;
+  }
+  if (ret != CKB_SUCCESS) {
+    return 0;
+  }
+  if (len < 16) {
+    return 0;
+  }
+  return len;
+}
+
+uint64_t get_output_cell_data_len(int i) {
+  uint64_t len = 0;
+  int ret =
+      ckb_load_cell_data(NULL, &len, 0, i, CKB_SOURCE_GROUP_OUTPUT);
+  if (ret == CKB_INDEX_OUT_OF_BOUND) {
+    return 0;
+  }
+  if (ret != CKB_SUCCESS) {
+    return 0;
+  }
+  if (len < 16) {
+    return 0;
+  }
+  return len;
+}
+
+cell_data_t get_utxo_inputs() {
+  cell_data_t inputs = {0};
+  inputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
+  int i = 0;
+  while (1) {
+    uint64_t len = get_input_cell_data_len(i);
+    if (len < 16) {
+      return EMPTY_CELL_DATA;
+    }
+    // uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
+    uint64_t cur_data = 0; 
+    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
+                             CKB_SOURCE_GROUP_INPUT);
+    // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
+    // through all cells of current type.
+    if (ret == CKB_INDEX_OUT_OF_BOUND) {
+      break;
+    }
+    if (ret != CKB_SUCCESS) {
+      return EMPTY_CELL_DATA;
+    }
+    if (len < 16) {
+      return EMPTY_CELL_DATA;
+    }
+    if (i >= (int)MAX_CELLS) {
+      free(inputs.ptr);
+      return EMPTY_CELL_DATA;
+    }
+    inputs.ptr[i].data = cur_data;
+    i += 1;
+    inputs.size = i;
+  };
+  return inputs;
+}
+
+cell_data_t get_utxo_outputs() {
+  cell_data_t outputs = {0};
+  outputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
+  int i = 0;
+  while (1) {
+    uint64_t len = get_output_cell_data_len(i);
+    uint64_t cur_data = 0;
+    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
+                             CKB_SOURCE_GROUP_OUTPUT);
+    // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
+    // through all cells of current type.
+    if (ret == CKB_INDEX_OUT_OF_BOUND) {
+      break;
+    }
+    if (ret != CKB_SUCCESS) {
+      return EMPTY_CELL_DATA;
+    }
+    if (len < 16) {
+      return EMPTY_CELL_DATA;
+    }
+    if (i >= (int)MAX_CELLS) {
+      free(outputs.ptr);
+      return EMPTY_CELL_DATA;
+    }
+    outputs.ptr[i].data = cur_data;
+    i += 1;
+    outputs.size = i;
+  }
+  return outputs;
+}
+
+void syscall_exit(int8_t code) {
+  ckb_exit(code);
+  return;
+}
+
+int get_flags(Args* args) {
+  return args->flags;
+}
+
+int get_owner_mode(Args* args) {
+  return args->owner_mode;
+}
+
 #ifdef CKB_USE_SIM
 int simulator_main() {
 #else
-int main() {
+int test_main() {
 #endif
-  Args arg = parse_args();
+  Args* arg = parse_args();
 
-  int err = arg.err;
-  XUDTFlags flags = arg.flags;
-  int owner_mode = arg.owner_mode;
+  int err = arg->err;
+  XUDTFlags flags = arg->flags;
+  int owner_mode = arg->owner_mode;
 
   if (err != 0) {
     return err;
@@ -831,7 +1053,7 @@ int main() {
   
   // check enhanced mode here
   if (!owner_mode) {
-    owner_mode = check_enhanced_owner_mode(&arg);
+    owner_mode = check_enhanced_owner_mode(arg);
     // don't need to check the return result from this function
     // if failed, owner mode is still false
   }
@@ -844,9 +1066,9 @@ int main() {
     return 0;
   }
 
-  arg.owner_mode = owner_mode;
-  if (execute_scripts(&arg)) {
+  arg->owner_mode = owner_mode;
+  if (execute_scripts(arg)) {
     return 0;
   }
-  return arg.err;
+  return arg->err;
 }

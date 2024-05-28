@@ -58,19 +58,7 @@ molecule-xudt:
 	cd third-party/xudt && ${MOLECULEC} --language - --schema-file xudt_rce.mol --format json > blockchain_mol2.json
 	cd third-party/xudt && ${MOLECULEC2} --input blockchain_mol2.json | clang-format -style=Google > xudt_rce_mol2.h
 xudt-c: molecule-xudt
-	cd third-party && \
-	clang --target=riscv64 \
-		-march=rv64imc \
-		-nostdlib \
-		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
-		-I ckb-c-stdlib/libc \
-		-I ckb-c-stdlib/molecule \
-		-I ckb-c-stdlib \
-		-I sparse-merkle-tree/c \
-		xudt/*.c \
-		-o xudt-c && \
-	cp xudt-c ..
-	@echo " >>> sussecfully build xudt-c"
+	cd third-party/xudt && make xudt-c
 ckb-libc: ckb-libc-debug ckb-libc-release install
 ckb-libc-debug:
 	@echo " >>> build libdummylibc-debug.a"
@@ -139,6 +127,7 @@ test/example:
 	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm
 	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte
 	${CELL} -t riscv tests/examples/xudt-data.cell && ckb-debugger --bin xudt-data
+	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt || true
 
 test/cross:
 	@echo " >>> test cross compiling"

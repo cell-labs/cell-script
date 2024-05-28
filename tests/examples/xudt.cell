@@ -1,0 +1,22 @@
+package main
+
+import (
+	"cell"
+	"debug"
+	"tx"
+)
+
+function main() {
+	a := [3]int64{1,2,3}
+	args := tx.xudtArgs()
+	tx.checkEnhancedOwnerMode(args)
+	ret := tx.sudt(tx.getOwnerMode())
+	if ret != 0 {
+		return ret
+	}
+	if tx.getFlags(args) == tx.XUDTFlagsPlain {
+		return 0
+	}
+	tx.executeScripts(args)
+	return 0
+}

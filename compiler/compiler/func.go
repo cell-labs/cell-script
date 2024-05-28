@@ -118,7 +118,17 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes)
 
-	isTxFFIFuncs := c.currentPackageName == "tx" && (compiledName == "is_owner_mode" || compiledName == "script_verify" || compiledName == "get_utxo_inputs" || compiledName == "get_utxo_outputs")
+	isTxFFIFuncs := c.currentPackageName == "tx" &&
+		(compiledName == "is_owner_mode" ||
+			compiledName == "script_verify" ||
+			compiledName == "get_utxo_inputs" ||
+			compiledName == "get_utxo_outputs" ||
+			compiledName == "check_enhanced_owner_mode" ||
+			compiledName == "get_owner_mode" ||
+			compiledName == "get_flags" ||
+			compiledName == "execute_scripts" ||
+			compiledName == "simple_udt" ||
+			compiledName == "parse_args")
 	var fn *ir.Func
 	var entry *ir.Block
 
