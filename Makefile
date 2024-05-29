@@ -18,8 +18,8 @@ clean:
 	rm -f third-party/ckb-c-stdlib/*.a
 grammar: antlr
 
-all: build install
-debug: build/debug install
+all: ckb-libc build install
+debug: ckb-libc build/debug install
 antlr:
 	go generate ./...
 dev:

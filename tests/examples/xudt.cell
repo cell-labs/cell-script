@@ -7,9 +7,16 @@ import (
 )
 
 function main() {
-	a := [3]int64{1,2,3}
 	args := tx.xudtArgs()
+	err := tx.getErr(args)
+	if err != 0 {
+		return err
+	}
 	tx.checkEnhancedOwnerMode(args)
+	err = tx.getErr(args)
+	if err != 0 {
+		return err
+	}
 	ret := tx.sudt(tx.getOwnerMode())
 	if ret != 0 {
 		return ret

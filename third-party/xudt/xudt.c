@@ -1029,6 +1029,10 @@ int get_flags(Args* args) {
   return args->flags;
 }
 
+int get_err(Args* args) {
+  return args->err;
+}
+
 int get_owner_mode(Args* args) {
   return args->owner_mode;
 }

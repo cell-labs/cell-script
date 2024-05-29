@@ -61,6 +61,13 @@ function getFlags(args uintptr) int64 {
 	return get_flags(args)
 }
 
+function get_err(args uintptr) int64 {
+	return 0
+}
+function getErr(args uintptr) int64 {
+	return get_err(args)
+}
+
 function get_owner_mode(args uintptr) int64 {
 	return 0
 }

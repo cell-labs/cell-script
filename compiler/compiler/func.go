@@ -126,6 +126,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 			compiledName == "check_enhanced_owner_mode" ||
 			compiledName == "get_owner_mode" ||
 			compiledName == "get_flags" ||
+			compiledName == "get_err" ||
 			compiledName == "execute_scripts" ||
 			compiledName == "simple_udt" ||
 			compiledName == "parse_args")
