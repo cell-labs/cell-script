@@ -22,11 +22,12 @@ type XudtArgs table {
 	err			int64
 	flags 		uint32
 	script  	[32768]byte
+	codeBuf_padding [4076]byte
 	codeBuf 	[1843200]byte
 	codeUsed	uint32
 	var_data	*uint8
 	var_len		uint32
 	hashes		[65536]byte
 	hashes_count	uint32
-	padding		[4072]byte
+	hashes_padding		[4072]byte
 }
