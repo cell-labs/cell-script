@@ -145,7 +145,7 @@ type BoolType struct {
 }
 
 func (BoolType) LLVM() types.Type {
-	return types.I1
+	return types.I8
 }
 
 func (BoolType) Name() string {
@@ -157,7 +157,7 @@ func (BoolType) Size() int64 {
 }
 
 func (b BoolType) Zero(block *ir.Block, alloca llvmValue.Value) {
-	block.NewStore(constant.NewInt(types.I1, 0), alloca)
+	block.NewStore(constant.NewInt(types.I8, 0), alloca)
 }
 
 type VoidType struct {

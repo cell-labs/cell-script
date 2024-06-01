@@ -18,6 +18,15 @@ type Script table {
 }
 
 type XudtArgs table {
-	flags uint32
-	scriptVec []Script
+	owner_mode	bool
+	err			int64
+	flags 		uint32
+	script  	[32768]byte
+	codeBuf 	[1843200]byte
+	codeUsed	uint32
+	var_data	*uint8
+	var_len		uint32
+	hashes		[65536]byte
+	hashes_count	uint32
+	padding		[4072]byte
 }

@@ -8,22 +8,20 @@ import (
 
 function main() {
 	args := tx.xudtArgs()
-	err := tx.getErr(args)
-	if err != 0 {
-		return err
+	if args.err != tx.SUCCESS {
+		return args.err
 	}
 	tx.checkEnhancedOwnerMode(args)
-	err = tx.getErr(args)
-	if err != 0 {
-		return err
+	if args.err != tx.SUCCESS {
+		return args.err
 	}
 	ret := tx.sudt(tx.getOwnerMode())
-	if ret != 0 {
+	if ret != tx.SUCCESS {
 		return ret
 	}
 	if tx.getFlags(args) == tx.XUDTFlagsPlain {
-		return 0
+		return tx.SUCCESS
 	}
 	tx.executeScripts(args)
-	return 0
+	return tx.SUCCESS
 }

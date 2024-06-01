@@ -92,7 +92,7 @@ typedef struct Script{
 typedef struct Args
 {
     bool owner_mode;
-    int err;
+    int64_t err;
     XUDTFlags flags;
     uint8_t g_script[SCRIPT_SIZE];
     uint8_t g_code_buff[MAX_CODE_SIZE] __attribute__((aligned(RISCV_PGSIZE)));

@@ -2,7 +2,15 @@ package tx
 
 import "cell"
 
-const XUDTFlagsPlain = 0
+const (
+	XUDTFlagsPlain = iota
+	XUDTFlagsInArgs
+	XUDTFlagsInWitness
+)
+
+const (
+	SUCCESS = iota
+)
 
 function script_verify() bool {
 	return true
@@ -33,17 +41,17 @@ function outputs() []cell.Cell {
 }
 
 // xudt related API and ffi functions
-function parse_args() uintptr {
+function parse_args() *cell.XudtArgs {
 	return 0
 }
-function xudtArgs(args uintptr) uintptr {
+function xudtArgs(args uintptr) *cell.XudtArgs {
 	return parse_args(args)
 }
 
-function check_enhanced_owner_mode(args uintptr) bool {
+function check_enhanced_owner_mode(args *cell.XudtArgs) bool {
 	return false
 }
-function checkEnhancedOwnerMode(args uintptr) bool {
+function checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 	return check_enhanced_owner_mode(args)
 }
 
@@ -71,14 +79,14 @@ function getErr(args uintptr) int64 {
 function get_owner_mode(args uintptr) int64 {
 	return 0
 }
-function getOwnerMode(args uintptr) int64 {
+function getOwnerMode(args *cell.XudtArgs) int64 {
 	return get_owner_mode(args)
 }
 
-function execute_scripts(args uintptr) bool {
+function execute_scripts(args *cell.XudtArgs) bool {
 	return false
 }
-function executeScripts(args uintptr) bool {
+function executeScripts(args *cell.XudtArgs) bool {
 	return execute_scripts(args)
 }
 

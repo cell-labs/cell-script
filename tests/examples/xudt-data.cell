@@ -26,11 +26,5 @@ function main() {
 	debug.Printf("%d", d.lock[0]) //50
 	debug.Printf("%d", d.data[0][0])
 
-	e := cell.XudtArgs{}
-	e.flags = uint32(1)
-	e.scriptVec[0] = c
-	append(e.scriptVec, c)
-	debug.Printf("%d", e.flags)
-	debug.Printf("%d", e.scriptVec[0].hashType)
 	return 0
 }
