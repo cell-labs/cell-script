@@ -15,11 +15,11 @@ function main() {
 	if args.err != tx.SUCCESS {
 		return args.err
 	}
-	ret := tx.sudt(tx.getOwnerMode())
+	ret := tx.sudt(args.owner_mode)
 	if ret != tx.SUCCESS {
 		return ret
 	}
-	if tx.getFlags(args) == tx.XUDTFlagsPlain {
+	if args.flags == tx.XUDTFlagsPlain {
 		return tx.SUCCESS
 	}
 	tx.executeScripts(args)
