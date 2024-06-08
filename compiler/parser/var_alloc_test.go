@@ -144,7 +144,7 @@ func TestAllocConstGroup(t *testing.T) {
 					},
 					{
 						Name:    []string{"e", "f"},
-						Val:     []Node{&ConstantNode{Type: BYTE, ValueStr: "\t"}, &ConstantNode{Type: BYTE, ValueStr: "'"}},
+						Val:     []Node{&ConstantNode{Type: BYTE, Value: int64('\t')}, &ConstantNode{Type: BYTE, Value: int64('\'')}},
 						IsConst: true,
 					},
 				},
