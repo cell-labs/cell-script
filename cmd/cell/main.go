@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/cell-labs/cell-script/cmd/cell/build"
+	"github.com/cell-labs/cell-script/compiler/option"
 	flag "github.com/spf13/pflag"
 )
 
@@ -32,7 +33,7 @@ func init() {
 	flag.StringVarP(&output, "output", "o", "", "Output binary filename")
 }
 
-func parseOptions() *build.Options {
+func parseOptions() *option.Options {
 	flag.Parse()
 
 	if len(flag.Args()) < 1 {
@@ -47,7 +48,7 @@ func parseOptions() *build.Options {
 		basename := filepath.Base(flag.Arg(0))
 		output = strings.TrimSuffix(basename, filepath.Ext(basename))
 	}
-	return &build.Options{
+	return &option.Options{
 		Debug:    debug,
 		Verbose:  verbose,
 		Optimize: optimize,
@@ -56,6 +57,7 @@ func parseOptions() *build.Options {
 		Output:   output,
 		Target:   target,
 		Root:     root,
+		Version:  option.VersionScheme{Major: 0, Minor: 0, Patch: 1},
 	}
 }
 

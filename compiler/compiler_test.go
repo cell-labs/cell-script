@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/cell-labs/cell-script/cmd/cell/build"
+	"github.com/cell-labs/cell-script/compiler/option"
 )
 
 func TestAllPrograms(t *testing.T) {
@@ -74,7 +75,7 @@ func buildRunAndCheck(t *testing.T, path string, withOptimize bool) (err error) 
 	_, testFilePath, _, _ := runtime.Caller(0)
 	goroot := filepath.Clean(testFilePath + "/../../pkg/")
 
-	err = build.Build(path, goroot, outputBinaryPath, false, withOptimize)
+	err = build.Build(path, &option.Options{Root: goroot, Output: outputBinaryPath, Debug: false, Optimize: withOptimize})
 	if err != nil {
 		output = strings.TrimSpace(err.Error())
 		runProgram = false

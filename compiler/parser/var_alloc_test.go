@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/option"
 )
 
 func TestAllocType(t *testing.T) {
@@ -20,7 +21,7 @@ func TestAllocType(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestAllocTypeWithValue(t *testing.T) {
@@ -36,7 +37,7 @@ func TestAllocTypeWithValue(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestAllocImplicitTypeValue(t *testing.T) {
@@ -51,7 +52,7 @@ func TestAllocImplicitTypeValue(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestAllocMultiWithType(t *testing.T) {
@@ -66,7 +67,7 @@ func TestAllocMultiWithType(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestAllocGroup(t *testing.T) {
@@ -97,7 +98,7 @@ func TestAllocGroup(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestConstAlloc(t *testing.T) {
@@ -112,7 +113,7 @@ func TestConstAlloc(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }
 
 func TestAllocConstGroup(t *testing.T) {
@@ -152,5 +153,5 @@ func TestAllocConstGroup(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(lexed, false))
+	assert.Equal(t, expected, Parse(lexed, &option.Options{Debug: false}))
 }

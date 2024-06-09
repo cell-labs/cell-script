@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/option"
 )
 
 func TestMultiAssignVar(t *testing.T) {
@@ -57,7 +58,7 @@ func TestMultiAssignVar(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 func TestMultiAllocVar(t *testing.T) {
 	input := []lexer.Item{
@@ -98,5 +99,5 @@ func TestMultiAllocVar(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }

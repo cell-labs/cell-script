@@ -12,22 +12,12 @@ import (
 	"github.com/cell-labs/cell-script/compiler/compiler"
 	"github.com/cell-labs/cell-script/compiler/lexer"
 	"github.com/cell-labs/cell-script/compiler/parser"
+	"github.com/cell-labs/cell-script/compiler/option"
 	"github.com/cell-labs/cell-script/compiler/passes/const_iota"
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
 )
 
-type Options struct {
-	Debug    bool
-	Verbose  bool
-	Optimize bool
-	Path     string
-	Package  string
-	Output   string
-	Target   string
-	Root     string
-}
-
-func Build(options *Options) error {
+func Build(options *option.Options) error {
 	path := options.Path
 	outputBinaryPath := options.Output
 	optimize := options.Optimize
@@ -105,7 +95,7 @@ func Build(options *Options) error {
 	return nil
 }
 
-func compilePackage(c *compiler.Compiler, path, name string, options *Options) error {
+func compilePackage(c *compiler.Compiler, path, name string, options *option.Options) error {
 	stdroot := options.Root
 	f, err := os.Stat(path)
 	if err != nil {
@@ -139,6 +129,10 @@ func compilePackage(c *compiler.Compiler, path, name string, options *Options) e
 	// Use importNodes to import more packages
 	for _, file := range parsedFiles {
 		for _, i := range file.Instructions {
+			if _, ok := i.(*parser.PragmaNode); ok {
+				continue
+			}
+
 			if _, ok := i.(*parser.DeclarePackageNode); ok {
 				continue
 			}
@@ -198,7 +192,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *Options) e
 	})
 }
 
-func parseFile(path string, options *Options) parser.FileNode {
+func parseFile(path string, options *option.Options) parser.FileNode {
 	// Read specified input file
 	fileContents, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -209,7 +203,7 @@ func parseFile(path string, options *Options) parser.FileNode {
 	lexed := lexer.Lex(string(fileContents))
 
 	// Run lexed source through the parser. A syntax tree is returned.
-	parsed := parser.Parse(lexed, options.Debug)
+	parsed := parser.Parse(lexed, options)
 
 	// List of passes to run on the AST
 	passes := []func(*parser.FileNode) *parser.FileNode{

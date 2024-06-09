@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/option"
 )
 
 func TestCall(t *testing.T) {
@@ -26,7 +27,7 @@ func TestCall(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestAdd(t *testing.T) {
@@ -53,7 +54,7 @@ func TestAdd(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestInfixPriority(t *testing.T) {
@@ -89,7 +90,7 @@ func TestInfixPriority(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestInfixPriority2(t *testing.T) {
@@ -125,7 +126,7 @@ func TestInfixPriority2(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestInfixPriority3(t *testing.T) {
@@ -170,7 +171,7 @@ func TestInfixPriority3(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestInfixPriority4(t *testing.T) {
@@ -210,7 +211,7 @@ func TestInfixPriority4(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 func TestInfixPriority4Load(t *testing.T) {
@@ -254,7 +255,7 @@ func TestInfixPriority4Load(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 
@@ -285,7 +286,7 @@ func TestPramga(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected, Parse(input, false))
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
 
