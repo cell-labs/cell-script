@@ -18,6 +18,21 @@ func (n *baseNode) Node() {
 
 }
 
+type VersionScheme struct{
+	Major int
+	Minor int
+	Patch int
+}
+// pragmaNode implements the Node interface, to tell compiler how to compile
+type PragmaNode struct{
+	baseNode
+	Version VersionScheme
+}
+
+func (p PragmaNode) String() string {
+	return fmt.Sprintf("PragmaNode: version(%+v)", p.Version)
+}
+
 // CallNode is a function call. Function is the name of the function to execute.
 type CallNode struct {
 	baseNode

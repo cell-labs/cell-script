@@ -256,3 +256,36 @@ func TestInfixPriority4Load(t *testing.T) {
 
 	assert.Equal(t, expected, Parse(input, false))
 }
+
+
+func TestPramga(t *testing.T) {
+	input := []lexer.Item{
+		{Type: lexer.KEYWORD, Val: "pragma", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "cellscript", Line: 1},
+		{Type: lexer.NUMBER, Val: "0", Line: 1},
+		{Type: lexer.NUMBER, Val: "0", Line: 1},
+		{Type: lexer.NUMBER, Val: "1", Line: 1},
+		{Type: lexer.EOL},
+		{Type: lexer.EOF},
+	}
+
+	/*
+		pramga cellscript 0.0.1
+	*/
+
+	expected := &FileNode{
+		Instructions: []Node{
+			&PragmaNode{
+				Version: VersionScheme{
+					Major: 0,
+					Minor: 0,
+					Patch: 1,
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, Parse(input, false))
+}
+
+

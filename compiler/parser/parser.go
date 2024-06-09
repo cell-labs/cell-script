@@ -109,7 +109,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		return
 	case lexer.BYTE:
 		res = &ConstantNode{
-			Type:     BYTE,
+			Type:  BYTE,
 			Value: int64(current.Val[0]),
 		}
 		if withAheadParse {
@@ -579,6 +579,34 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			}
 		}
 
+		if current.Val == "pragma" {
+			p.i++
+
+			key := p.lookAhead(0)
+			p.expect(key, lexer.Item{Type: lexer.IDENTIFIER})
+			p.i++
+
+			tokenMajor := p.lookAhead(0)
+			p.expect(tokenMajor, lexer.Item{Type: lexer.NUMBER})
+			major, _ := strconv.Atoi(tokenMajor.Val)
+			p.i++
+			tokenMinor := p.lookAhead(0)
+			p.expect(tokenMajor, lexer.Item{Type: lexer.NUMBER})
+			minor, _ := strconv.Atoi(tokenMinor.Val)
+			p.i++
+			tokenPatch := p.lookAhead(0)
+			p.expect(tokenPatch, lexer.Item{Type: lexer.NUMBER})
+			patch, _ := strconv.Atoi(tokenPatch.Val)
+			p.i++
+			return &PragmaNode{
+				Version: VersionScheme{
+					Major: major,
+					Minor: minor,
+					Patch: patch,
+				},
+			}
+		}
+
 		if current.Val == "for" {
 			return p.parseFor()
 		}
@@ -923,7 +951,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 			if isType {
 				inputType := &SingleTypeNode{
 					PackageName: nameNode.Package,
-					TypeName: nameNode.Name,
+					TypeName:    nameNode.Name,
 				}
 
 				p.i += 2
