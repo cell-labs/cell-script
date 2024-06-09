@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"github.com/cell-labs/cell-script/compiler/lexer"
+	"github.com/cell-labs/cell-script/compiler/option"
 )
 
 type parser struct {
@@ -25,11 +26,11 @@ type parser struct {
 	packages map[string]struct{}
 }
 
-func Parse(input []lexer.Item, debug bool) *FileNode {
+func Parse(input []lexer.Item, options *option.Options) *FileNode {
 	p := &parser{
 		i:        0,
 		input:    input,
-		debug:    debug,
+		debug:    options.Debug,
 		packages: map[string]struct{}{},
 		types: map[string]struct{}{
 			"int":     {},
@@ -585,7 +586,9 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			key := p.lookAhead(0)
 			p.expect(key, lexer.Item{Type: lexer.IDENTIFIER})
 			p.i++
-
+			if key.Val != "cellscript" {
+				panic("")
+			}
 			tokenMajor := p.lookAhead(0)
 			p.expect(tokenMajor, lexer.Item{Type: lexer.NUMBER})
 			major, _ := strconv.Atoi(tokenMajor.Val)

@@ -257,6 +257,9 @@ func (c *Compiler) compile(instructions []parser.Node) {
 		case *parser.ImportNode:
 			// NOOP
 			break
+		case *parser.PragmaNode:
+			// NOOP
+			break
 
 		case *parser.DefineTypeNode:
 			t := c.parserTypeToType(v.Type)

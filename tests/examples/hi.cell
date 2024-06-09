@@ -1,3 +1,4 @@
+pragma cellscript 0.0.1
 //package main
 import "debug"
 function main() {
