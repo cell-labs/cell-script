@@ -169,3 +169,19 @@ func TestLexerSimpleCallWithStringNum(t *testing.T) {
 
 	assert.Equal(t, expected, r)
 }
+
+func TestLexerPragma(t *testing.T) {
+	r := Lex(`pragma cellscript 0.0.1`)
+
+	expected := []Item{
+		{Type: KEYWORD, Val: "pragma", Line: 1},
+		{Type: IDENTIFIER, Val: "cellscript", Line: 1},
+		{Type: NUMBER, Val: "0", Line: 1},
+		{Type: NUMBER, Val: "0", Line: 1},
+		{Type: NUMBER, Val: "1", Line: 1},
+		{Type: EOL},
+		{Type: EOF},
+	}
+
+	assert.Equal(t, expected, r)
+}

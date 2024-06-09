@@ -237,13 +237,36 @@ func Lex(inputFullSource string) []Item {
 
 			// NUMBER
 			// 0-9
-			if input[i] >= '0' && input[i] <= '9' {
-				val := ""
-				for i < len(input) && input[i] >= '0' && input[i] <= '9' {
-					val += string(input[i])
-					i++
+			lexNumber := func() bool {
+				if i >= len(input) {
+					return false
 				}
-				res = append(res, Item{Type: NUMBER, Val: val, Line: line})
+				if input[i] >= '0' && input[i] <= '9' {
+					val := ""
+					for i < len(input) && input[i] >= '0' && input[i] <= '9' {
+						val += string(input[i])
+						i++
+					}
+					res = append(res, Item{Type: NUMBER, Val: val, Line: line})
+					return true
+				}
+				return false
+			}
+			if succ := lexNumber(); succ {
+				if i >= len(input) || input[i] != '.' {
+					continue
+				}
+				i++
+				lexNumber()
+				if i >= len(input) || input[i] != '.' {
+					continue
+				}
+				i++
+				// VERSION: NUMBER.NUMBER.NUMBER
+				succ = lexNumber()
+				if !succ {
+					panic("Unexpected char in Lexer: " + string(input[i]))
+				}
 				continue
 			}
 

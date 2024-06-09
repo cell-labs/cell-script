@@ -10,6 +10,7 @@ var keywords = map[string]struct{}{
 	"var":         {},
 	"const":       {},
 	"package":     {},
+	"pragma": 	   {},
 	"for":         {},
 	"break":       {},
 	"continue":    {},
