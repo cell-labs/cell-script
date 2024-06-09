@@ -80,6 +80,10 @@ func Walk(v Visitor, node Node) (r Node) {
 		// nothing to do
 	case *ContinueNode:
 		// nothing to do
+	case *PragmaNode:
+		// nothing to do
+	case *VersionScheme:
+		// nothing to do
 	case *GetReferenceNode:
 		n.Item = Walk(v, n.Item)
 	case *DereferenceNode:
@@ -131,12 +135,6 @@ func Walk(v Visitor, node Node) (r Node) {
 	case *InitializeStructNode:
 		for i, a := range n.Items {
 			n.Items[i] = Walk(v, a)
-		}
-	case *PragmaNode:
-		Walk(v, &n.Version)
-	case *VersionScheme:
-		if !(n.Major == 0 && n.Minor == 0 && n.Patch == 1) {
-			panic("not supported")
 		}
 	default:
 		panic(fmt.Sprintf("unexpected type in Walk(): %T", node))

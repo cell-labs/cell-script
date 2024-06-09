@@ -11,8 +11,8 @@ import (
 
 	"github.com/cell-labs/cell-script/compiler/compiler"
 	"github.com/cell-labs/cell-script/compiler/lexer"
-	"github.com/cell-labs/cell-script/compiler/parser"
 	"github.com/cell-labs/cell-script/compiler/option"
+	"github.com/cell-labs/cell-script/compiler/parser"
 	"github.com/cell-labs/cell-script/compiler/passes/const_iota"
 	"github.com/cell-labs/cell-script/compiler/passes/escape"
 )
@@ -129,7 +129,13 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 	// Use importNodes to import more packages
 	for _, file := range parsedFiles {
 		for _, i := range file.Instructions {
-			if _, ok := i.(*parser.PragmaNode); ok {
+			if pragma, ok := i.(*parser.PragmaNode); ok {
+				version := pragma.Version
+				if !(version.Major == options.Version.Major &&
+					version.Minor == options.Version.Minor &&
+					version.Patch == options.Version.Patch) {
+					panic("unsupported compiler version")
+				}
 				continue
 			}
 
