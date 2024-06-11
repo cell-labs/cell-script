@@ -102,8 +102,9 @@ cd risc-v
 git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
 
 cd riscv-gnu-toolchain
+sudo mkdir /opt/riscv
 ./configure --prefix=/opt/riscv
-make linux
+sudo make linux
 
 echo 'export PATH="$PATH:/opt/riscv/bin"' >> ~/.bashrc
 
