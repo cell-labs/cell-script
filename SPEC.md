@@ -6,11 +6,11 @@ Cell Script is a smart-contract oriented programming language, and focused in UT
 
 All the smart contracts are constructed from packages which are the easy to maintain by the community.
 
-The first princple is keep Cell Script simple and easy to use.  
+The first princple is keep Cell Script simple and easy to use.
 
 # Notation
 
-The syntax is specified using Extended Backus-Naur Form (EBNF):
+The syntax is specified using a [variant](https://en.wikipedia.org/wiki/Wirth_syntax_notation) of Extended Backus-Naur Form (EBNF):
 
 ```ebnf
 Syntax      = { Production } ;
@@ -21,6 +21,15 @@ Factor      = production_name | token [ "…" token ] | Group | Option | Repetit
 Group       = "(" Expression ")" ;
 Option      = "[" Expression "]" ;
 Repetition  = "{" Expression "}" ;
+```
+
+Productions are expressions constructed from terms and the following operators, in increasing precedence:
+
+```
+|   alternation
+()  grouping
+[]  option (0 or 1 times)
+{}  repetition (0 to n times)
 ```
 
 # Lexical elements
@@ -61,7 +70,7 @@ var
 
 ## Identifiers
 
-Identifiers name program entities such as variables and types. An identifier is a sequence of one or more letters and digits. The first character in an identifier must be a letter in regex expression [a-zA-Z_].
+Identifiers name program entities such as variables and types. An identifier is a sequence of one or more letters and digits. The first character in an identifier must be a letter in regex expression `[a-zA-Z_]`.
 
 ## Whitespace
 
@@ -105,7 +114,7 @@ The formal syntax uses semicolons ";" as terminators in a number of productions.
 # Module and source files
 
 ```ebnf
-Module = Definition* ;
+	Module = Definition* ;
 ```
 
 Source files has the extension `.cell`.
@@ -172,7 +181,7 @@ TableField = Visibility?
            | Identifier Type ;
 ```
 
-## Unions
+## Unions(TODO)
 
 ```ebnf
 Union = union Identifier { TableFields } ;
@@ -198,7 +207,6 @@ hex_lit        = "0x" [ "_" ] hex_digits .
 binary_digits  = binary_digit { [ "_" ] binary_digit } .
 hex_digits     = hex_digit { [ "_" ] hex_digit } .
 ```
-
 
 ```
 42
@@ -284,6 +292,16 @@ The length of a string s can be discovered using the built-in function len. The 
 ## Byte types
 
 Byte is a simplify expression of uint8 for most cases.
+
+### Pointer types
+
+A pointer type denotes the set of all pointers to [variables](https://go.dev/ref/spec#Variables) of a given type, called the *base type* of the pointer. The value of an uninitialized pointer is `nil`.
+
+```
+PointerType = "*" BaseType . 
+The syntax is specified using a variant of Extended Backus-Naur Form (EBNF):BaseType    = Type .
+```
+
 
 ## Union types
 
