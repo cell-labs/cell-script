@@ -64,10 +64,6 @@ export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"
 brew install --cask spike
 make build
 source install.sh
-
-cell <file>.cell
-cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
-ckb-debugger --bin <file>
 ```
 
 ## How to build (Ubuntu)
@@ -119,26 +115,46 @@ sudo apt install device-tree-compiler libboost-regex-dev
 cd ~/risc-v
 git clone https://github.com/riscv-software-src/riscv-isa-sim.git
 
+cd riscv-isa-sim
+
 mkdir build
 cd build
-../configure --prefix=$RISCV
-$ make
-$ [sudo] make install
+
+../configure --prefix=/opt/riscv
+make
+make install
 ```
 
 
+Build & Install compiler in the root folder
 ```
-brew tap riscv-software-src/riscv
-brew install riscv-tools
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"
-brew install --cask spike
 make build
 source install.sh
+```
 
-cell <file>.cell
+
+
+## How to compile cellscript program
+
+You can write your program in file with `.cell`. Here for example, we say `hello.cell`
+
+```
+cell hello.cell
+```
+
+You will get the output file also known as elf file named `hello` in the root folder.
+
+To run the elf file, we need `ckb-debugger` the default debugger for ckb programs.
+
+Run the following command to install `ckb-debugger`, suppose you already know what is cargo.
+
+```
 cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
-ckb-debugger --bin <file>
+```
+
+Run below command to debug & run the `hello` program.
+```
+ckb-debugger --bin hello
 ```
 
 ## To develop xUDT
