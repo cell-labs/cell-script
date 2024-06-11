@@ -10,29 +10,22 @@ import "debug"
 import "tx"
 import "cell"
 
-// main is the entry point of every cell script
 function main() {
-    tx.scriptVerify()
-    var ins = tx.inputs()
-    var outs = tx.outputs()
-
-    var in_sum uint64
-    var out_sum uint64
-
-    for _, input := range ins {
-        in_sum += input
-        if in_sum < input {
-            debug.Printf("input overflow")
-            return 1
-        }
+    if tx.isOwnerMode() {
+        return 0
     }
 
-    for _, output := range outs {
+    in_sum, out_sum := 0, 0
+    ins := tx.inputs()
+    if len(ins) == int32(0) {
+        return 1
+    }
+    for input := range tx.inputs() {
+        in_sum += input
+    }
+
+    for output := range tx.outputs() {
         out_sum += output
-        if out_sum < output {
-            debug.Printf("output overflow")
-            return 1
-        }
     }
 
     if in_sum < out_sum {
