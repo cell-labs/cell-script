@@ -1,6 +1,6 @@
 module github.com/cell-labs/cell-script
 
-go 1.21.4
+go 1.22.4
 
 require (
 	github.com/antlr4-go/antlr/v4 v4.13.0
