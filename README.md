@@ -103,7 +103,7 @@ source ~/.bashrc
 Install `spike`
 
 ```
-sudo apt install device-tree-compiler libboost-regex-dev
+sudo apt install device-tree-compiler libboost-all-dev
 
 cd ~/risc-v
 git clone https://github.com/riscv-software-src/riscv-isa-sim.git
