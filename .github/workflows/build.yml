@@ -86,13 +86,12 @@ jobs:
     - name: Build
       run: |
         make build
-        make install
 
     - name: Test .cell
       run: |
-         cell tests/examples/always-true.cell
+         ./output/cell tests/examples/always-true.cell
          ./always-true
-          cell tests/examples/always-true.cell -t riscv
+         ./output/cell tests/examples/always-true.cell -t riscv
 
     # - name: Test
     #   run: make test
