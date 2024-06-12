@@ -5,6 +5,7 @@ Cell Script is a newly designed language for smart-contract programming on the U
 ## Example
 
 Here is an example of a simple cell script.
+
 ```
 import "debug"
 import "tx"
@@ -32,16 +33,14 @@ function main() {
         debug.Printf("Invalid Amount")
         return 1
     }
-    
+  
     return 0
 }
 ```
 
+The ideas and specs can be found [here](./SPEC.md).
 
-
-The ideas and specs can be found [here](./SPEC.md). 
-
-The internal discussion can be found [here](./DISCUSSION.md). 
+The internal discussion can be found [here](./DISCUSSION.md).
 
 ## How to build (MacOS)
 
@@ -62,6 +61,7 @@ source install.sh
 ## How to build (Ubuntu)
 
 Install `golang 1.22`
+
 ```
 sudo add-apt-repository ppa:longsleep/golang-backports
 sudo apt update
@@ -69,6 +69,7 @@ sudo apt install golang-go
 ```
 
 Install `antlr4`, `openjdk-21`, `clang`
+
 ```
 sudo apt install antlr4
 sudo apt install openjdk-21-jdk
@@ -76,6 +77,7 @@ sudo apt install clang
 ```
 
 Install `llvm`
+
 ```
 sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 ```
@@ -87,8 +89,8 @@ sudo apt install llvm
 sudo apt install lld
 ```
 
-
 Install `riscv-tools`
+
 ```
 sudo apt update
 sudo apt upgrade
@@ -132,14 +134,12 @@ make
 make install
 ```
 
-
 Build & Install compiler in the root folder
+
 ```
 make build
 source install.sh
 ```
-
-
 
 ## How to compile cellscript program
 
@@ -168,18 +168,33 @@ cargo install --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb
 ```
 
 Run below command to debug & run the `hello` program.
+
 ```
 ckb-debugger --bin hello
+```
+
+Use `cell --help` to view the usage instructions.
+
+```
+Usage: cell [options] <filename>
+  -d, --debug           Emit debug information during compile time
+  -h, --help            Show help message
+  -O, --optimize        Enable clang optimization
+  -o, --output string   Output binary filename
+  -t, --target string   Compile to this target (default "native")
+  -v, --verbose         Emit verbose command during compiling
 ```
 
 ## To develop xUDT
 
 ckb-c-stdlib use molecule 0.7.1
+
 ```
 cargo install moleculec@0.7.1 --locked
 ```
 
 ## How to Deploy?
+
 ```
 git clone git@github.com:cell-labs/cell-cli.git
 cd cell-cli
@@ -189,4 +204,3 @@ npm install -g .
 # 2、Enter your CKB private key in cell.config.js
 cell-cli deploy ./helloworld
 ```
-
