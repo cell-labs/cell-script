@@ -15,7 +15,7 @@ func (c *Compiler) compileNegateBoolNode(v *parser.NegateNode) value.Value {
 
 	return value.Value{
 		Type:       types.Bool,
-		Value:      c.contextBlock.NewXor(loadedVal, constant.NewInt(llvmTypes.I1, 1)),
+		Value:      c.contextBlock.NewXor(loadedVal, constant.NewInt(llvmTypes.I8, 1)),
 		IsVariable: false,
 	}
 }

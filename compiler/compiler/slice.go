@@ -42,7 +42,7 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	startIsInBounds := c.contextBlock.NewICmp(enum.IPredSLE, startVar, originalLength)
 
 	var endIsInBounds llvmValue.Value
-	endIsInBounds = constant.NewInt(llvmTypes.I1, 1)
+	endIsInBounds = constant.NewInt(llvmTypes.I8, 1)
 
 	var length llvmValue.Value
 	if v.HasEnd {

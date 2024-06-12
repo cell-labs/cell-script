@@ -153,7 +153,7 @@ func (BoolType) Name() string {
 }
 
 func (BoolType) Size() int64 {
-	return 1
+	return 4
 }
 
 func (b BoolType) Zero(block *ir.Block, alloca llvmValue.Value) {
