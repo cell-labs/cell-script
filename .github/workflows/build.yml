@@ -1,0 +1,97 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: CellScript
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+  
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+
+    - name: Install basic packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: antlr4 openjdk-21-jdk clang
+        version: 1.0
+
+    - name: Install llvm
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: llvm lld
+        version: 1.0
+
+    # - name: Install LLVM
+    #   run: |
+    #     sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+
+    - name: Install riscv-tools
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: gcc-riscv64-unknown-elf
+        version: 1.0
+
+    # - name: Install packages for riscv-tools
+    #   uses: awalsh128/cache-apt-pkgs-action@latest
+    #   with:
+    #     packages: autoconf automake autotools-dev curl python3 python3-pip libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev ninja-build git cmake libglib2.0-dev libslirp-dev
+    #     version: 1.0
+        
+    # - name: Install riscv-tools
+    #   run: |
+    #     mkdir risc-v
+    #     cd risc-v
+    #     git clone https://github.com/riscv-collab/riscv-gnu-toolchain.git
+    #     cd riscv-gnu-toolchain
+    #     sudo mkdir /opt/riscv
+    #     ./configure --prefix=/opt/riscv
+    #     sudo make linux
+    #     echo 'export PATH="$PATH:/opt/riscv/bin"' >> ~/.bashrc
+    #     source ~/.bashrc
+
+    # - name: Install packages for spike
+    #   uses: awalsh128/cache-apt-pkgs-action@latest
+    #   with:
+    #     packages: device-tree-compiler libboost-all-dev
+    #     version: 1.0
+
+    # - name: Install spike
+    #   run: |
+    #     cd ~/risc-v
+    #     git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+    #     cd riscv-isa-sim
+    #     mkdir build
+    #     cd build
+    #     ../configure --prefix=/opt/riscv
+    #     make
+    #     make install
+              
+
+    - name: Build
+      run: |
+        make build
+
+    - name: Test .cell
+      run: |
+         ./output/cell tests/examples/always-true.cell
+         ./always-true
+         ./output/cell tests/examples/always-true.cell -t riscv
+
+    # - name: Test
+    #   run: make test
