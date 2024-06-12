@@ -31,9 +31,15 @@ jobs:
         packages: antlr4 openjdk-21-jdk clang
         version: 1.0
 
-    - name: Install LLVM
-      run: |
-        sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+    - name: Install llvm
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: llvm lld
+        version: 1.0
+
+    # - name: Install LLVM
+    #   run: |
+    #     sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 
     - name: Install riscv-tools
       uses: awalsh128/cache-apt-pkgs-action@latest
