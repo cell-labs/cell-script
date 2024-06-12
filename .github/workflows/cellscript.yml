@@ -52,7 +52,7 @@ jobs:
     - name: Install packages for spike
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: device-tree-compiler libboost-regex-dev
+        packages: device-tree-compiler libboost-all-dev
         version: 1.0
 
     - name: Install spike
