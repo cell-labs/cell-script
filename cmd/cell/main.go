@@ -18,6 +18,7 @@ var (
 	verbose  bool
 	output   string
 	target   string
+	help 	 bool
 )
 
 func init() {
@@ -29,6 +30,7 @@ func init() {
 	flag.BoolVarP(&debug, "debug", "d", false, "Emit debug information during compile time")
 	flag.BoolVarP(&verbose, "verbose", "v", false, "Emit verbose command during compiling")
 	flag.BoolVarP(&optimize, "optimize", "O", false, "Enable clang optimization")
+	flag.BoolVarP(&help, "help", "h", false, "Show help message")
 	flag.StringVarP(&target, "target", "t", "native", "Compile to this target")
 	flag.StringVarP(&output, "output", "o", "", "Output binary filename")
 }
@@ -36,6 +38,10 @@ func init() {
 func parseOptions() *option.Options {
 	flag.Parse()
 
+	if help {
+		flag.Usage()
+		os.Exit(0)
+	}
 	if len(flag.Args()) < 1 {
 		log.Printf("No file specified. Usage: %s path/to/file.cell", os.Args[0])
 		os.Exit(1)

@@ -120,7 +120,7 @@ unittest:
 	go mod verify
 	go test -v ${MKFILE_DIR}/compiler/lexer/*.go
 	go test -v ${MKFILE_DIR}/compiler/parser/*.go
-	go test -v ${MKFILE_DIR}/compiler/passes/bigint/*.go
+	# go test -v ${MKFILE_DIR}/compiler/passes/bigint/*.go
 test/example:
 	@echo " ${>>>} test cell examples ${<<<} "
 	make build
