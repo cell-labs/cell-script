@@ -68,10 +68,11 @@ sudo apt update
 sudo apt install golang-go
 ```
 
-Install `antlr4`, `openjdk-21`
+Install `antlr4`, `openjdk-21`, `clang`
 ```
 sudo apt install antlr4
 sudo apt install openjdk-21-jdk
+sudo apt install clang
 ```
 
 Install `llvm`
@@ -79,8 +80,15 @@ Install `llvm`
 sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
 ```
 
-Install `riscv-tools`
+or
 
+```
+sudo apt install llvm
+sudo apt install lld
+```
+
+
+Install `riscv-tools`
 ```
 sudo apt update
 sudo apt upgrade
@@ -100,7 +108,13 @@ echo 'export PATH="$PATH:/opt/riscv/bin"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-Install `spike`
+or
+
+```
+sudo apt install gcc-riscv64-unknown-elf
+```
+
+Install `spike`. ⚠️This is optional
 
 ```
 sudo apt install device-tree-compiler libboost-all-dev
@@ -135,7 +149,15 @@ You can write your program in file with `.cell`. Here for example, we say `hello
 cell hello.cell
 ```
 
-You will get the output file also known as elf file named `hello` in the root folder.
+You will get the output file also known as elf file named `hello` in the root folder. Just run it `./hello`!
+
+To compile `elf`
+
+```
+cell -t riscv hello.cell
+```
+
+You will get the elf executable named `hello` in the root folder.
 
 To run the elf file, we need `ckb-debugger` the default debugger for ckb programs.
 
