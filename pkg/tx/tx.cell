@@ -44,8 +44,8 @@ function outputs() []cell.Cell {
 function parse_args() *cell.XudtArgs {
 	return 0
 }
-function xudtArgs(args uintptr) *cell.XudtArgs {
-	return parse_args(args)
+function xudtArgs() *cell.XudtArgs {
+	return parse_args()
 }
 
 function check_enhanced_owner_mode(args *cell.XudtArgs) bool {
