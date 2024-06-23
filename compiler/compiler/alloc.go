@@ -21,10 +21,10 @@ func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
 		c.contextAlloc = c.contextAlloc[0 : len(c.contextAlloc)-1]
 	}()
 
-	if v.IsConst {
-		c.compileAllocConstNode(v)
-		return
-	}
+	// if v.IsConst {
+	// 	c.compileAllocConstNode(v)
+	// 	return
+	// }
 
 	// Allocate from type
 	if len(v.Val) == 0 && v.Type != nil {
