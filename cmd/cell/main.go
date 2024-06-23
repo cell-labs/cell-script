@@ -63,7 +63,7 @@ func parseOptions() *option.Options {
 		Output:   output,
 		Target:   target,
 		Root:     root,
-		Version:  option.VersionScheme{Major: 0, Minor: 0, Patch: 1},
+		Version:  option.VersionScheme{Major: 0, Minor: 1, Patch: 0},
 	}
 }
 
