@@ -3,7 +3,6 @@ package build
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -106,7 +105,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 
 	// Parse all files in the folder
 	if f.IsDir() {
-		files, err := ioutil.ReadDir(path)
+		files, err := os.ReadDir(path)
 		if err != nil {
 			panic(path + ": " + err.Error())
 		}
@@ -200,7 +199,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 
 func parseFile(path string, options *option.Options) parser.FileNode {
 	// Read specified input file
-	fileContents, err := ioutil.ReadFile(path)
+	fileContents, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}

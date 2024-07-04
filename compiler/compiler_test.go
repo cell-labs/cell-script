@@ -3,7 +3,6 @@ package compiler
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -17,7 +16,7 @@ import (
 )
 
 func TestAllPrograms(t *testing.T) {
-	files, _ := ioutil.ReadDir("testdata")
+	files, _ := os.ReadDir("testdata")
 	if len(files) == 0 {
 		t.Error("No test files found")
 	}
@@ -50,7 +49,7 @@ func buildRunAndCheck(t *testing.T, path string, withOptimize bool) (err error) 
 		mainPath = path + "/main.go"
 	}
 
-	content, err := ioutil.ReadFile(mainPath)
+	content, err := os.ReadFile(mainPath)
 	if err != nil {
 		return err
 	}

@@ -18,7 +18,7 @@ var (
 	verbose  bool
 	output   string
 	target   string
-	help 	 bool
+	help     bool
 )
 
 func init() {

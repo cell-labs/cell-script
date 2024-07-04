@@ -19,7 +19,7 @@ func (n *baseNode) Node() {
 }
 
 // VersionScheme implements the Node interface, to specify the compiler version
-type VersionScheme struct{
+type VersionScheme struct {
 	baseNode
 	Major int
 	Minor int
@@ -31,7 +31,7 @@ func (v VersionScheme) String() string {
 }
 
 // PragmaNode implements the Node interface, to tell compiler how to compile
-type PragmaNode struct{
+type PragmaNode struct {
 	baseNode
 	Version VersionScheme
 }

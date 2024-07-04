@@ -258,7 +258,6 @@ func TestInfixPriority4Load(t *testing.T) {
 	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
 
-
 func TestPramga(t *testing.T) {
 	input := []lexer.Item{
 		{Type: lexer.KEYWORD, Val: "pragma", Line: 1},
@@ -288,5 +287,3 @@ func TestPramga(t *testing.T) {
 
 	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
-
-

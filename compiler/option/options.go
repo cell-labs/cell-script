@@ -1,6 +1,6 @@
 package option
 
-type VersionScheme struct{
+type VersionScheme struct {
 	Major int
 	Minor int
 	Patch int
