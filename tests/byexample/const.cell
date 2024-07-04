@@ -1,0 +1,16 @@
+package main
+import (
+    "debug"
+)
+
+const (
+	s string = "constant"
+	s2 = "string: s2"
+)
+function main() {
+    debug.Printf("%s", s)
+    debug.Printf("%s", s2)
+    const n = 500000000
+    debug.Printf("%d", n)
+	return 0
+}
