@@ -24,7 +24,7 @@ Look at the following code, to understand it better:
 
 ### Example
 
-```solidity
+```cellscript
 package main
 import "debug"
 
@@ -49,7 +49,7 @@ CellScript supports single-line or multi-line comments.
 
 ### Single-line Comments
 
-```
+```cellscript
 // This is a comment
 package main
 import ("fmt")
@@ -94,19 +94,19 @@ Variable naming rules:
 
 #### `var` keyword
 
-```
+```cellscript
 var variablename type = value
 ```
 
 #### `:=` sign
 
-```
+```cellscript
 variablename := value
 ```
 
 #### Variable Declaration With Initial Value
 
-```
+```cellscript
 package main
 import ("fmt")
 
@@ -125,7 +125,7 @@ func main() {
 
 In Go, all variables are initialized. So, if you declare a variable without an initial value, its value will be set to the default value of its type:
 
-```
+```cellscript
 package main
 import ("fmt")
 
@@ -150,7 +150,7 @@ The `const` keyword declares the variable as "constant", which means that it is 
 
 ### Declaring a Constant
 
-```
+```cellscript
 package main
 import ("fmt")
 
@@ -168,7 +168,7 @@ There are three functions to output text:
 * `Println()`
 * `Printf()`
 
-```
+```cellscript
 package main
 import ("debug")
 
@@ -184,7 +184,7 @@ function main() {
 
 Arrays are used to store multiple values of the same type in a single variable, instead of declaring separate variables for each value.
 
-```
+```cellscript
 var array_name = [length]datatype{values} // here length is defined
 array_name := [length]datatype{values} // here length is defined
 ```
@@ -193,7 +193,7 @@ array_name := [length]datatype{values} // here length is defined
 
 An vector is a numbered sequence of elements of a single type, called the element type. The number of elements is called the length of the vector and is never negative.
 
-```
+```cellscript
 vector_name := []datatype{values}
 ```
 
@@ -232,7 +232,7 @@ To create (often referred to as declare) a function, do the following:
 * Specify a name for the function, followed by parentheses ().
 * Finally, add code that defines what the function should do, inside curly braces {}.
 
-```
+```cellscript
 function FunctionName() {
   // code to be executed
 }
@@ -242,7 +242,7 @@ function FunctionName() {
 
 Functions are not executed immediately. They are "saved for later use", and will be executed when they are called.
 
-```
+```cellscript
 package main
 import ("debug")
 
@@ -263,7 +263,7 @@ Each execution of a loop is called an  **iteration** .
 
 The `for` loop can take up to three statements:
 
-```
+```cellscript
 for statement1; statement2; statement3 {
    // code to be executed for each iteration
 }
@@ -271,7 +271,7 @@ for statement1; statement2; statement3 {
 
 Example
 
-```
+```cellscript
 package main
 import ("fmt")
 
@@ -288,7 +288,7 @@ A table is a sequence of named elements, called fields, each of which has a name
 
 To declare a structure in CellScript, use the `type` and `struct` keywords:
 
-```
+```cellscript
 type struct_name struct {
   member1 datatype;
   member2 datatype;
@@ -299,7 +299,7 @@ type struct_name struct {
 
 Example
 
-```
+```cellscript
 type Person struct {
   name string
   age int
