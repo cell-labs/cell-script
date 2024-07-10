@@ -324,6 +324,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			return outerConditionNode
 		}
 
+		// "cfunction" is function without function body
 		// "function" gets converted into a DefineFuncNode
 		// the keyword "function" is followed by
 		// - a IDENTIFIER (function name)
@@ -339,8 +340,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		// method:      func (a abc) abc() {
 		// value func:  func (a abc) {
 
-		if current.Val == "function" {
+		if current.Val == "function" || current.Val == "cfunction"  {
 			defineFunc := &DefineFuncNode{}
+			if current.Val == "cfunction" {
+				defineFunc.IsCFunc = true
+			}
 			p.i++
 
 			var argsOrMethodType []*NameNode
@@ -462,6 +466,10 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			}
 
 			defineFunc.ReturnValues = retTypesNodeNames
+
+			if current.Val == "cfunction" {
+				return p.aheadParse(defineFunc)
+			}
 
 			openBracket := p.lookAhead(0)
 			if openBracket.Type != lexer.OPERATOR || openBracket.Val != "{" {

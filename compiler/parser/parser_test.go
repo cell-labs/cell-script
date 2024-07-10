@@ -287,3 +287,46 @@ func TestPramga(t *testing.T) {
 
 	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
+
+func TestFunction(t *testing.T) {
+	input := []lexer.Item{
+		{Type: lexer.KEYWORD, Val: "cfunction", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "foo", Line: 1},
+		{Type: lexer.OPERATOR, Val: "(", Line: 1},
+		{Type: lexer.OPERATOR, Val: ")", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "int32", Line: 1},
+		{Type: lexer.EOL},
+		{Type: lexer.EOF},
+	}
+
+	/*
+		pramga cellscript 0.0.1
+	*/
+
+	expected := &FileNode{
+		Instructions: []Node{
+			&DefineFuncNode{
+				Name: "foo",
+				IsNamed: true,
+				IsMethod: false,
+				IsCFunc: true,
+
+				MethodOnType: nil,
+				IsPointerReceiver: false,
+				InstanceName: "",
+
+				Arguments: nil,
+				ReturnValues: []*NameNode{
+					&NameNode{
+						Type: &SingleTypeNode{
+							TypeName: "int32",
+						},
+					},
+				},
+				Body: nil,
+			},
+		},
+	}
+
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
+}

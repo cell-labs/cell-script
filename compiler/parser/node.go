@@ -188,6 +188,7 @@ type DefineFuncNode struct {
 	IsNamed bool
 
 	IsMethod bool
+	IsCFunc  bool
 
 	MethodOnType      *SingleTypeNode
 	IsPointerReceiver bool
