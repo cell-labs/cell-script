@@ -75,6 +75,11 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 	return funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount
 }
 
+// ABI description
+// method:			package + _method_ + type + _ + name
+// named variable: 	package + name
+// cffi:			function_name
+// lambda:			package + anonName
 func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	var compiledName string
 
