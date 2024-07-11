@@ -12,82 +12,39 @@ const (
 	SUCCESS = iota
 )
 
-function script_verify() bool {
-	return true
-}
+cfunction script_verify() bool
+cfunction is_owner_mode() bool
+cfunction get_utxo_inputs() []cell.Cell
+cfunction get_utxo_outputs() []cell.Cell
+
 function scriptVerify() bool {
 	return script_verify()
-}
-
-function is_owner_mode() bool {
-	return true
 }
 function isOwnerMode() bool {
 	return is_owner_mode()
 }
-
-function get_utxo_inputs() []cell.Cell {
-	return []cell.Cell{}
-}
 function inputs() []cell.Cell {
 	return get_utxo_inputs()
-}
-
-function get_utxo_outputs() []cell.Cell {
-	return []cell.Cell{}
 }
 function outputs() []cell.Cell {
 	return get_utxo_outputs()
 }
 
 // xudt related API and ffi functions
-function parse_args() *cell.XudtArgs {
-	return 0
-}
+cfunction parse_args() *cell.XudtArgs
+cfunction check_enhanced_owner_mode(args *cell.XudtArgs) bool
+cfunction simple_udt(owner_mode bool) int64
+cfunction execute_scripts(args *cell.XudtArgs) bool
+
 function xudtArgs() *cell.XudtArgs {
 	return parse_args()
-}
-
-function check_enhanced_owner_mode(args *cell.XudtArgs) bool {
-	return false
 }
 function checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 	return check_enhanced_owner_mode(args)
 }
-
-function simple_udt(owner_mode bool) int64 {
-	return 0
-}
 function sudt(owner_mode bool) int64 {
 	return simple_udt(owner_mode)
-}
-
-function get_flags(args uintptr) int64 {
-	return 0
-}
-function getFlags(args uintptr) int64 {
-	return get_flags(args)
-}
-
-function get_err(args uintptr) int64 {
-	return 0
-}
-function getErr(args uintptr) int64 {
-	return get_err(args)
-}
-
-function get_owner_mode(args uintptr) int64 {
-	return 0
-}
-function getOwnerMode(args *cell.XudtArgs) int64 {
-	return get_owner_mode(args)
-}
-
-function execute_scripts(args *cell.XudtArgs) bool {
-	return false
 }
 function executeScripts(args *cell.XudtArgs) bool {
 	return execute_scripts(args)
 }
-
-

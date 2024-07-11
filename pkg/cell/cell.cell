@@ -20,7 +20,7 @@ type Script table {
 type XudtArgs table {
 	owner_mode	bool
 	err			int64
-	flags 		uint32
+	flags 		int64
 	script  	[32768]byte
 	codeBuf_padding [4076]byte
 	codeBuf 	[1843200]byte
