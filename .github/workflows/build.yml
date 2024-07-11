@@ -85,13 +85,12 @@ jobs:
 
     - name: Build
       run: |
-        make build
+        make all
 
     - name: Test .cell
       run: |
-         ./output/cell tests/examples/always-true.cell
-         ./always-true
-         ./output/cell tests/examples/always-true.cell -t riscv
+         source install.sh
+         make test
 
     # - name: Test
     #   run: make test
