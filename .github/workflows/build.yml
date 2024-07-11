@@ -82,10 +82,8 @@ jobs:
     #     make
     #     make install
 
-    - name: Git Submodules Init
-      # You may pin to the exact commit or the version.
-      # uses: chris-short/github-action-git-submodules@88901c55aa6d9741d91bab66ac6b4e96d0732b7f
-      uses: chris-short/github-action-git-submodules@v0.1.0
+    - name: submodules-init
+      uses: snickerbockers/submodules-init@v4
 
     - name: Build
       run: |
