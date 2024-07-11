@@ -94,13 +94,9 @@ jobs:
          make unittest
 
     # Add ckb-debugger to test running compiling production
-    - name: rust-cargo
-      uses: actions-rs/cargo@v1.0.1
+    - uses: taiki-e/cache-cargo-install-action@v2
       with:
-        # Cargo command to run (ex. `check` or `build`)
-        command: install
-        # Arguments for the cargo command
-        args: --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
+        tool: ckb-debugger
 
     - name: Test Compiling
       run: |
