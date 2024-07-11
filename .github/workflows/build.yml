@@ -89,10 +89,20 @@ jobs:
       run: |
         make all
 
-    - name: Test .cell
+    - name: Unittest
       run: |
-         source install.sh
-         make test
+         make unittest
 
-    # - name: Test
-    #   run: make test
+    # Add ckb-debugger to test running compiling production
+    - name: rust-cargo
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        # Cargo command to run (ex. `check` or `build`)
+        command: install
+        # Arguments for the cargo command
+        args: --git https://github.com/nervosnetwork/ckb-standalone-debugger ckb-debugger
+
+    - name: Test Compiling
+      run: |
+        source install.sh
+        make test/example
