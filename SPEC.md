@@ -106,7 +106,7 @@ The following character sequences represent operators and punctuation.
 -    |     ||    <     <=    [    ]
 *    ^     >     ,     ;     {    }
 /    <<    =     .     >=   
-%    >>    !     ;
+%    >>    !
 ```
 
 The formal syntax uses semicolons ";" as terminators in a number of productions.
