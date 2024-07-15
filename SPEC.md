@@ -55,6 +55,7 @@ bool
 const
 continue
 else
+extern
 for
 func
 if
@@ -104,7 +105,7 @@ The following character sequences represent operators and punctuation.
 -    |     ||    <     <=    [    ]
 *    ^     >     ,     ;     {    }
 /    <<    =     .     >=   
-%    >>    !	:=
+%    >>    !     :=
 ```
 
 The formal syntax uses semicolons ";" as terminators in a number of productions.
@@ -112,7 +113,7 @@ The formal syntax uses semicolons ";" as terminators in a number of productions.
 # Module and source files
 
 ```ebnf
-	Module = Definition* ;
+Module = Definition* ;
 ```
 
 Source files has the extension `.cell`.
@@ -293,7 +294,6 @@ A reference type denotes the set of all references to [variables](/##Variables) 
 ReferenceType = "*" BaseType . 
 The syntax is specified using a variant of Extended Backus-Naur Form (EBNF):BaseType    = Type .
 ```
-
 
 ## Union types
 
@@ -678,7 +678,6 @@ len(s)    string type      string length in bytes
 
 # Names
 
-
 ## tx
 
 TODO
@@ -694,4 +693,3 @@ TODO
 # Appendix
 
 TODO
-
