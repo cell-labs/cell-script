@@ -56,15 +56,13 @@ const
 continue
 else
 for
-function
+func
 if
 import
 package
-public
 return
 range
 table
-union
 var
 ```
 
@@ -106,7 +104,7 @@ The following character sequences represent operators and punctuation.
 -    |     ||    <     <=    [    ]
 *    ^     >     ,     ;     {    }
 /    <<    =     .     >=   
-%    >>    !
+%    >>    !	:=
 ```
 
 The formal syntax uses semicolons ";" as terminators in a number of productions.
@@ -128,7 +126,7 @@ TODO
 
 A Module contains a main function can be compiled to an executable.
 
-If a main function is present, it must take no arguments, and its return type must be `int8`.
+If a main function is present, it must take no arguments, and its return type must be `int64`.
 
 # Declarations
 
@@ -138,8 +136,7 @@ Declaration = Package
             | Constant
             | Variable
             | Function
-            | Table
-            | Union ;
+            | Table;
 ```
 
 ## Packages
@@ -169,23 +166,18 @@ Variable = var Identifier Type (= Expression)? ;
 ## Functions
 
 ```ebnf
-Function = function Identifier ( FunctionParameters? ) FunctionReturnType (BlockExpression)? ;
+Function = func Identifier ( FunctionParameters? ) FunctionReturnType (BlockExpression)? ;
 ```
 
 ## Tables
 
 ```ebnf
-Table = table Identifier { TablFields? } ;
-TablFields = TablField (, TablField)* ,? ;
-TableField = Visibility?
-           | Identifier Type ;
+Table = table Identifier { TableFields? } ;
+TableFields = TableField (, TableField)* ,? ;
+TableField = Identifier Type ;
 ```
 
 ## Unions(TODO)
-
-```ebnf
-Union = union Identifier { TableFields } ;
-```
 
 # Expressions
 
@@ -230,7 +222,7 @@ _42         // an identifier, not an integer literal
 A string literal represents a string constant obtained from concatenating a sequence of characters.
 
 ```
-string_lit         = "`" { unicode_char | newline } "`" .
+string_lit         = " { unicode_char | newline } " .
 ```
 
 These examples all represent the same string:
@@ -280,7 +272,7 @@ uint16      the set of all unsigned 16-bit integers (0 to 65535)
 uint32      the set of all unsigned 32-bit integers (0 to 4294967295)
 uint64      the set of all unsigned 64-bit integers (0 to 18446744073709551615)
 uint128     the set of all unsigned 128-bit integers (0 to 340282366920938463463374607431768211455)
-uint256     the set of all unsigned 256-bit integers (0 to 115792089237316195423570985008687907853269984665640564039457584007913129639935)
+uint256     (tbd)the set of all unsigned 256-bit integers (0 to 115792089237316195423570985008687907853269984665640564039457584007913129639935)
 ```
 
 ## String types
@@ -293,12 +285,12 @@ The length of a string s can be discovered using the built-in function len. The 
 
 Byte is a simplify expression of uint8 for most cases.
 
-### Pointer types
+### Reference types
 
-A pointer type denotes the set of all pointers to [variables](https://go.dev/ref/spec#Variables) of a given type, called the *base type* of the pointer. The value of an uninitialized pointer is `nil`.
+A reference type denotes the set of all references to [variables](/##Variables) of a given type, called the *base type* of the reference.
 
 ```
-PointerType = "*" BaseType . 
+ReferenceType = "*" BaseType . 
 The syntax is specified using a variant of Extended Backus-Naur Form (EBNF):BaseType    = Type .
 ```
 
@@ -316,7 +308,7 @@ TODO
 A function type denotes the set of all functions with the same parameter and result types.
 
 ```
-FunctionType   = "function" Signature .
+FunctionType   = "func" Signature .
 Signature      = Parameters [ Result ] .
 Result         = Parameters | Type .
 Parameters     = "(" [ ParameterList [ "," ] ] ")" .
@@ -327,9 +319,9 @@ ParameterDecl  = [ IdentifierList ] [ "..." ] Type .
 Within a list of parameters or results, the names (IdentifierList) must all be present. Each name stands for one item (parameter or result) of the specified type and all non-blank names in the signature must be unique. Parameter and result lists are always parenthesized except that if there is exactly one unnamed result it may be written as an unparenthesized type.
 
 ```
-function()
-function(x uint8) uint8
-function(a, _ uint32, z uint64) bool
+func()
+func(x uint8) uint8
+func(a, _ uint32, z uint64) bool
 ```
 
 # Complex Types
@@ -358,7 +350,11 @@ TODO
 
 A table is a sequence of named elements, called fields, each of which has a name and a type. Field names may be specified explicitly (IdentifierList) or implicitly (EmbeddedField). Within a table, non-blank field names must be unique.
 
-TODO
+```ebnf
+Table = table Identifier { TableFields? } ;
+TableFields = TableField (, TableField)* ,? ;
+TableField = Identifier Type ;
+```
 
 # Blocks
 
@@ -371,7 +367,7 @@ StatementList = { Statement ";" } .
 
 # Declarations and scope
 
-A declaration binds a non-blank identifier to a constant, type, type parameter, variable, function, label, or package. Every identifier in a program must be declared. No identifier may be declared twice in the same block, and no identifier may be declared in both the file and package block.
+A declaration binds a non-blank identifier to a constant, type, type parameter, variable, function, or package. Every identifier in a program must be declared. No identifier may be declared twice in the same block, and no identifier may be declared in both the file and package block.
 
 The blank identifier may be used like any other identifier in a declaration, but it does not introduce a binding and thus is not declared. In the package block, the identifier init may only be used for init function declarations, and like the blank identifier it does not introduce a new binding.
 
@@ -380,15 +376,11 @@ Declaration   = ConstDecl | TypeDecl | VarDecl .
 TopLevelDecl  = Declaration | FunctionDecl | MethodDecl .
 ```
 
-The scope of a declared identifier is the extent of source text in which the identifier denotes the specified constant, type, variable, function, label, or package.
+The scope of a declared identifier is the extent of source text in which the identifier denotes the specified constant, type, variable, function, or package.
 
 An identifier declared in a block may be redeclared in an inner block. While the identifier of the inner declaration is in scope, it denotes the entity declared by the inner declaration.
 
 The package clause is not a declaration; the package name does not appear in any scope. Its purpose is to identify the files belonging to the same package and to specify the default package name for import declarations.
-
-## Label scopes
-
-TODO
 
 ## Predeclared identifiers
 
@@ -402,14 +394,9 @@ Types:
 Constants:
  true false
 
-Zero value:
- null
-
 Functions:
- append len max min  
+ append cap len
 ```
-
-TODO
 
 ## Constant declarations
 
@@ -417,11 +404,14 @@ TODO
 const a, b, c = 3, 4, "foo" // a = 3, b = 4, c = "foo", untyped integer and string constants
 ```
 
-TODO
-
 ## Type declarations
 
-TODO
+A type declaration binds an identifier, the type name, to a type. Type declarations come in two forms: alias declarations and type definitions.
+
+```
+TypeDecl = "type" ( TypeSpec | "(" { TypeSpec ";" } ")" ) .
+TypeSpec = AliasDecl | TypeDef .
+```
 
 ## Variable declarations
 
@@ -460,7 +450,7 @@ f := func() int { return 7 }
 A function declaration binds an identifier, the function name, to a function.
 
 ```
-FunctionDecl = "function" FunctionName [ TypeParameters ] Signature [ FunctionBody ] .
+FunctionDecl = "func" FunctionName [ TypeParameters ] Signature [ FunctionBody ] .
 FunctionName = identifier .
 FunctionBody = Block .
 ```
@@ -527,12 +517,12 @@ assign_op = [ add_op | mul_op ] "=" .
 
 Each left-hand side operand must be addressable, a map index expression, or (for = assignments only) the blank identifier. Operands may be parenthesized.
 
-```
+```cellscript
 x = 1
 a[i] = 23
 ```
 
-```
+```cellscript
 a, b = b, a  // exchange a and b
 
 x := []int{1, 2, 3}
@@ -546,8 +536,8 @@ x[0], x[0] = 1, 2  // set x[0] = 1, then x[0] = 2 (so x[0] == 2 at end)
 
 x[1], x[3] = 4, 5  // set x[1] = 4, then panic setting x[3] = 5.
 
-type Point struct { x, y int }
-var p *Point
+type Point table { x, y int }
+var p Point
 x[2], p.x = 6, 7  // set x[2] = 6, then panic setting p.x = 7
 
 i = 2
@@ -566,7 +556,7 @@ for i, x[i] = range x {  // set i, x[2] = 0, x[0]
 IfStmt = "if" [ SimpleStmt ";" ] Expression Block [ "else" ( IfStmt | Block ) ] .
 ```
 
-```
+```cellscript
 if x > max {
  x = max
 }
@@ -576,19 +566,19 @@ if x > max {
 
 A "for" statement specifies repeated execution of a block. There are three forms: The iteration may be controlled by a single condition, a "for" clause, or a "range" clause.
 
-```cell
+```cellscript
 for a < b {
  a *= 2
 }
 ```
 
-```
+```cellscript
 for i := 0; i < 10; i++ {
  f(i)
 }
 ```
 
-```
+```cellscript
 var a [10]string
 for i, s := range a {
  // type of i is int
@@ -604,18 +594,18 @@ for i, s := range a {
 A "break" statement terminates execution of the innermost "for" statement within the same function.
 
 ```
-BreakStmt = "break" [ Label ] .
+BreakStmt = "break".
 ```
 
-```
+```cellscript
 for i = 0; i < n; i++ {
   for j = 0; j < m; j++ {
    if a[i][j] == nil {
     state = Error
-    break OuterLoop
-            } else if a[i][j] == item {
+    break 
+   } else if a[i][j] == item {
     state = Found
-    break OuterLoop
+    break
    }
   }
  }
@@ -626,14 +616,15 @@ for i = 0; i < n; i++ {
 A "continue" statement begins the next iteration of the innermost enclosing "for" loop by advancing control to the end of the loop block. The "for" loop must be within the same function.
 
 ```
-ContinueStmt = "continue" [ Label ] .
+ContinueStmt = "continue" .
 ```
 
-```
+```cellscript
+rows := [[1,2,3],[4,5,6]]
 for y, row := range rows {
   for x, data := range row {
-   if data == endOfRow {
-    continue RowLoop
+   if data % 2 == 0 {
+    continue
    }
    row[x] = data + bias(x, y)
   }
@@ -664,7 +655,15 @@ The built-in functions do not have standard Go types, so they can only appear in
 
 TODO
 
-## Length
+## Append
+
+TODO
+
+## Cap
+
+TODO
+
+## Len
 
 The built-in functions len take arguments of various types and return a result of type int. The implementation guarantees that the result always fits into an int.
 
@@ -677,41 +676,8 @@ len(s)    string type      string length in bytes
 
 ```
 
-## Min and max
-
-The built-in functions min and max compute the smallest—or largest, respectively—value of a fixed number of arguments of ordered types. There must be at least one argument.
-
-The same type rules as for operators apply: for ordered arguments x and y, min(x, y) is valid if x + y is valid, and the type of min(x, y) is the type of x + y (and similarly for max). If all arguments are constant, the result is constant.
-
-```
-var x, y int
-m := min(x)                 // m == x
-m := min(x, y)              // m is the smaller of x and y
-m := max(x, y, 10)          // m is the larger of x and y but at least 10
-var s []string
-_ = min(s...)               // invalid: slice arguments are not permitted
-t := max("", "foo", "bar")  // t == "foo" (string kind)
-```
-
 # Names
 
-## Visibility
-
-```ebnf
-Visibility = pub ;
-```
-
-# Program initialization and execution
-
-TODO
-
-# Errors
-
-TODO
-
-# Misc
-
-TODO
 
 ## tx
 
@@ -728,3 +694,4 @@ TODO
 # Appendix
 
 TODO
+
