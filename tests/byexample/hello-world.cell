@@ -1,8 +1,10 @@
 package main
+
 import "debug"
-function main() {
-    debug.Printf("cellscript")
-    debug.Printf("1+1 = %d", 1+1)
-    debug.Printf("true = %d", true)
+
+func main() {
+	debug.Printf("cellscript")
+	debug.Printf("1+1 = %d", 1+1)
+	debug.Printf("true = %d", true)
 	return 0
 }

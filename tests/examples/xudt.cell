@@ -1,12 +1,10 @@
 package main
 
 import (
-	"cell"
-	"debug"
 	"tx"
 )
 
-function main() {
+func main() {
 	args := tx.xudtArgs()
 	if args.err != tx.SUCCESS {
 		return args.err

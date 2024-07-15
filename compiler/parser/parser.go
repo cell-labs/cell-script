@@ -325,8 +325,8 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		}
 
 		// "cfunction" is function without function body
-		// "function" gets converted into a DefineFuncNode
-		// the keyword "function" is followed by
+		// "func" gets converted into a DefineFuncNode
+		// the keyword "func" is followed by
 		// - a IDENTIFIER (function name)
 		// - opening parenthesis
 		// - optional: arguments (name type, name2 type2, ...)
@@ -340,7 +340,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		// method:      func (a abc) abc() {
 		// value func:  func (a abc) {
 
-		if current.Val == "function" || current.Val == "cfunction"  {
+		if current.Val == "func" || current.Val == "cfunction" {
 			defineFunc := &DefineFuncNode{}
 			if current.Val == "cfunction" {
 				defineFunc.IsCFunc = true
@@ -1386,7 +1386,7 @@ func (p *parser) parseOneType() (TypeNode, error) {
 	}
 
 	// Func type parsing
-	if current.Type == lexer.KEYWORD && current.Val == "function" {
+	if current.Type == lexer.KEYWORD && current.Val == "func" {
 		p.i++
 
 		expectOpenParen := p.lookAhead(0)

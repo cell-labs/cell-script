@@ -1,15 +1,17 @@
 package main
-import "debug"
-function main() {
-    for j := 7; j <= 9; j++ {
-        debug.Printf("%d", j)
-    }
 
-    for n := 0; n <= 5; n++ {
-        if (n&1) == 0 {
-            continue
-        }
-        debug.Printf("%d", n)
-    }
-    return 0
+import "debug"
+
+func main() {
+	for j := 7; j <= 9; j++ {
+		debug.Printf("%d", j)
+	}
+
+	for n := 0; n <= 5; n++ {
+		if (n & 1) == 0 {
+			continue
+		}
+		debug.Printf("%d", n)
+	}
+	return 0
 }

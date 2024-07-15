@@ -1,10 +1,10 @@
 import "debug"
 
-function ff() []int {
+func ff() []int {
 	return []int{40, 50}
 }
 
-function main() {
+func main() {
 	s := []int{10, 20, 30}
 	// 0 10
 	// 1 20
@@ -24,7 +24,7 @@ function main() {
 	// 1
 	// 2
 	for k := range s {
-	 	debug.Printf("%d\n", k)
+		debug.Printf("%d\n", k)
 	}
 
 	// AAA

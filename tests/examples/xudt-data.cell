@@ -5,17 +5,17 @@ import (
 	"debug"
 )
 
-function main() {
+func main() {
 	var a cell.SudtData = 22
 	var b cell.SudtData = 200
-	debug.Printf("%d", a + b)
+	debug.Printf("%d", a+b)
 
 	c := cell.Script{
 		hashType: '1',
 	}
 	c.codeHash[31] = '0'
 	debug.Printf("%d", c.codeHash[31]) //48
-	debug.Printf("%d", c.hashType) //49
+	debug.Printf("%d", c.hashType)     //49
 	debug.Printf("%d", c.args[0])
 
 	d := cell.XudtData{}

@@ -1,15 +1,17 @@
 package main
+
 import "debug"
-function main() {
-    var a = "initial"
-    debug.Printf("%s", a)
-    var b, c int64 = 1, 2
-    debug.Printf("%d %d", b, c)
-    var d = true
-    debug.Printf("%d", d)
-    var e int32
-    debug.Printf("%d", e)
-    f := "short"
-    debug.Printf("%s", f)
+
+func main() {
+	var a = "initial"
+	debug.Printf("%s", a)
+	var b, c int64 = 1, 2
+	debug.Printf("%d %d", b, c)
+	var d = true
+	debug.Printf("%d", d)
+	var e int32
+	debug.Printf("%d", e)
+	f := "short"
+	debug.Printf("%s", f)
 	return 0
 }

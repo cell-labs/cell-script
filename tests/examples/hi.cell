@@ -1,7 +1,7 @@
 pragma cellscript 0.1.0
 //package main
 import "debug"
-function main() {
+func main() {
     debug.Printf("hi")
     return 0
 }

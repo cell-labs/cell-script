@@ -2,7 +2,7 @@ import "debug"
 import "cell"
 import "tx"
 
-function main() {
+func main() {
 	ok := tx.scriptVerify()
 	debug.Printf("%d:", ok)
 	var outs []cell.Cell

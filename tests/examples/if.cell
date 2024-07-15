@@ -2,8 +2,7 @@ package main
 
 import "debug"
 
-
-function main() {
+func main() {
 	// 1
 	// 0
 	// a was true
@@ -35,6 +34,6 @@ function main() {
 	var c bool
 	c = false
 	debug.Printf("%d\n", c)
-	
+
 	return 0
 }

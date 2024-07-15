@@ -137,7 +137,7 @@ func (f Function) LLVM() types.Type {
 }
 
 func (f Function) Name() string {
-	return "function"
+	return "func"
 }
 
 type BoolType struct {

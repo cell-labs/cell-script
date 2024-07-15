@@ -1,12 +1,12 @@
 import "tx"
 import "debug"
 
-function main() {
+func main() {
 
 	var ok bool
 
 	ok = tx.scriptVerify()
-	
+
 	// 1000
 	debug.Printf("%d\n", ok)
 	return 0

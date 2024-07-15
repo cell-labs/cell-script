@@ -1,12 +1,12 @@
 import "debug"
 import "os"
 
-function foo() int64 {
-    debug.Printf("exit from foo")
-    os.exit(123)
-    return 0
+func foo() int64 {
+	debug.Printf("exit from foo")
+	os.exit(123)
+	return 0
 }
 
-function main() {
-    return foo()
+func main() {
+	return foo()
 }

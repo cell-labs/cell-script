@@ -3,7 +3,7 @@ package lexer
 var keywords = map[string]struct{}{
 	"if":        {},
 	"else":      {},
-	"function":  {},
+	"func":      {},
 	"cfunction": {},
 	"return":    {},
 	"type":      {},

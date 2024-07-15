@@ -12,7 +12,7 @@ type Bookshelf table {
 	book1 Book
 }
 
-function main() {
+func main() {
 	var shelf Bookshelf
 	var b0 Book
 

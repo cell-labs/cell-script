@@ -10,8 +10,8 @@ var r string
 
 var prog = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
 
-function scan(dir int64) {
-	for nest := dir;  (nest * dir) != 0 ; pc += dir {
+func scan(dir int64) {
+	for nest := dir; (nest * dir) != 0; pc += dir {
 		if prog[pc+dir] == ']' {
 			nest--
 		} else if prog[pc+dir] == '[' {
@@ -19,13 +19,13 @@ function scan(dir int64) {
 		}
 	}
 }
- 
-function main() {
+
+func main() {
 	j := 0
-	for pc = 0; pc < len(prog); pc++ { 
+	for pc = 0; pc < len(prog); pc++ {
 		if prog[pc] == '>' {
 			p++
-        } else if prog[pc] == '<' {
+		} else if prog[pc] == '<' {
 			p--
 		} else if prog[pc] == '+' {
 			a[p]++
@@ -43,7 +43,7 @@ function main() {
 			if a[p] != uint8(0) {
 				scan(-1)
 			}
-        } else {
+		} else {
 			debug.Printf("%s", r)
 			return 0
 		}

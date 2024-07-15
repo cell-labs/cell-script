@@ -17,16 +17,16 @@ cfunction is_owner_mode() bool
 cfunction get_utxo_inputs() []cell.Cell
 cfunction get_utxo_outputs() []cell.Cell
 
-function scriptVerify() bool {
+func scriptVerify() bool {
 	return script_verify()
 }
-function isOwnerMode() bool {
+func isOwnerMode() bool {
 	return is_owner_mode()
 }
-function inputs() []cell.Cell {
+func inputs() []cell.Cell {
 	return get_utxo_inputs()
 }
-function outputs() []cell.Cell {
+func outputs() []cell.Cell {
 	return get_utxo_outputs()
 }
 
@@ -36,15 +36,15 @@ cfunction check_enhanced_owner_mode(args *cell.XudtArgs) bool
 cfunction simple_udt(owner_mode bool) int64
 cfunction execute_scripts(args *cell.XudtArgs) bool
 
-function xudtArgs() *cell.XudtArgs {
+func xudtArgs() *cell.XudtArgs {
 	return parse_args()
 }
-function checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
+func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 	return check_enhanced_owner_mode(args)
 }
-function sudt(owner_mode bool) int64 {
+func sudt(owner_mode bool) int64 {
 	return simple_udt(owner_mode)
 }
-function executeScripts(args *cell.XudtArgs) bool {
+func executeScripts(args *cell.XudtArgs) bool {
 	return execute_scripts(args)
 }

@@ -2,6 +2,6 @@ package main
 
 import "debug"
 
-function bar() {
+func bar() {
 	debug.Printf("bar\n")
 }
