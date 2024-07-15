@@ -78,7 +78,7 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 // ABI description
 // method:			package + _method_ + type + _ + name
 // named variable: 	package + name
-// cffi:			function_name
+// cffi(extern):	function_name
 // lambda:			package + anonName
 func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	var compiledName string
@@ -102,7 +102,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		compiledName = c.currentPackageName + "_method_" + v.MethodOnType.TypeName + "_" + v.Name
 	} else if v.IsNamed {
 		// todo ffi set identifier
-		if c.currentPackageName == "tx" {
+		if v.IsExtern {
 			compiledName = v.Name
 		} else {
 			compiledName = c.currentPackageName + "_" + v.Name
@@ -141,7 +141,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	} else {
 		fn = c.module.NewFunc(compiledName, funcRetType.LLVM(), llvmParams...)
 		// register ffi function definnition for tx package and os package
-		if v.IsCFunc {
+		if v.IsExtern {
 			// do not generate block
 		} else {
 			entry = fn.NewBlock(name.Block())
@@ -158,7 +158,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	// register ffi function definition for tx package
 	// without generate func body
-	if v.IsCFunc {
+	if v.IsExtern {
 		val := value.Value{
 			Type:  typesFunc,
 			Value: fn,

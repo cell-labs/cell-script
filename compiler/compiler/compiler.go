@@ -250,6 +250,10 @@ func (c *Compiler) compile(instructions []parser.Node) {
 			c.compileBreakNode(v)
 		case *parser.ContinueNode:
 			c.compileContinueNode(v)
+		case *parser.ExternNode:
+			for _, fn := range v.FuncNodes {
+				c.compileDefineFuncNode(fn)
+			}
 
 		case *parser.DeclarePackageNode:
 			// TODO: Make use of it

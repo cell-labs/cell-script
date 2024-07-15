@@ -12,10 +12,12 @@ const (
 	SUCCESS = iota
 )
 
-cfunction script_verify() bool
-cfunction is_owner_mode() bool
-cfunction get_utxo_inputs() []cell.Cell
-cfunction get_utxo_outputs() []cell.Cell
+extern (
+	func script_verify() bool
+    func is_owner_mode() bool
+    func get_utxo_inputs() []cell.Cell
+    func get_utxo_outputs() []cell.Cell
+)
 
 func scriptVerify() bool {
 	return script_verify()
@@ -31,10 +33,12 @@ func outputs() []cell.Cell {
 }
 
 // xudt related API and ffi functions
-cfunction parse_args() *cell.XudtArgs
-cfunction check_enhanced_owner_mode(args *cell.XudtArgs) bool
-cfunction simple_udt(owner_mode bool) int64
-cfunction execute_scripts(args *cell.XudtArgs) bool
+extern (
+	func parse_args() *cell.XudtArgs
+    func check_enhanced_owner_mode(args *cell.XudtArgs) bool
+    func simple_udt(owner_mode bool) int64
+    func execute_scripts(args *cell.XudtArgs) bool
+)
 
 func xudtArgs() *cell.XudtArgs {
 	return parse_args()

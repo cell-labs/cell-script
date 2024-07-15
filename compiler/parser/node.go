@@ -180,41 +180,6 @@ func (ConditionNode) String() string {
 	return "condition"
 }
 
-// DefineFuncNode creates a new named function
-type DefineFuncNode struct {
-	baseNode
-
-	Name    string
-	IsNamed bool
-
-	IsMethod bool
-	IsCFunc  bool
-
-	MethodOnType      *SingleTypeNode
-	IsPointerReceiver bool
-	InstanceName      string
-
-	Arguments    []*NameNode
-	ReturnValues []*NameNode
-	Body         []Node
-}
-
-func (dfn DefineFuncNode) String() string {
-	var body []string
-
-	for _, b := range dfn.Body {
-		body = append(body, fmt.Sprintf("%+v", b))
-	}
-
-	if dfn.IsMethod {
-		return fmt.Sprintf("func+m (%+v) %s(%+v) %+v {\n\t%s\n}", dfn.InstanceName, dfn.Name, dfn.Arguments, dfn.ReturnValues, strings.Join(body, "\n\t"))
-	} else if dfn.IsNamed {
-		return fmt.Sprintf("func+n %s(%+v) %+v {\n\t%s\n}", dfn.Name, dfn.Arguments, dfn.ReturnValues, strings.Join(body, "\n\t"))
-	} else {
-		return fmt.Sprintf("func+v (%+v) %+v {\n\t%s\n}", dfn.Arguments, dfn.ReturnValues, strings.Join(body, "\n\t"))
-	}
-}
-
 // NameNode retreives a named variable
 type NameNode struct {
 	baseNode

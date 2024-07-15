@@ -290,40 +290,51 @@ func TestPramga(t *testing.T) {
 
 func TestFunction(t *testing.T) {
 	input := []lexer.Item{
-		{Type: lexer.KEYWORD, Val: "cfunction", Line: 1},
+		{Type: lexer.KEYWORD, Val: "extern", Line: 1},
+		{Type: lexer.OPERATOR, Val: "(", Line: 1},
+		{Type: lexer.KEYWORD, Val: "func", Line: 1},
 		{Type: lexer.IDENTIFIER, Val: "foo", Line: 1},
 		{Type: lexer.OPERATOR, Val: "(", Line: 1},
 		{Type: lexer.OPERATOR, Val: ")", Line: 1},
 		{Type: lexer.IDENTIFIER, Val: "int32", Line: 1},
+		{Type: lexer.OPERATOR, Val: ")", Line: 1},
 		{Type: lexer.EOL},
 		{Type: lexer.EOF},
 	}
 
 	/*
-		pramga cellscript 0.0.1
+		extern (
+			func foo() int32
+			func bar() int32
+		)
+		extern func foo() int32
 	*/
 
 	expected := &FileNode{
 		Instructions: []Node{
-			&DefineFuncNode{
-				Name: "foo",
-				IsNamed: true,
-				IsMethod: false,
-				IsCFunc: true,
+			&ExternNode{
+				FuncNodes: []*DefineFuncNode{
+					&DefineFuncNode{
+						Name: "foo",
+						IsNamed: true,
+						IsMethod: false,
+						IsExtern: true,
 
-				MethodOnType: nil,
-				IsPointerReceiver: false,
-				InstanceName: "",
+						MethodOnType: nil,
+						IsPointerReceiver: false,
+						InstanceName: "",
 
-				Arguments: nil,
-				ReturnValues: []*NameNode{
-					&NameNode{
-						Type: &SingleTypeNode{
-							TypeName: "int32",
+						Arguments: nil,
+						ReturnValues: []*NameNode{
+							&NameNode{
+								Type: &SingleTypeNode{
+									TypeName: "int32",
+								},
+							},
 						},
+						Body: nil,
 					},
 				},
-				Body: nil,
 			},
 		},
 	}

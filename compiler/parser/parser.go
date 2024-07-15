@@ -324,7 +324,17 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			return outerConditionNode
 		}
 
-		// "cfunction" is function without function body
+		// "extern" is external function without function body
+
+		// single extern: 	extern func foo() int32
+		// multiple extern:	extern (
+		// 						func foo() int32
+		// 						func bar() int32
+		// 					)
+		if current.Val == "extern" {
+			p.i++
+			return p.parseExtern()
+		}
 		// "func" gets converted into a DefineFuncNode
 		// the keyword "func" is followed by
 		// - a IDENTIFIER (function name)
@@ -340,136 +350,9 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		// method:      func (a abc) abc() {
 		// value func:  func (a abc) {
 
-		if current.Val == "func" || current.Val == "cfunction" {
-			defineFunc := &DefineFuncNode{}
-			if current.Val == "cfunction" {
-				defineFunc.IsCFunc = true
-			}
+		if current.Val == "func" {
 			p.i++
-
-			var argsOrMethodType []*NameNode
-			var canBeMethod bool
-
-			checkIfOpeningParen := p.lookAhead(0)
-			if checkIfOpeningParen.Type == lexer.OPERATOR && checkIfOpeningParen.Val == "(" {
-				p.i++
-				argsOrMethodType = p.parseFunctionArguments()
-				canBeMethod = true
-			}
-
-			checkIfIdentifier := p.lookAhead(0)
-			checkIfOpeningParen = p.lookAhead(1)
-
-			if canBeMethod && checkIfIdentifier.Type == lexer.IDENTIFIER &&
-				checkIfOpeningParen.Type == lexer.OPERATOR && checkIfOpeningParen.Val == "(" {
-
-				defineFunc.IsMethod = true
-				defineFunc.IsNamed = true
-				defineFunc.Name = checkIfIdentifier.Val
-
-				if len(argsOrMethodType) != 1 {
-					panic("Unexpected count of types in method")
-				}
-
-				defineFunc.InstanceName = argsOrMethodType[0].Name
-
-				methodOnType := argsOrMethodType[0].Type
-
-				if pointerSingleTypeNode, ok := methodOnType.(*PointerTypeNode); ok {
-					defineFunc.IsPointerReceiver = true
-					methodOnType = pointerSingleTypeNode.ValueType
-				}
-
-				if singleTypeNode, ok := methodOnType.(*SingleTypeNode); ok {
-					defineFunc.MethodOnType = singleTypeNode
-				} else {
-					panic(fmt.Sprintf("could not find type in method defitition: %T", methodOnType))
-				}
-			}
-
-			name := p.lookAhead(0)
-			openParen := p.lookAhead(1)
-			if name.Type == lexer.IDENTIFIER && openParen.Type == lexer.OPERATOR && openParen.Val == "(" {
-				defineFunc.Name = name.Val
-				defineFunc.IsNamed = true
-
-				p.i++
-				p.i++
-
-				// Parse argument list
-				defineFunc.Arguments = p.parseFunctionArguments()
-			} else {
-				defineFunc.Arguments = argsOrMethodType
-			}
-
-			// Parse return types
-			var retTypesNodeNames []*NameNode
-
-			checkIfOpeningCurly := p.lookAhead(0)
-			if checkIfOpeningCurly.Type != lexer.OPERATOR || checkIfOpeningCurly.Val != "{" {
-
-				// Check if next is an opening parenthesis
-				// Is optional if there's only one return type, is required
-				// if there is multiple ones
-				var allowMultiRetVals bool
-
-				checkIfOpenParen := p.lookAhead(0)
-				if checkIfOpenParen.Type == lexer.OPERATOR && checkIfOpenParen.Val == "(" {
-					allowMultiRetVals = true
-					p.i++
-				}
-
-				for {
-					nameNode := &NameNode{}
-
-					// Support both named return values and when we only get the type
-					retTypeOrNamed, err := p.parseOneType()
-					if err != nil {
-						panic(err)
-					}
-					p.i++
-
-					// Next can be type, that means that the previous was the name of the var
-					isType := p.lookAhead(0)
-					if isType.Type == lexer.IDENTIFIER {
-						retType, err := p.parseOneType()
-						if err != nil {
-							panic(err)
-						}
-						p.i++
-
-						nameNode.Name = retTypeOrNamed.Type()
-						nameNode.Type = retType
-					} else {
-						nameNode.Type = retTypeOrNamed
-					}
-
-					retTypesNodeNames = append(retTypesNodeNames, nameNode)
-
-					if !allowMultiRetVals {
-						break
-					}
-
-					// Check if comma or end parenthesis
-					commaOrEnd := p.lookAhead(0)
-					if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == "," {
-						p.i++
-						continue
-					}
-
-					if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == ")" {
-						p.i++
-						break
-					}
-					panic("Could not parse function return types")
-				}
-			}
-
-			defineFunc.ReturnValues = retTypesNodeNames
-
-			if current.Val == "cfunction" {
-				return p.aheadParse(defineFunc)
-			}
+			defineFunc := p.parseFuncDefinition()
 
 			openBracket := p.lookAhead(0)
 			if openBracket.Type != lexer.OPERATOR || openBracket.Val != "{" {

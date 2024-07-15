@@ -4,7 +4,7 @@ var keywords = map[string]struct{}{
 	"if":        {},
 	"else":      {},
 	"func":      {},
-	"cfunction": {},
+	"extern":    {},
 	"return":    {},
 	"type":      {},
 	"table":     {},
