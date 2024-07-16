@@ -5,21 +5,23 @@ import (
 )
 
 func main() {
+	ok := tx.scriptVerify()
+
 	args := tx.xudtArgs()
-	if args.err != tx.SUCCESS {
-		return args.err
-	}
-	tx.checkEnhancedOwnerMode(args)
-	if args.err != tx.SUCCESS {
-		return args.err
-	}
-	ret := tx.sudt(args.owner_mode)
-	if ret != tx.SUCCESS {
-		return ret
-	}
-	if args.flags == tx.XUDTFlagsPlain {
-		return tx.SUCCESS
-	}
-	tx.executeScripts(args)
+	// if args.err != tx.SUCCESS {
+	// 	return args.err
+	// }
+	// tx.checkEnhancedOwnerMode(args)
+	// if args.err != tx.SUCCESS {
+	// 	return args.err
+	// }
+	// ret := tx.sudt(args.owner_mode)
+	// if ret != tx.SUCCESS {
+	// 	return ret
+	// }
+	// if args.flags == tx.XUDTFlagsPlain {
+	// 	return tx.SUCCESS
+	// }
+	// tx.executeScripts(args)
 	return tx.SUCCESS
 }

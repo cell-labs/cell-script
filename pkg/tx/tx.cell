@@ -34,21 +34,21 @@ func outputs() []cell.Cell {
 
 // xudt related API and ffi functions
 extern (
-	func parse_args() *cell.XudtArgs
-    func check_enhanced_owner_mode(args *cell.XudtArgs) bool
-    func simple_udt(owner_mode bool) int64
-    func execute_scripts(args *cell.XudtArgs) bool
+	func parse_args() string
+    // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
+    // func simple_udt(owner_mode bool) int64
+    // func execute_scripts(args *cell.XudtArgs) bool
 )
 
-func xudtArgs() *cell.XudtArgs {
+func xudtArgs() string {
 	return parse_args()
 }
-func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
-	return check_enhanced_owner_mode(args)
-}
-func sudt(owner_mode bool) int64 {
-	return simple_udt(owner_mode)
-}
-func executeScripts(args *cell.XudtArgs) bool {
-	return execute_scripts(args)
-}
+// func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
+// 	return check_enhanced_owner_mode(args)
+// }
+// func sudt(owner_mode bool) int64 {
+// 	return simple_udt(owner_mode)
+// }
+// func executeScripts(args *cell.XudtArgs) bool {
+// 	return execute_scripts(args)
+// }

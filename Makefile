@@ -84,10 +84,10 @@ ckb-libc-debug:
 		-I molecule \
 		-I . \
 		-I ../sparse-merkle-tree/c \
-		-c ../xudt/xudt.c \
+		-c ../xudt/wrapper.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
 		-DCKB_PRINTF_DECLARATION_ONLY=1 && \
-	riscv64-unknown-elf-ar rcs libdummylibc-debug.a xudt.o
+	riscv64-unknown-elf-ar rcs libdummylibc-debug.a wrapper.o
 ckb-libc-release:
 	@echo " ${>>>} build libdummylibc.a ${<<<} "
 	cd third-party/ckb-c-stdlib && \
@@ -99,8 +99,8 @@ ckb-libc-release:
 		-I molecule \
 		-I . \
 		-I ../sparse-merkle-tree/c \
-		-c ../xudt/xudt.c && \
-	riscv64-unknown-elf-ar rcs libdummylibc.a xudt.o
+		-c ../xudt/wrapper.c && \
+	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
 install:
 	mkdir -p output/pkg
 	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
@@ -127,7 +127,7 @@ test/example:
 	${CELL} || true
 	${CELL} tests/examples/hi.cell && ./hi
 	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
-	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld | grep "hello world! 0"
+	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld | grep "hello world! 1"
 	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
