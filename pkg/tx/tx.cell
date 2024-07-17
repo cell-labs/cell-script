@@ -2,6 +2,7 @@ package tx
 
 import "cell"
 
+type byte uint8
 const (
 	XUDTFlagsPlain = iota
 	XUDTFlagsInArgs
@@ -35,6 +36,7 @@ func outputs() []cell.Cell {
 // xudt related API and ffi functions
 extern (
 	func parse_args() string
+	func lock_scripts() []byte
     // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
     // func simple_udt(owner_mode bool) int64
     // func execute_scripts(args *cell.XudtArgs) bool
@@ -42,6 +44,9 @@ extern (
 
 func xudtArgs() string {
 	return parse_args()
+}
+func lockScripts() []byte {
+	return lock_scripts()
 }
 // func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 // 	return check_enhanced_owner_mode(args)

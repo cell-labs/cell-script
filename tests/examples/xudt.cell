@@ -2,12 +2,36 @@ package main
 
 import (
 	"tx"
+	"debug"
 )
+type byte uint8
 
 func main() {
 	ok := tx.scriptVerify()
 
 	args := tx.xudtArgs()
+	// args.size() >= 4
+	// big-edian
+	byte0 := uint64(args[0])
+	byte1 := uint64(args[1])
+	byte2 := uint64(args[2])
+	byte3 := uint64(args[3])
+	val := (byte0 << 24)
+	val += (byte1 << 16)
+	val += (byte2 << 8)
+	val += byte3
+	// if (val & OWNER_MODE_INPUT_TYPE_MASK) {
+	// owner_mode_for_input_type = true;
+	// }
+	// if (val & OWNER_MODE_OUTPUT_TYPE_MASK) {
+	// owner_mode_for_output_type = true;
+	// }
+	// if (val & OWNER_MODE_INPUT_LOCK_NOT_MASK) {
+	// owner_mode_for_input_lock = false;
+	// }
+
+	hashes := tx.lockScripts()
+
 	// if args.err != tx.SUCCESS {
 	// 	return args.err
 	// }
