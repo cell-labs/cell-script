@@ -375,7 +375,7 @@ ByteSlice make_byte_slice(uint32_t len, uint32_t cap, uint32_t offset, uint8_t* 
 ByteSlice lock_scripts() {
   uint32_t hashes_count = 0;
   uint8_t *hashes = malloc(sizeof(uint8_t) * BLAKE2B_BLOCK_SIZE * MAX_LOCK_SCRIPT_HASH_COUNT);
-  memset(hashes, 0, 0);
+  memset(hashes, 0, sizeof(hashes));
   ByteSlice bs = make_byte_slice(0, 0, 0, NULL);
   // collect hashes
   size_t i = 0;
