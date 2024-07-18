@@ -211,6 +211,7 @@ func (c *Compiler) addGlobal() {
 	global.DefinePkgType("uint256", types.U256)
 	global.DefinePkgType("uintptr", types.Uintptr)
 	global.DefinePkgType("string", types.String)
+	global.DefinePkgType("byte", types.U8)
 
 	c.packages["global"] = global
 
