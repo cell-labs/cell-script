@@ -125,6 +125,7 @@ func init() {
 		OP_BIT_AND, OP_BIT_OR, OP_BIT_XOR, OP_BIT_CLEAR,
 		OP_LEFT_SHIFT, OP_RIGHT_SHIFT,
 		OP_GT, OP_GTEQ, OP_LT, OP_LTEQ, OP_EQ, OP_NEQ,
+		OP_LOGICAL_AND, OP_LOGICAL_OR,
 	} {
 		opsCharToOp[string(op)] = op
 	}

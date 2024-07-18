@@ -123,6 +123,10 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 		opRes = c.contextBlock.NewShl(leftLLVM, rightLLVM)
 	case parser.OP_RIGHT_SHIFT:
 		opRes = c.contextBlock.NewLShr(leftLLVM, rightLLVM)
+	case parser.OP_LOGICAL_AND:
+		opRes = c.contextBlock.NewAdd(leftLLVM, rightLLVM)
+	case parser.OP_LOGICAL_OR:
+		opRes = c.contextBlock.NewOr(leftLLVM, rightLLVM)
 	default:
 		// Boolean operations
 		return value.Value{
