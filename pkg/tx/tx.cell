@@ -2,7 +2,6 @@ package tx
 
 import "cell"
 
-type byte uint8
 const (
 	XUDTFlagsPlain = iota
 	XUDTFlagsInArgs
@@ -13,6 +12,20 @@ const (
 	SUCCESS = iota
 )
 
+const (
+	CKB_CELL_FIELD_CAPACITY = iota
+	CKB_CELL_FIELD_DATA_HASH
+	CKB_CELL_FIELD_LOCK
+	CKB_CELL_FIELD_LOCK_HASH
+	CKB_CELL_FIELD_TYPE
+	CKB_CELL_FIELD_TYPE_HASH
+	CKB_CELL_FIELD_OCCUPIED_CAPACITY
+)
+
+const (
+	CKB_SOURCE_INPUT = 1
+    CKB_SOURCE_OUTPUT = 2
+)
 extern (
 	func script_verify() bool
     func is_owner_mode() bool
@@ -33,10 +46,15 @@ func outputs() []cell.Cell {
 	return get_utxo_outputs()
 }
 
+type OptionBool table {
+	err int64
+	val bool
+}
 // xudt related API and ffi functions
 extern (
 	func parse_args() string
 	func lock_scripts() []byte
+	func check_owner_mode(source int64, filed int64) OptionBool
     // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
     // func simple_udt(owner_mode bool) int64
     // func execute_scripts(args *cell.XudtArgs) bool
@@ -47,6 +65,9 @@ func xudtArgs() string {
 }
 func lockScripts() []byte {
 	return lock_scripts()
+}
+func checkOwnerMode(source int64, field int64) OptionBool {
+	return check_owner_mode(source, field)
 }
 // func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 // 	return check_enhanced_owner_mode(args)

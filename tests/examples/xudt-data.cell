@@ -10,15 +10,14 @@ func main() {
 	var b cell.SudtData = 200
 	debug.Printf("%d", a+b)
 
-	c := cell.Script{
-		hashType: '1',
-	}
+	var c cell.Script
+	c.hashType = '1'
 	c.codeHash[31] = '0'
 	debug.Printf("%d", c.codeHash[31]) //48
 	debug.Printf("%d", c.hashType)     //49
 	debug.Printf("%d", c.args[0])
 
-	d := cell.XudtData{}
+	var d cell.XudtData
 	d.amount = 101
 	append(d.lock, '2')
 	// d.data[0][0] = '3' TODO: fix [][]slice

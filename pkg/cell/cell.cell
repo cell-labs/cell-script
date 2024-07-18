@@ -2,7 +2,6 @@ package cell
 
 type Cell uint64
 
-type byte uint8
 type SudtData uint128
 
 type XudtData table {

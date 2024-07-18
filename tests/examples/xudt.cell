@@ -1,36 +1,83 @@
 package main
 
 import (
-	"tx"
 	"debug"
+	"os"
+	"tx"
 )
-type byte uint8
 
-func main() {
-	ok := tx.scriptVerify()
+const (
+	BLAKE2B_BLOCK_SIZE             = 32
+	OWNER_MODE_INPUT_TYPE_MASK     = 0x80000000
+	OWNER_MODE_OUTPUT_TYPE_MASK    = 0x40000000
+	OWNER_MODE_INPUT_LOCK_NOT_MASK = 0x20000000
+)
 
-	args := tx.xudtArgs()
-	// args.size() >= 4
+func getFlagFromArgs(args []byte) uint64 {
+    // args.size() >= 4
 	// big-edian
-	byte0 := uint64(args[0])
-	byte1 := uint64(args[1])
-	byte2 := uint64(args[2])
-	byte3 := uint64(args[3])
+	byte0 := uint64(args[0+BLAKE2B_BLOCK_SIZE])
+	byte1 := uint64(args[1+BLAKE2B_BLOCK_SIZE])
+	byte2 := uint64(args[2+BLAKE2B_BLOCK_SIZE])
+	byte3 := uint64(args[3+BLAKE2B_BLOCK_SIZE])
 	val := (byte0 << 24)
 	val += (byte1 << 16)
 	val += (byte2 << 8)
 	val += byte3
-	// if (val & OWNER_MODE_INPUT_TYPE_MASK) {
-	// owner_mode_for_input_type = true;
-	// }
-	// if (val & OWNER_MODE_OUTPUT_TYPE_MASK) {
-	// owner_mode_for_output_type = true;
-	// }
-	// if (val & OWNER_MODE_INPUT_LOCK_NOT_MASK) {
-	// owner_mode_for_input_lock = false;
-	// }
+    return val
+}
+
+func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
+    owner_mode_for_input_type := false
+	owner_mode_for_output_type := false
+	// default is on
+	owner_mode_for_input_lock := true
+	if (val & OWNER_MODE_INPUT_TYPE_MASK) != 0 {
+		owner_mode_for_input_type = true
+	}
+	if (val & OWNER_MODE_OUTPUT_TYPE_MASK) != 0 {
+		owner_mode_for_output_type = true
+	}
+	if (val & OWNER_MODE_INPUT_LOCK_NOT_MASK) != 0 {
+		owner_mode_for_input_lock = false
+	}
+    return owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type
+}
+
+
+func main() {
+	ok := tx.scriptVerify()
+	args := tx.xudtArgs()
+    val := getFlagFromArgs(args)
+    owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
+	
+	// owner mode checking
+	var owner_mode tx.OptionBool
+	if owner_mode_for_input_lock && owner_mode.val == false {
+		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_LOCK_HASH)
+		if owner_mode.err != tx.SUCCESS {
+			os.exit(owner_mode.err)
+		}
+	}
+
+	if owner_mode_for_input_type && owner_mode.val == false {
+		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
+		if owner_mode.err != tx.SUCCESS {
+			os.exit(owner_mode.err)
+		}
+	}
+	if owner_mode_for_output_type && owner_mode.val == false {
+		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_OUTPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
+		if owner_mode.err != tx.SUCCESS {
+			os.exit(owner_mode.err)
+		}
+	}
 
 	hashes := tx.lockScripts()
+	debug.Printf("%d\n", len(hashes)) // 32 byte
+	// for _, ch := range hashes {
+	//     debug.Printf("%d\n", ch)
+	// }
 
 	// if args.err != tx.SUCCESS {
 	// 	return args.err
