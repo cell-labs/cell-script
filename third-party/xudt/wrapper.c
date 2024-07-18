@@ -1,6 +1,7 @@
 #include "ckb_syscalls.h"
 #include "molecule/blockchain.h"
 #include "error.h"
+#include "slice.h"
 
 // We are limiting the script size loaded to be 32KB at most. This should be
 // more than enough. We are also using blake2b with 256-bit hash here, which is
@@ -406,3 +407,5 @@ OptionBool check_owner_mode(int64_t source, int64_t field) {
   OptionBool ret = {err, owner_mode};
   return ret;
 }
+
+

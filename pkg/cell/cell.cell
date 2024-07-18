@@ -15,18 +15,3 @@ type Script table {
 	hashType byte
 	args	 []byte
 }
-
-type XudtArgs table {
-	owner_mode	bool
-	err			int64
-	flags 		int64
-	script  	[32768]byte
-	codeBuf_padding [4076]byte
-	codeBuf 	[1843200]byte
-	codeUsed	uint32
-	var_data	*uint8
-	var_len		uint32
-	hashes		[65536]byte
-	hashes_count	uint32
-	hashes_padding		[4072]byte
-}
