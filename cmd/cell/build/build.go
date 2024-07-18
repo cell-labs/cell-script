@@ -104,25 +104,28 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 	var parsedFiles []parser.FileNode
 
 	// Parse all files in the folder
-	if f.IsDir() {
-		files, err := os.ReadDir(path)
-		if err != nil {
-			panic(path + ": " + err.Error())
-		}
+	parseCurrentPackage := func() {
+		if f.IsDir() {
+			files, err := os.ReadDir(path)
+			if err != nil {
+				panic(path + ": " + err.Error())
+			}
 
-		for _, file := range files {
-			if !file.IsDir() {
-				// Tre files doesn't have to contain valid Go code, and is used to prevent issues
-				// with some of the go tools (like vgo)
-				if strings.HasSuffix(file.Name(), ".cell") || strings.HasSuffix(file.Name(), ".go") {
-					parsedFiles = append(parsedFiles, parseFile(path+"/"+file.Name(), options))
+			for _, file := range files {
+				if !file.IsDir() {
+					// Tre files doesn't have to contain valid Go code, and is used to prevent issues
+					// with some of the go tools (like vgo)
+					if strings.HasSuffix(file.Name(), ".cell") || strings.HasSuffix(file.Name(), ".go") {
+						parsedFiles = append(parsedFiles, parseFile(path+"/"+file.Name(), options))
+					}
 				}
 			}
+		} else {
+			// Parse a single file
+			parsedFiles = append(parsedFiles, parseFile(path, options))
 		}
-	} else {
-		// Parse a single file
-		parsedFiles = append(parsedFiles, parseFile(path, options))
 	}
+	parseCurrentPackage()
 
 	// Scan for ImportNodes
 	// Use importNodes to import more packages
@@ -190,6 +193,10 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 			break
 		}
 	}
+
+	// Parse again after importing all types needed
+	clear(parsedFiles)
+	parseCurrentPackage()
 
 	return c.Compile(parser.PackageNode{
 		Files: parsedFiles,

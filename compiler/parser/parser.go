@@ -401,7 +401,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		if current.Val == "type" {
 			name := p.lookAhead(1)
 			if name.Type != lexer.IDENTIFIER {
-				panic("type must beb followed by IDENTIFIER")
+				panic("type must be followed by IDENTIFIER")
 			}
 
 			p.i += 2
@@ -838,10 +838,6 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 		nameNode, isNamedNode := input.(*NameNode)
 		if isNamedNode {
 			_, isType := p.types[nameNode.Name]
-			// TODO: handle imported types properly
-			if nameNode.Package == "cell" {
-				isType = true
-			}
 			if isType {
 				inputType := &SingleTypeNode{
 					PackageName: nameNode.Package,
