@@ -11,7 +11,7 @@ type XudtData table {
 }
 
 type Script table {
-	codeHash [32]byte
+	codeHash string // size == 32byte
 	hashType byte
-	args	 []byte
+	args	 string
 }

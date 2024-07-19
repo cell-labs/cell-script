@@ -3,12 +3,6 @@ package tx
 import "cell"
 
 const (
-	XUDTFlagsPlain = iota
-	XUDTFlagsInArgs
-	XUDTFlagsInWitness
-)
-
-const (
 	SUCCESS = iota
 )
 
@@ -55,6 +49,7 @@ extern (
 	func parse_args() string
 	func lock_scripts() []byte
 	func check_owner_mode(source int64, filed int64) OptionBool
+	func get_vec_size(args string) uint64
     // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
     // func simple_udt(owner_mode bool) int64
     // func execute_scripts(args *cell.XudtArgs) bool
@@ -69,6 +64,12 @@ func lockScripts() []byte {
 func checkOwnerMode(source int64, field int64) OptionBool {
 	return check_owner_mode(source, field)
 }
+func getVectorSize(args string) uint64 {
+	return get_vec_size(args)
+}
+// func getScripts(args string) []cell.Script {
+	
+// }
 // func checkEnhancedOwnerMode(args *cell.XudtArgs) bool {
 // 	return check_enhanced_owner_mode(args)
 // }

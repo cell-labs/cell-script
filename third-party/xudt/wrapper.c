@@ -373,29 +373,35 @@ ByteSlice lock_scripts()
   return make_byte_slice(hashes_count * BLAKE2B_BLOCK_SIZE, hashes_count * BLAKE2B_BLOCK_SIZE, 0, hashes);
 }
 
-typedef struct {
+typedef struct
+{
   int64_t err;
   bool val;
 } OptionBool;
-OptionBool check_owner_mode(int64_t source, int64_t field) {
+OptionBool check_owner_mode(int64_t source, int64_t field)
+{
   int err = CKB_SUCCESS;
   bool owner_mode = false;
   size_t i = 0;
   uint8_t buffer[BLAKE2B_BLOCK_SIZE];
 
-  while (1) {
+  while (1)
+  {
     uint64_t len = BLAKE2B_BLOCK_SIZE;
     err = ckb_checked_load_cell_by_field(buffer, &len, 0, i, (size_t)source, (size_t)field);
-    if (err == CKB_INDEX_OUT_OF_BOUND) {
+    if (err == CKB_INDEX_OUT_OF_BOUND)
+    {
       err = CKB_SUCCESS;
       break;
     }
-    if (err == CKB_ITEM_MISSING) {
+    if (err == CKB_ITEM_MISSING)
+    {
       i += 1;
       err = CKB_SUCCESS;
       continue;
     }
-    if (err != CKB_SUCCESS) {
+    if (err != CKB_SUCCESS)
+    {
       OptionBool ret = {err, owner_mode};
       return ret;
     }
@@ -406,6 +412,43 @@ OptionBool check_owner_mode(int64_t source, int64_t field) {
   }
   OptionBool ret = {err, owner_mode};
   return ret;
+}
+
+typedef uint8_t byte;
+typedef struct
+{
+  String code_hash;
+  byte hash_type;
+  String args;
+} Script;
+typedef struct
+{
+  uint32_t len;
+  uint32_t cap;
+  uint32_t offset;
+  Script*  data;
+} ScriptSlice;
+int64_t checked_load_script_vec_size(uint8_t *ptr, uint32_t size, uint64_t *real_size)
+{
+  if (size < MOL_NUM_T_SIZE)
+  {
+    return ERROR_INVALID_MOL_FORMAT;
+  }
+  mol_num_t full_size = mol_unpack_number(ptr);
+  *real_size = full_size;
+  if (*real_size > size)
+  {
+    *real_size = 0;
+    return ERROR_INVALID_MOL_FORMAT;
+  }
+  return CKB_SUCCESS;
+}
+
+uint64_t get_vec_size(String args)
+{
+  uint64_t real_size = 0;
+  checked_load_script_vec_size(args.ptr, args.size, &real_size);
+  return real_size;
 }
 
 

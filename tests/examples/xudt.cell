@@ -8,13 +8,62 @@ import (
 
 const (
 	BLAKE2B_BLOCK_SIZE             = 32
+	FLAGS_SIZE                     = 4
 	OWNER_MODE_INPUT_TYPE_MASK     = 0x80000000
 	OWNER_MODE_OUTPUT_TYPE_MASK    = 0x40000000
 	OWNER_MODE_INPUT_LOCK_NOT_MASK = 0x20000000
+	OWNER_MODE_MASK                = (OWNER_MODE_INPUT_TYPE_MASK | OWNER_MODE_OUTPUT_TYPE_MASK | OWNER_MODE_INPUT_LOCK_NOT_MASK)
+)
+
+const (
+	XUDTFlagsPlain = iota
+	XUDTFlagsInArgs
+	XUDTFlagsInWitness
+)
+
+const (
+	SUCCESS
+	// 0 is the only success code. We can use 0 directly.
+
+	// inherit from simple_udt
+	ERROR_ARGUMENTS_LEN   = -1
+	ERROR_ENCODING        = -2
+	ERROR_SYSCALL         = -3
+	ERROR_SCRIPT_TOO_LONG = -21
+	ERROR_OVERFLOWING     = -51
+	ERROR_AMOUNT          = -52
+
+	// error code is starting from 40 to avoid conflict with
+	// common error code in other scripts.
+	ERROR_CANT_LOAD_LIB    = 40
+	ERROR_CANT_FIND_SYMBOL = iota
+	ERROR_INVALID_RCE_ARGS
+	ERROR_NOT_ENOUGH_BUFF
+	ERROR_INVALID_FLAG
+
+    ERROR_INVALID_ARGS_FORMAT
+// ERROR_INVALID_WITNESS_FORMAT
+// ERROR_INVALID_MOL_FORMAT
+// ERROR_BLAKE2B_ERROR
+// ERROR_HASH_MISMATCHED
+// ERROR_RCRULES_TOO_DEEP  // 50
+// ERROR_TOO_MANY_RCRULES
+// ERROR_RCRULES_PROOFS_MISMATCHED
+// ERROR_SMT_VERIFY_FAILED
+// ERROR_RCE_EMERGENCY_HALT
+// ERROR_NOT_VALIDATED
+// ERROR_TOO_MANY_LOCK
+// ERROR_ON_BLACK_LIST
+// ERROR_ON_BLACK_LIST2
+// ERROR_NOT_ON_WHITE_LIST
+// ERROR_TYPE_FREEZED  // 60
+// ERROR_APPEND_ONLY
+// ERROR_EOF
+// ERROR_TOO_LONG_PROOF
 )
 
 func getFlagFromArgs(args []byte) uint64 {
-    // args.size() >= 4
+	// args.size() >= 4
 	// big-edian
 	byte0 := uint64(args[0+BLAKE2B_BLOCK_SIZE])
 	byte1 := uint64(args[1+BLAKE2B_BLOCK_SIZE])
@@ -24,11 +73,11 @@ func getFlagFromArgs(args []byte) uint64 {
 	val += (byte1 << 16)
 	val += (byte2 << 8)
 	val += byte3
-    return val
+	return val
 }
 
 func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
-    owner_mode_for_input_type := false
+	owner_mode_for_input_type := false
 	owner_mode_for_output_type := false
 	// default is on
 	owner_mode_for_input_lock := true
@@ -41,34 +90,33 @@ func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
 	if (val & OWNER_MODE_INPUT_LOCK_NOT_MASK) != 0 {
 		owner_mode_for_input_lock = false
 	}
-    return owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type
+	return owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type
 }
-
 
 func main() {
 	ok := tx.scriptVerify()
 	args := tx.xudtArgs()
-    val := getFlagFromArgs(args)
-    owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
-	
+	val := getFlagFromArgs(args)
+	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
+
 	// owner mode checking
 	var owner_mode tx.OptionBool
 	if owner_mode_for_input_lock && owner_mode.val == false {
 		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_LOCK_HASH)
-		if owner_mode.err != tx.SUCCESS {
+		if owner_mode.err != SUCCESS {
 			os.exit(owner_mode.err)
 		}
 	}
 
 	if owner_mode_for_input_type && owner_mode.val == false {
 		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
-		if owner_mode.err != tx.SUCCESS {
+		if owner_mode.err != SUCCESS {
 			os.exit(owner_mode.err)
 		}
 	}
 	if owner_mode_for_output_type && owner_mode.val == false {
 		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_OUTPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
-		if owner_mode.err != tx.SUCCESS {
+		if owner_mode.err != SUCCESS {
 			os.exit(owner_mode.err)
 		}
 	}
@@ -79,20 +127,47 @@ func main() {
 	//     debug.Printf("%d\n", ch)
 	// }
 
-	// if args.err != tx.SUCCESS {
+	// parse xUDT args
+	argsSize := len(args)
+	data := ""
+	flags := 0
+	if argsSize < (FLAGS_SIZE + BLAKE2B_BLOCK_SIZE) {
+		flags = XUDTFlagsPlain
+	} else {
+		mask := OWNER_MODE_MASK ^ -1
+		tempFlags := val & mask
+		if tempFlags == XUDTFlagsPlain {
+			flags = XUDTFlagsPlain
+		} else if tempFlags == XUDTFlagsInArgs {
+			flags = XUDTFlagsInArgs
+			data = args[BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
+			vecSize := tx.getVectorSize(data)
+            if vecSize != argsSize - BLAKE2B_BLOCK_SIZE+FLAGS_SIZE {
+                return ERROR_INVALID_ARGS_FORMAT
+            }
+			return SUCCESS
+		} else if tempFlags == XUDTFlagsInWitness {
+			hash_size := argsSize - BLAKE2B_BLOCK_SIZE - FLAGS_SIZE
+            // todo
+		} else {
+			return ERROR_INVALID_FLAG
+		}
+	}
+
+	// if args.err != SUCCESS {
 	// 	return args.err
 	// }
 	// tx.checkEnhancedOwnerMode(args)
-	// if args.err != tx.SUCCESS {
+	// if args.err != SUCCESS {
 	// 	return args.err
 	// }
 	// ret := tx.sudt(args.owner_mode)
-	// if ret != tx.SUCCESS {
+	// if ret != SUCCESS {
 	// 	return ret
 	// }
-	// if args.flags == tx.XUDTFlagsPlain {
-	// 	return tx.SUCCESS
+	// if args.flags == tx.tx. {
+	// 	return SUCCESS
 	// }
 	// tx.executeScripts(args)
-	return tx.SUCCESS
+	return SUCCESS
 }
