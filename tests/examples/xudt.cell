@@ -16,8 +16,8 @@ const (
 )
 
 const (
-	XUDTFlagsPlain = iota
-	XUDTFlagsInArgs
+	XUDTFlagsPlain = iota // sudt
+	XUDTFlagsInArgs		  // scripts is in args
 	XUDTFlagsInWitness
 )
 
@@ -62,7 +62,7 @@ const (
 // ERROR_TOO_LONG_PROOF
 )
 
-func getFlagFromArgs(args []byte) uint64 {
+func getFlagFromArgs(args string) uint64 {
 	// args.size() >= 4
 	// big-edian
 	byte0 := uint64(args[0+BLAKE2B_BLOCK_SIZE])
@@ -134,14 +134,15 @@ func main() {
 	if argsSize < (FLAGS_SIZE + BLAKE2B_BLOCK_SIZE) {
 		flags = XUDTFlagsPlain
 	} else {
-		mask := OWNER_MODE_MASK ^ -1
+		mask := OWNER_MODE_MASK ^ -1 // 0x1FFFFFF
 		tempFlags := val & mask
 		if tempFlags == XUDTFlagsPlain {
 			flags = XUDTFlagsPlain
 		} else if tempFlags == XUDTFlagsInArgs {
 			flags = XUDTFlagsInArgs
 			data = args[BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
-			vecSize := tx.getVectorSize(data)
+			// vector <Script> is a dynvec
+			vecSize := tx.getVectorRawByteSize(data)
             if vecSize != argsSize - BLAKE2B_BLOCK_SIZE+FLAGS_SIZE {
                 return ERROR_INVALID_ARGS_FORMAT
             }

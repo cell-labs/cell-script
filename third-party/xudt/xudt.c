@@ -588,7 +588,7 @@ Args* parse_args() {
         args->err = err;
         return args;
       }                     
-      // note, it's different than "flag = 2"
+      // note, it's different than "flag = XUDTFlagsInArgs"
       if (real_size != *var_len) {
         args->err = ERROR_INVALID_ARGS_FORMAT;
       }
