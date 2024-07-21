@@ -80,6 +80,7 @@ ckb-libc-debug:
 		-march=rv64imc \
 		-nostdlib \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
+		-Wno-implicit-function-declaration -Wno-visibility \
 		-I libc \
 		-I molecule \
 		-I . \
@@ -95,6 +96,7 @@ ckb-libc-release:
 		-march=rv64imc \
 		-nostdlib \
 		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
+		-Wno-implicit-function-declaration -Wno-visibility \
 		-I libc \
 		-I molecule \
 		-I . \
@@ -129,6 +131,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
 	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld | grep "hello world! 1"
 	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table
+	${CELL} -d -t riscv tests/examples/string.cell && ckb-debugger --bin string | grep "eq"
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
 	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs

@@ -1,0 +1,10 @@
+package main
+import "debug"
+func main() {
+	xx := "xxo"
+	if xx == "xxo" {
+		debug.Printf("eq")
+	}
+	debug.Printf("not")
+	return 0
+}
