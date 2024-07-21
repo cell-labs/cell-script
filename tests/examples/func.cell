@@ -1,0 +1,10 @@
+package main
+import "debug"
+func main() {
+	hi := func() int64 {
+		return 999
+	}
+
+	debug.Printf("%d", hi())
+	return 0
+}
