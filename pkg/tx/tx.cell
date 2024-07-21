@@ -51,6 +51,7 @@ extern (
 	func check_owner_mode(source int64, filed int64) OptionBool
 	func get_vec_size(args string) uint64
 	func get_witness() string
+	func get_blake2b(data string) string
     // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
     // func simple_udt(owner_mode bool) int64
     // func execute_scripts(args *cell.XudtArgs) bool
@@ -71,6 +72,9 @@ func getVectorRawByteSize(args string) uint64 {
 }
 func getWitness() string {
 	return get_witness()
+}
+func getBlake2b(data string) string {
+	return get_blake2b(data)
 }
 // func getScripts(args string) []cell.Script {
 	

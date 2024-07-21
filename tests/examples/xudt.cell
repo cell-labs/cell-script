@@ -44,10 +44,10 @@ const (
 
 	ERROR_INVALID_ARGS_FORMAT
 
-// ERROR_INVALID_WITNESS_FORMAT
-// ERROR_INVALID_MOL_FORMAT
-// ERROR_BLAKE2B_ERROR
-// ERROR_HASH_MISMATCHED
+	ERROR_INVALID_WITNESS_FORMAT
+	ERROR_INVALID_MOL_FORMAT
+	ERROR_BLAKE2B_ERROR
+	ERROR_HASH_MISMATCHED
 // ERROR_RCRULES_TOO_DEEP  // 50
 // ERROR_TOO_MANY_RCRULES
 // ERROR_RCRULES_PROOFS_MISMATCHED
@@ -156,13 +156,17 @@ func main() {
 			}
 			blake160Hash := args[BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
 			witness := tx.getWitness()
+			witnessBlake2bHash := tx.getBlake2b()
 			// todo
+			if witnessBlake2bHash[0:BLAKE160_SIZE] == blake160Hash {
+				return ERROR_HASH_MISMATCHED
+			}
 			return SUCCESS
 		} else {
 			return ERROR_INVALID_FLAG
 		}
 	}
-
+	
 	// if args.err != SUCCESS {
 	// 	return args.err
 	// }

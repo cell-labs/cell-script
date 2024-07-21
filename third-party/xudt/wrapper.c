@@ -1,4 +1,5 @@
 #include "ckb_syscalls.h"
+#include "blake2b.h"
 #ifndef MOL2_EXIT
 #define MOL2_EXIT ckb_exit
 #endif
@@ -455,7 +456,6 @@ uint64_t get_vec_size(String args)
   return real_size;
 }
 
-
 const uint32_t BLAKE160_SIZE = 160 / 8;
 const uint32_t RAW_EXTENSION_SIZE = 65536;
 String get_witness()
@@ -467,17 +467,20 @@ String get_witness()
   // same logic is applied to rce_validator
   size_t source = CKB_SOURCE_GROUP_INPUT;
   int err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
-  if (err == CKB_INDEX_OUT_OF_BOUND) {
+  if (err == CKB_INDEX_OUT_OF_BOUND)
+  {
     source = CKB_SOURCE_GROUP_OUTPUT;
     err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
   }
   String str;
   str.ptr = NULL;
   str.size = 0;
-  if (err != 0) {
+  if (err != 0)
+  {
     return str;
   }
-  if (witness_len <= 0) {
+  if (witness_len <= 0)
+  {
     err = ERROR_INVALID_MOL_FORMAT;
     return str;
   }
@@ -488,3 +491,151 @@ String get_witness()
   str.size = witness_len;
   return str;
 }
+String get_blake2b(String data)
+{
+  uint8_t *hash = malloc(BLAKE2B_BLOCK_SIZE);
+  String str;
+  str.ptr = hash;
+  str.size = BLAKE2B_BLOCK_SIZE;
+  int err = blake2b(hash, BLAKE2B_BLOCK_SIZE, data.ptr, data.size, NULL, 0);
+  if (err != 0)
+  {
+    str.size = 0;
+    return str;
+  }
+  return str;
+}
+
+// uint32_t read_from_witness(uintptr_t arg[], uint8_t *ptr, uint32_t len,
+//                                   uint32_t offset) {
+//   int err;
+//   uint64_t output_len = len;
+//   err = ckb_load_witness(ptr, &output_len, offset, arg[0], arg[1]);
+//   if (err != 0) {
+//     return 0;
+//   }
+//   if (output_len > len) {
+//     return len;
+//   } else {
+//     return output_len;
+//   }
+// }
+// int make_cursor_from_witness(WitnessArgsType *witness, bool *use_input_type) {
+//   uint64_t witness_len = 0;
+//   // at the beginning of the transactions including RCE,
+//   // there is no "witness" in CKB_SOURCE_GROUP_INPUT
+//   // here we use the first witness of CKB_SOURCE_GROUP_OUTPUT
+//   // same logic is applied to rce_validator
+//   size_t source = CKB_SOURCE_GROUP_INPUT;
+//   int err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
+//   if (err == CKB_INDEX_OUT_OF_BOUND) {
+//     source = CKB_SOURCE_GROUP_OUTPUT;
+//     err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
+//     *use_input_type = false;
+//   } else {
+//     *use_input_type = true;
+//   }
+//   if (err != 0) {
+//     return 0;
+//   }
+//   if (witness_len <= 0) {
+//     return ERROR_INVALID_MOL_FORMAT;
+//   }
+
+//   mol2_cursor_t cur;
+//   cur.offset = 0;
+//   cur.size = witness_len;
+
+//   mol2_data_source_t *ptr = (mol2_data_source_t *)malloc(DEFAULT_DATA_SOURCE_LENGTH);
+
+//   ptr->read = read_from_witness;
+//   ptr->total_size = witness_len;
+//   // pass index and source as args
+//   ptr->args[0] = 0;
+//   ptr->args[1] = source;
+
+//   ptr->cache_size = 0;
+//   ptr->start_point = 0;
+//   ptr->max_cache_size = MAX_CACHE_SIZE;
+//   cur.data_source = ptr;
+
+//   *witness = make_WitnessArgs(&cur);
+
+//   err = 0;
+
+//   return err;
+// }
+// typedef struct ScriptVecOptVTable {
+//   bool (*is_none)(struct ScriptVecOptType *);
+//   bool (*is_some)(struct ScriptVecOptType *);
+//   struct ScriptVecType (*unwrap)(struct ScriptVecOptType *);
+// } ScriptVecOptVTable;
+// typedef struct ScriptVecOptType {
+//   mol2_cursor_t cur;
+//   ScriptVecOptVTable *t;
+// } ScriptVecOptType;
+// struct XudtWitnessInputType;
+// typedef struct XudtWitnessInputVTable {
+//   struct ScriptOptType (*owner_script)(struct XudtWitnessInputType *);
+//   struct BytesOptType (*owner_signature)(struct XudtWitnessInputType *);
+//   struct ScriptVecOptType (*raw_extension_data)(struct XudtWitnessInputType *);
+//   struct BytesVecType (*extension_data)(struct XudtWitnessInputType *);
+// } XudtWitnessInputVTable;
+// typedef struct XudtWitnessInputType {
+//   mol2_cursor_t cur;
+//   XudtWitnessInputVTable *t;
+// } XudtWitnessInputType;
+// XudtWitnessInputVTable *GetXudtWitnessInputVTable(void) {
+//   static XudtWitnessInputVTable s_vtable;
+//   static int inited = 0;
+//   if (inited) return &s_vtable;
+//   s_vtable.owner_script = NULL;
+//   s_vtable.owner_signature = NULL;
+//   s_vtable.raw_extension_data = NULL;
+//   s_vtable.extension_data = NULL;
+//   return &s_vtable;
+// }
+// struct XudtWitnessInputType make_XudtWitnessInput(mol2_cursor_t *cur) {
+//   XudtWitnessInputType ret;
+//   ret.cur = *cur;
+//   ret.t = GetXudtWitnessInputVTable();
+//   return ret;
+// }
+// int load_raw_extension_data(uint8_t **var_data, uint32_t *var_len) {
+//   int err = 0;
+//   bool use_input_type = true;
+//   WitnessArgsType witness_args;
+//   err = make_cursor_from_witness(&witness_args, &use_input_type);
+//   if (err != 0) {
+//     return err;
+//   }
+
+//   BytesOptType input;
+//   if (use_input_type) {
+//     input = witness_args.t->input_type(&witness_args);
+//   } else {
+//     input = witness_args.t->output_type(&witness_args);
+//   }
+
+//   if (input.t->is_none(&input)) {
+//     return ERROR_INVALID_MOL_FORMAT;
+//   }
+
+//   struct mol2_cursor_t bytes = input.t->unwrap(&input);
+//   // convert Bytes to XudtWitnessInputType
+//   XudtWitnessInputType witness_input = make_XudtWitnessInput(&bytes);
+//   ScriptVecOptType script_vec =
+//       witness_input.t->raw_extension_data(&witness_input);
+
+//   uint8_t raw_extension_data[RAW_EXTENSION_SIZE];
+//   memset(raw_extension_data, 0, RAW_EXTENSION_SIZE);
+//   uint32_t read_len =
+//       mol2_read_at(&script_vec.cur, raw_extension_data, RAW_EXTENSION_SIZE);
+//   if (read_len != script_vec.cur.size) {
+//     return ERROR_INVALID_MOL_FORMAT;
+//   }
+
+//   *var_data = raw_extension_data;
+//   *var_len = read_len;
+//   return err;
+// }
