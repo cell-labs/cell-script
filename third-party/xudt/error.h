@@ -1,4 +1,5 @@
-enum ErrorCode {
+enum ErrorCode
+{
   // 0 is the only success code. We can use 0 directly.
 
   // inherit from simple_udt
@@ -21,7 +22,7 @@ enum ErrorCode {
   ERROR_INVALID_MOL_FORMAT,
   ERROR_BLAKE2B_ERROR,
   ERROR_HASH_MISMATCHED,
-  ERROR_RCRULES_TOO_DEEP,  // 50
+  ERROR_RCRULES_TOO_DEEP, // 50
   ERROR_TOO_MANY_RCRULES,
   ERROR_RCRULES_PROOFS_MISMATCHED,
   ERROR_SMT_VERIFY_FAILED,
@@ -31,7 +32,7 @@ enum ErrorCode {
   ERROR_ON_BLACK_LIST,
   ERROR_ON_BLACK_LIST2,
   ERROR_NOT_ON_WHITE_LIST,
-  ERROR_TYPE_FREEZED,  // 60
+  ERROR_TYPE_FREEZED, // 60
   ERROR_APPEND_ONLY,
   ERROR_EOF,
   ERROR_TOO_LONG_PROOF,

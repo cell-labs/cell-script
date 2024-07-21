@@ -1,8 +1,12 @@
 #include "ckb_syscalls.h"
+#ifndef MOL2_EXIT
+#define MOL2_EXIT ckb_exit
+#endif
+int ckb_exit(signed char);
 #include "molecule/blockchain.h"
+#include "molecule/blockchain-api2.h"
 #include "error.h"
 #include "slice.h"
-
 // We are limiting the script size loaded to be 32KB at most. This should be
 // more than enough. We are also using blake2b with 256-bit hash here, which is
 // the same as CKB.
@@ -426,7 +430,7 @@ typedef struct
   uint32_t len;
   uint32_t cap;
   uint32_t offset;
-  Script*  data;
+  Script *data;
 } ScriptSlice;
 int64_t checked_load_script_vec_size(uint8_t *ptr, uint32_t size, uint64_t *real_size)
 {
@@ -452,3 +456,35 @@ uint64_t get_vec_size(String args)
 }
 
 
+const uint32_t BLAKE160_SIZE = 160 / 8;
+const uint32_t RAW_EXTENSION_SIZE = 65536;
+String get_witness()
+{
+  uint64_t witness_len = 0;
+  // at the beginning of the transactions including RCE,
+  // there is no "witness" in CKB_SOURCE_GROUP_INPUT
+  // here we use the first witness of CKB_SOURCE_GROUP_OUTPUT
+  // same logic is applied to rce_validator
+  size_t source = CKB_SOURCE_GROUP_INPUT;
+  int err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
+  if (err == CKB_INDEX_OUT_OF_BOUND) {
+    source = CKB_SOURCE_GROUP_OUTPUT;
+    err = ckb_load_witness(NULL, &witness_len, 0, 0, source);
+  }
+  String str;
+  str.ptr = NULL;
+  str.size = 0;
+  if (err != 0) {
+    return str;
+  }
+  if (witness_len <= 0) {
+    err = ERROR_INVALID_MOL_FORMAT;
+    return str;
+  }
+
+  uint8_t *witness_bytes = malloc(RAW_EXTENSION_SIZE);
+  ckb_load_witness(witness_bytes, &witness_len, 0, 0, source);
+  str.ptr = witness_bytes;
+  str.size = witness_len;
+  return str;
+}
