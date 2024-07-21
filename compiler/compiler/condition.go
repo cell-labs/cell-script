@@ -91,6 +91,19 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 				IsVariable: false,
 			}
 		}
+		if v.Operator == parser.OP_EQ {
+			leftPtr := c.contextBlock.NewExtractValue(leftLLVM, 1)
+			rightPtr := c.contextBlock.NewExtractValue(rightLLVM, 1)
+			// Compare two strings
+			cmpRet := c.contextBlock.NewCall(c.osFuncs.Strcmp.Value.(llvmValue.Named), leftPtr, rightPtr)
+
+			return value.Value{
+				Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator), cmpRet, constant.NewInt(llvmTypes.I64, 0)),
+				Type:       types.Bool,
+				IsVariable: false,
+			}
+
+		}
 
 		panic("string does not implement operation " + v.Operator)
 	}
