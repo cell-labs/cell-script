@@ -7,8 +7,6 @@ import (
 )
 
 const (
-	BLAKE2B_BLOCK_SIZE             = 32
-	BLAKE160_SIZE				   = 160/8
 	FLAGS_SIZE                     = 4
 	OWNER_MODE_INPUT_TYPE_MASK     = 0x80000000
 	OWNER_MODE_OUTPUT_TYPE_MASK    = 0x40000000
@@ -67,10 +65,10 @@ const (
 func getFlagFromArgs(args string) uint64 {
 	// args.size() >= 4
 	// big-edian
-	byte0 := uint64(args[0+BLAKE2B_BLOCK_SIZE])
-	byte1 := uint64(args[1+BLAKE2B_BLOCK_SIZE])
-	byte2 := uint64(args[2+BLAKE2B_BLOCK_SIZE])
-	byte3 := uint64(args[3+BLAKE2B_BLOCK_SIZE])
+	byte0 := uint64(args[0+tx.BLAKE2B_BLOCK_SIZE])
+	byte1 := uint64(args[1+tx.BLAKE2B_BLOCK_SIZE])
+	byte2 := uint64(args[2+tx.BLAKE2B_BLOCK_SIZE])
+	byte3 := uint64(args[3+tx.BLAKE2B_BLOCK_SIZE])
 	val := (byte0 << 24)
 	val += (byte1 << 16)
 	val += (byte2 << 8)
@@ -133,7 +131,7 @@ func main() {
 	argsSize := len(args)
 	data := ""
 	flags := 0
-	if argsSize < (FLAGS_SIZE + BLAKE2B_BLOCK_SIZE) {
+	if argsSize < (FLAGS_SIZE + tx.BLAKE2B_BLOCK_SIZE) {
 		flags = XUDTFlagsPlain
 	} else {
 		mask := OWNER_MODE_MASK ^ -1 // 0x1FFFFFF
@@ -142,45 +140,77 @@ func main() {
 			flags = XUDTFlagsPlain
 		} else if tempFlags == XUDTFlagsInArgs {
 			flags = XUDTFlagsInArgs
-			data = args[BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
+			data = args[tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
 			// vector <Script> is a dynvec
 			vecSize := tx.getVectorRawByteSize(data)
-			if vecSize != argsSize-BLAKE2B_BLOCK_SIZE+FLAGS_SIZE {
+			if vecSize != argsSize-tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE {
 				return ERROR_INVALID_ARGS_FORMAT
 			}
-			return SUCCESS
+			// return SUCCESS
 		} else if tempFlags == XUDTFlagsInWitness {
-			hash_size := argsSize - BLAKE2B_BLOCK_SIZE - FLAGS_SIZE
-			if hash_size != BLAKE160_SIZE {
+			hash_size := argsSize - tx.BLAKE2B_BLOCK_SIZE - FLAGS_SIZE
+			if hash_size != tx.BLAKE160_SIZE {
 				return ERROR_INVALID_FLAG
 			}
-			blake160Hash := args[BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
+			blake160Hash := args[tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
 			witness := tx.getWitness()
 			witnessBlake2bHash := tx.getBlake2b()
-			// todo
-			if witnessBlake2bHash[0:BLAKE160_SIZE] == blake160Hash {
+			if witnessBlake2bHash[0:tx.BLAKE160_SIZE] == blake160Hash {
 				return ERROR_HASH_MISMATCHED
 			}
-			return SUCCESS
+			// return SUCCESS
 		} else {
 			return ERROR_INVALID_FLAG
 		}
 	}
-	
-	// if args.err != SUCCESS {
-	// 	return args.err
-	// }
-	// tx.checkEnhancedOwnerMode(args)
-	// if args.err != SUCCESS {
-	// 	return args.err
-	// }
-	// ret := tx.sudt(args.owner_mode)
-	// if ret != SUCCESS {
-	// 	return ret
-	// }
-	// if args.flags == tx.tx. {
-	// 	return SUCCESS
-	// }
-	// tx.executeScripts(args)
+
+	// enable owner script via a script in witness
+	if owner_mode.val == false {
+		// get Owner Script, optional filed from witnessArgs.inputType
+		ownerScriptRawBytes := "" // witness.intput.ownerScript
+		// compute blake2b hash for owner script
+		ownerScriptHash := tx.getBlake2b(ownerScriptRawBytes)
+		// get 32 byte hash from args
+		argsFromHash := args[0:tx.BLAKE2B_BLOCK_SIZE]
+		if ownerScriptHash != argsFromHash {
+			return ERROR_HASH_MISMATCHED
+		}
+
+		// decode ownerScript raw bytes to Script
+		var ownerScript cell.Script
+		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode.val, 0, ownerScript.args)
+		if err == SUCCESS {
+			owner_mode.val = true
+		}
+	}
+
+	// sudt
+	in_sum, out_sum := 0, 0
+	ins := tx.inputs()
+	if len(ins) == int32(0) {
+		return ERROR_AMOUNT
+	}
+	for input := range tx.inputs() {
+		in_sum += input
+	}
+
+	for output := range tx.outputs() {
+		out_sum += output
+	}
+
+	if in_sum < out_sum {
+		debug.Printf("Invalid Amount")
+		return ERROR_AMOUNT
+	}
+	// Plain mode get done here
+	if flags == XUDTFlagsPlain {
+    	return SUCCESS
+  	}
+	// todo: decode extension scripts
+	var extensionScripts []cell.Script
+	// execute all scripts
+	for i, script := range(extensionScripts) {
+		tx.executeFunc(script.codeHash, script.hashType, "validate", owner_mode.val, i, script.args)
+	}
 	return SUCCESS
 }

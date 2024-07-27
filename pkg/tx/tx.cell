@@ -7,6 +7,12 @@ const (
 )
 
 const (
+	SCRTPT_SIZE		   = 32768
+	BLAKE2B_BLOCK_SIZE = 32
+	BLAKE160_SIZE      = 160/8
+)
+
+const (
 	CKB_CELL_FIELD_CAPACITY = iota
 	CKB_CELL_FIELD_DATA_HASH
 	CKB_CELL_FIELD_LOCK
@@ -52,6 +58,7 @@ extern (
 	func get_vec_size(args string) uint64
 	func get_witness() string
 	func get_blake2b(data string) string
+	func execute_func(hash string, hashType uint8, funcName string, isOwnerMode bool, extensionIndex int64, args string) int64
     // func check_enhanced_owner_mode(args *cell.XudtArgs) bool
     // func simple_udt(owner_mode bool) int64
     // func execute_scripts(args *cell.XudtArgs) bool
@@ -75,6 +82,9 @@ func getWitness() string {
 }
 func getBlake2b(data string) string {
 	return get_blake2b(data)
+}
+func executeFunc(hash string, hashType uint8, funcName string, isOwnerMode bool, extensionIndex int64, args string) int64 {
+	return execute_func(hash, hashType, funcName, isOwnerMode, extensionIndex, args)
 }
 // func getScripts(args string) []cell.Script {
 	

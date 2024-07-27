@@ -1,4 +1,5 @@
 #include "ckb_syscalls.h"
+#include "ckb_dlfcn.h"
 #include "blake2b.h"
 #ifndef MOL2_EXIT
 #define MOL2_EXIT ckb_exit
@@ -504,6 +505,63 @@ String get_blake2b(String data)
     return str;
   }
   return str;
+}
+
+// here we reserve a lot of memory for dynamic libraries. The enhanced owner
+// mode may also checked via dynamic library. It might consume much memory, e.g.
+// precomputed table (about 1 M) in secp256k1
+#define MAX_CODE_SIZE (1024 * 1800)
+#define RISCV_PGSIZE 4096
+#define EXPORTED_FUNC_NAME "validate"
+typedef int (*ValidateFuncType)(int is_owner_mode, size_t extension_index,
+                                const uint8_t *args, size_t args_len);
+// load validate function with code_hash
+int load_validate_func(const uint8_t *hash, uint8_t hash_type,
+                       const uint8_t *func_name, ValidateFuncType *func)
+{
+  int err = 0;
+  void *handle = NULL;
+  size_t consumed_size = 0;
+
+  // RCE: todo
+  // if (memcmp(RCE_HASH, hash, 32) == 0 && hash_type == 1) {
+  //   *func = rce_validate;
+  //   return 0;
+  // }
+
+  uint8_t code_buff[MAX_CODE_SIZE]; // __attribute__((aligned(RISCV_PGSIZE)));
+  err = ckb_dlopen2(hash, hash_type, code_buff,
+                    MAX_CODE_SIZE, &handle, &consumed_size);
+  if (err != 0)
+  {
+    return err;
+  }
+  if (handle == NULL)
+  {
+    return ERROR_CANT_LOAD_LIB;
+  }
+  ASSERT(consumed_size % RISCV_PGSIZE == 0);
+
+  *func = (ValidateFuncType)ckb_dlsym(handle, (const char*)func_name);
+  if (*func == NULL)
+  {
+    return ERROR_CANT_FIND_SYMBOL;
+  }
+  return err;
+}
+
+int64_t execute_func(String hash, uint8_t hash_type,
+                     String func_name,
+                     bool is_owner_mode,
+                     int64_t extension_index,
+                     String args)
+{
+  ValidateFuncType func;
+  int err = load_validate_func(hash.ptr, hash_type, func_name.ptr, &func);
+  if (err != 0) {
+    return err;
+  }
+  return func(is_owner_mode, extension_index, args.ptr, args.size);
 }
 
 // uint32_t read_from_witness(uintptr_t arg[], uint8_t *ptr, uint32_t len,

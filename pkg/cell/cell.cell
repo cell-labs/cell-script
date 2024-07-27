@@ -4,14 +4,36 @@ type Cell uint64
 
 type SudtData uint128
 
-type XudtData table {
-	amount uint128
-	lock   []byte
-	data   [][]byte
-}
-
 type Script table {
 	codeHash string // size == 32byte
 	hashType byte
 	args	 string
+}
+
+type H256 [32]byte
+type OutPoint table {
+	txHash H256
+	index  uint32
+}
+type CellDep table {
+	outPoint OutPoint
+	depType  uint8
+}
+type CellInput table {
+	prev	OutPoint
+	since	uint64
+}
+type CellOutput table {
+	capcity		uint64
+	lockScript	Script
+	typeScript	Script // optional
+}
+type Transaction table {
+	version  	uint32
+	cellDeps	[]CellDep
+	headerDeps	H256
+	inputs		CellInput
+	witness		string
+	outputs		CellOutput
+	outputsData	string
 }

@@ -143,7 +143,6 @@ test/example:
 	
 	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm
 	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte
-	${CELL} -t riscv tests/examples/xudt-data.cell && ckb-debugger --bin xudt-data
 	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt || true
 
 test/cross:
