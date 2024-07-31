@@ -24,7 +24,12 @@ func Build(options *option.Options) error {
 	c := compiler.NewCompiler(&compiler.Options{Target: options.Target})
 	debug := options.Debug
 
-	err := compilePackage(c, path, "main", options)
+	err := compilePackage(c, root + "/" + "builtin", "global", options)
+	if err != nil {
+		return err
+	}
+	
+	err = compilePackage(c, path, "main", options)
 	if err != nil {
 		return err
 	}

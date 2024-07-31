@@ -157,9 +157,13 @@ func (c *Compiler) Compile(root parser.PackageNode) (err error) {
 		}
 	}()
 
-	c.currentPackage = NewPkg(root.Name)
 	c.currentPackageName = root.Name
-	c.packages[c.currentPackageName] = c.currentPackage
+	if !c.IsPackageImported(c.currentPackageName) {
+		c.currentPackage = NewPkg(c.currentPackageName)
+		c.packages[c.currentPackageName] = c.currentPackage
+	} else {
+		c.currentPackage = c.packages[c.currentPackageName]
+	}
 
 	for _, fileNode := range root.Files {
 		c.compile(fileNode.Instructions)
