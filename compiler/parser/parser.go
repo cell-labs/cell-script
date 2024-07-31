@@ -1179,6 +1179,21 @@ func (p *parser) parseOneType() (TypeNode, error) {
 					break
 				}
 
+				if current.Type == lexer.OPERATOR && current.Val == "(" {
+					p.i++
+					continue
+				}
+
+				if current.Type == lexer.OPERATOR && current.Val == "," {
+					p.i++
+					continue
+				}
+
+				if current.Type == lexer.OPERATOR && current.Val == ")" {
+					p.i++
+					break
+				}
+
 				returnType, err := p.parseOneType()
 				if err != nil {
 					panic(err)
