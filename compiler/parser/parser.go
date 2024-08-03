@@ -32,11 +32,14 @@ func Parse(input []lexer.Item, options *option.Options) *FileNode {
 		input:    input,
 		debug:    options.Debug,
 		packages: map[string]struct{}{},
+		// todo: loading builtin types all in once
 		types: map[string]struct{}{
 			"int":     {},
 			"uint":    {},
 			"int8":    {},
 			"uint8":   {},
+			"int16":   {},
+			"uint16":  {},
 			"int32":   {},
 			"uint32":  {},
 			"int64":   {},
