@@ -91,19 +91,30 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 }
 
 func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) value.Value {
-	arrType := src.Type.(*types.Array)
-
-	sliceType := internal.Slice(arrType.Type.LLVM())
+	sliceType := internal.Slice(src.Type.LLVM())
 
 	alloc := c.contextBlock.NewAlloca(sliceType)
 
-	startIndex := c.compileValue(v.Start)
-	endIndex := c.compileValue(v.End)
+	startIndexValue := c.compileValue(v.Start)
+	startIndex := internal.LoadIfVariable(c.contextBlock, startIndexValue)
+	var endIndex llvmValue.Value
+	if v.HasEnd {
+		endIndex = c.compileValue(v.End).Value
+	} else {
+		srcVal := internal.LoadIfVariable(c.contextBlock, src)
+		endIndex = c.contextBlock.NewExtractValue(srcVal, 1)
+	}
 
-	sliceLen := c.contextBlock.NewSub(endIndex.Value, startIndex.Value)
-	sliceLen32 := c.contextBlock.NewTrunc(sliceLen, i32.LLVM())
-
-	offset32 := c.contextBlock.NewTrunc(startIndex.Value, i32.LLVM())
+	sliceLen := c.contextBlock.NewSub(endIndex, startIndex)
+	var sliceLen32 llvmValue.Value
+	sliceLen32 = sliceLen
+	if sliceLen.Type() != llvmTypes.I32 {
+		sliceLen32 = c.contextBlock.NewTrunc(sliceLen, i32.LLVM())
+	}
+	offset32 := startIndex
+	if startIndex.Type() != llvmTypes.I32 {
+		offset32 = c.contextBlock.NewTrunc(startIndex, i32.LLVM())
+	}
 
 	// Len
 	lenItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 0))
@@ -124,12 +135,12 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) 
 	backingArrayItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 3))
 	backingArrayItem.SetName(name.Var("backing"))
 
-	itemPtr := c.contextBlock.NewBitCast(src.Value, llvmTypes.NewPointer(arrType.Type.LLVM()))
+	itemPtr := c.contextBlock.NewBitCast(src.Value, llvmTypes.NewPointer(src.Type.LLVM()))
 	c.contextBlock.NewStore(itemPtr, backingArrayItem)
 
 	res := value.Value{
 		Type: &types.Slice{
-			Type:     arrType.Type,
+			Type:     src.Type,
 			LlvmType: sliceType,
 		},
 		Value: alloc,
