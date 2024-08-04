@@ -47,6 +47,7 @@ func Parse(input []lexer.Item, options *option.Options) *FileNode {
 			"uint128": {},
 			"uint256": {},
 			"uintptr": {},
+			"byte":    {},
 			"string":  {},
 		},
 	}
@@ -383,7 +384,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 				retVals = append(retVals, p.parseOne(true))
 				p.i++
-
+				
 				checkIfComma := p.lookAhead(0)
 				if checkIfComma.Type == lexer.OPERATOR && checkIfComma.Val == "," {
 					p.i++
