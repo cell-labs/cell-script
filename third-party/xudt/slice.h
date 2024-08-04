@@ -16,3 +16,9 @@ char *strndup(const char *str, size_t n) {
   result[n] = '\0';
   return result;
 }
+
+char *strcat(char *dest, const char *src)
+{
+  strcpy (dest + strlen (dest), src);
+  return dest;
+}

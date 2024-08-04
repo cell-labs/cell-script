@@ -1,0 +1,37 @@
+package strings
+
+const maxInt = uint64(uint64(-1)^uint64(0) >> uint64(1))
+
+// Join concatenates the elements of its first argument to create a single string. The separator
+// string sep is placed between elements in the resulting string.
+func Join(elems []string, sep string) string {
+	l := len(elems)
+	if l == uint32(0) {
+		return ""
+	} else if  l == uint32(1) {
+		return elems[0]
+	}
+
+	var n uint64
+	lenSep := len(sep)
+	lenElems := uint64(len(elems))
+	if lenSep > 0 {
+		if lenSep >= maxInt/(lenElems-1) {
+			// panic("strings: Join output length overflow")
+		}
+		n += lenSep * (lenElems - 1)
+	}
+	for _, elem := range elems {
+		if len(elem) > maxInt-n {
+			// panic("strings: Join output length overflow")
+		}
+		n += len(elem)
+	}
+
+	var buf = elems[0]
+	for i, _ := range elems[1:] {
+		buf = buf + sep
+		buf = buf + elems[1 + i]
+	}
+	return buf
+}

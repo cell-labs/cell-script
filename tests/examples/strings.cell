@@ -1,0 +1,12 @@
+package main
+
+import (
+	"debug"
+	"strings"
+)
+
+func main() {
+	str := []string{"aa", "bb"}
+	debug.Printf("%s", strings.Join(str, "-"))
+	return 0
+}
