@@ -17,6 +17,7 @@ func (c *Compiler) compileForNode(v *parser.ForNode) {
 }
 
 func (c *Compiler) compileForThreeType(v *parser.ForNode) {
+	forParent := c.contextBlock
 	// TODO: create a new context-block for code running inside the for loop
 	c.compile([]parser.Node{
 		v.BeforeLoop,
@@ -56,6 +57,7 @@ func (c *Compiler) compileForThreeType(v *parser.ForNode) {
 
 	// Set context to the new block after the loop
 	c.contextBlock = afterLoopBlock
+	afterLoopBlock.NewBr(forParent)
 
 	// Pop break and continue
 	c.contextLoopBreak = c.contextLoopBreak[0 : len(c.contextLoopBreak)-1]
