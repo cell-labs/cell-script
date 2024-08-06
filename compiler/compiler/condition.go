@@ -143,6 +143,12 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 		opRes = c.contextBlock.NewAdd(leftLLVM, rightLLVM)
 	case parser.OP_LOGICAL_OR:
 		opRes = c.contextBlock.NewOr(leftLLVM, rightLLVM)
+	case parser.OP_REMAINDER:
+		if left.Type.IsSigned() {
+			opRes = c.contextBlock.NewSRem(leftLLVM, rightLLVM) // SDiv == Signed Division
+		} else {
+			opRes = c.contextBlock.NewURem(leftLLVM, rightLLVM) // SDiv == Signed Division
+		}
 	default:
 		// Boolean operations
 		return value.Value{
