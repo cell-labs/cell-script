@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/cell-labs/cell-script/compiler/compiler"
@@ -158,7 +159,8 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 					if packagePath == "os" {
 						continue
 					}
-					if c.IsPackageImported(packagePath) {
+					packageName := filepath.Base(packagePath)
+					if c.IsPackageImported(packageName) {
 						continue
 					}
 

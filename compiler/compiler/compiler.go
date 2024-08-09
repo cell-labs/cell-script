@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"runtime/debug"
 
@@ -157,7 +158,7 @@ func (c *Compiler) Compile(root parser.PackageNode) (err error) {
 		}
 	}()
 
-	c.currentPackageName = root.Name
+	c.currentPackageName = filepath.Base(root.Name)
 	if !c.IsPackageImported(c.currentPackageName) {
 		c.currentPackage = NewPkg(c.currentPackageName)
 		c.packages[c.currentPackageName] = c.currentPackage

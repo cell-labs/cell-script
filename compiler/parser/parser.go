@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 	"strconv"
 
 	"errors"
@@ -519,7 +520,8 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 		if current.Val == "import" {
 			imp := p.parseImport()
-			for _, n := range imp.PackagePaths {
+			for _, path := range imp.PackagePaths {
+				n := filepath.Base(path)
 				p.packages[n] = struct{}{}
 			}
 			return imp
