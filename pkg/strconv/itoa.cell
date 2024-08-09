@@ -2,7 +2,7 @@
 package strconv
 
 import (
-	// "math/bits"
+	"math/bits"
 	"strings"
 )
 
@@ -112,7 +112,7 @@ func formatBits(dst []byte, u uint64, base uint64, neg bool, append_ bool) ([]by
 		// the constant 7 we tell the compiler that the shift count is always
 		// less than 8 which is smaller than any register width. This allows
 		// the compiler to generate better code for the shift operation.
-		shift := 1 //uint64(bits.TrailingZeros(uint(base))) & 7
+		shift := uint64(bits.TrailingZeros(base)) & 7
 		b := base
 		m := base - 1 // == 1<<shift - 1
 		for num := u; num >= b; num = num >> shift {
@@ -183,7 +183,7 @@ func FormatInt(i int64, base int64) string {
 	return s
 }
 
-// // Itoa is equivalent to FormatInt(int64(i), 10).
-// func Itoa(i int) string {
-// 	return FormatInt(int64(i), 10)
-// }
+// Itoa is equivalent to FormatInt(int64(i), 10).
+func Itoa(i int64) string {
+	return FormatInt(i, 10)
+}

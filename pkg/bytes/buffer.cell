@@ -477,11 +477,11 @@ const maxInt = 2147483647
 //
 // In most cases, new([Buffer]) (or just declaring a [Buffer] variable) is
 // sufficient to initialize a [Buffer].
-// func NewBuffer(buf []byte) *Buffer {
-// 	var b Buffer
-// 	b.buf = buf
-// 	return &b
-// }
+func NewBuffer(buf []byte) *Buffer {
+	var b Buffer
+	b.buf = buf
+	return &b
+}
 
 // NewBufferString creates and initializes a new [Buffer] using string s as its
 // initial contents. It is intended to prepare a buffer to read an existing
