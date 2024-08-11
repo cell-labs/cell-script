@@ -335,6 +335,24 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			return outerConditionNode
 		}
 
+		if current.Val == "panic" {
+			p.i++
+			lParent := p.lookAhead(0)
+			p.expect(lParent, lexer.Item{Type: lexer.OPERATOR, Val: "("})
+			p.i++
+			args := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
+			if len(args) != 1 {
+				panic("wrong number of arguments for panic(message)")
+			}
+			if _, ok := args[0].(*ConstantNode); !ok {
+				panic("wrong type of argument for panic(message)")
+			}
+			return &CallNode{
+				Function:  &NameNode{Name: "panic"},
+				Arguments: args,
+			}
+		}
+
 		// "make" is a construtor command for composed types
 		if current.Val == "make" {
 			p.i++

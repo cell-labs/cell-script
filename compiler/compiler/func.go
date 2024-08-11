@@ -397,6 +397,10 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 			return c.appendFuncCall(v)
 		case "print":
 			return c.printFuncCall(v)
+		case "panic":
+			message, _ := v.Arguments[0].(*parser.ConstantNode)
+			c.panic(c.contextBlock, message.ValueStr)
+			return value.Value{}
 		}
 	}
 

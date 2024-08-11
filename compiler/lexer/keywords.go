@@ -21,4 +21,5 @@ var keywords = map[string]struct{}{
 	"interface": {},
 	"range":     {},
 	"make":		 {},
+	"panic":	 {},
 }
