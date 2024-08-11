@@ -40,10 +40,10 @@ func formatBits(dst []byte, u uint64, base uint64, neg bool, append_ bool) ([]by
 	var s string
 	// 2 <= base && base <= len(digits)
 	if base > len(digits) {
-		// panic("strconv: illegal AppendInt/FormatInt base")
+		panic("strconv: illegal AppendInt/FormatInt base")
 	}
 	if base < 2 {
-		// panic
+		panic("strconv: illegal AppendInt/FormatInt base")
 	}
 
 	var a [65]byte // 64 + 1, +1 for sign of 64bit value in base 2

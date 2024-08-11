@@ -17,13 +17,13 @@ func Join(elems []string, sep string) string {
 	lenElems := uint64(len(elems))
 	if lenSep > 0 {
 		if lenSep >= maxInt/(lenElems-1) {
-			// panic("strings: Join output length overflow")
+			panic("strings: Join output length overflow")
 		}
 		n += lenSep * (lenElems - 1)
 	}
 	for _, elem := range elems {
 		if len(elem) > maxInt-n {
-			// panic("strings: Join output length overflow")
+			panic("strings: Join output length overflow")
 		}
 		n += len(elem)
 	}
