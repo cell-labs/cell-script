@@ -20,4 +20,5 @@ var keywords = map[string]struct{}{
 	"false":     {},
 	"interface": {},
 	"range":     {},
+	"make":		 {},
 }

@@ -397,11 +397,13 @@ func (sn SubNode) String() string {
 type InitializeSliceNode struct {
 	baseNode
 	Type  TypeNode
+	Len   Node
+	Cap   Node
 	Items []Node
 }
 
 func (i InitializeSliceNode) String() string {
-	return fmt.Sprintf("InitializeSliceNode-[]%s{%+v}", i.Type, i.Items)
+	return fmt.Sprintf("InitializeSliceNode-[]%s{%+v}(%d)", i.Type, i.Items, i.Cap)
 }
 
 type InitializeArrayNode struct {

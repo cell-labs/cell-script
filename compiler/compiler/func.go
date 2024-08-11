@@ -475,7 +475,10 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		variadicType := fnType.ArgumentTypes[variadicArgIndex].(*types.Slice)
 
 		// Convert last argument to a slice.
-		variadicSlice := c.compileInitializeSliceWithValues(variadicType.Type, args[variadicArgIndex:]...)
+		variadicSlice := c.compileInitializeSliceWithValues(variadicType.Type,
+			value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, int64(len(args[variadicArgIndex:])))},
+			value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, int64(len(args[variadicArgIndex:])))},
+			args[variadicArgIndex:]...)
 
 		// Remove "pre-sliceified" arguments from the list of arguments
 		args = args[0:variadicArgIndex]

@@ -362,10 +362,18 @@ func (c *Compiler) compileInitializeSliceNode(v *parser.InitializeSliceNode) val
 		c.contextAssignDest = c.contextAssignDest[0 : len(c.contextAssignDest)-1]
 	}
 
-	return c.compileInitializeSliceWithValues(itemType, values...)
+	len := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 0)}
+	if v.Len != nil {
+		len = c.compileValue(v.Len)
+	}
+	cap := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 0)}
+	if v.Cap != nil {
+		cap = c.compileValue(v.Cap)
+	}
+	return c.compileInitializeSliceWithValues(itemType, len, cap, values...)
 }
 
-func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, values ...value.Value) value.Value {
+func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen, initCap value.Value, values ...value.Value) value.Value {
 	sliceType := &types.Slice{
 		Type:     itemType,
 		LlvmType: internal.Slice(itemType.LLVM()),
@@ -373,7 +381,7 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, values 
 
 	// Create slice with cap set to the requested size
 	allocSlice := c.contextBlock.NewAlloca(sliceType.LLVM())
-	sliceType.SliceZero(c.contextBlock, c.osFuncs.Malloc.Value.(llvmValue.Named), len(values), allocSlice)
+	sliceType.SliceZero(c.contextBlock, c.osFuncs.Malloc.Value.(llvmValue.Named), initLen.Value, initCap.Value, allocSlice)
 
 	backingArrayPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(allocSlice), allocSlice,
 		constant.NewInt(llvmTypes.I32, 0),
@@ -399,7 +407,22 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, values 
 		constant.NewInt(llvmTypes.I32, 0),
 	)
 	lenPtr.SetName(name.Var("len"))
-	c.contextBlock.NewStore(constant.NewInt(llvmTypes.I32, int64(len(values))), lenPtr)
+	len32 := initLen.Value
+	if len32.Type() != llvmTypes.I32 {
+		len32 = c.contextBlock.NewTrunc(len32, i32.LLVM())
+	}
+	c.contextBlock.NewStore(len32, lenPtr)
+	
+	capPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(allocSlice), allocSlice,
+		constant.NewInt(llvmTypes.I32, 0),
+		constant.NewInt(llvmTypes.I32, 1),
+		)
+	capPtr.SetName(name.Var("cap"))
+	cap32 := initCap.Value
+	if cap32.Type() != llvmTypes.I32 {
+		cap32 = c.contextBlock.NewTrunc(cap32, i32.LLVM())
+	}
+	c.contextBlock.NewStore(cap32, capPtr)
 
 	return value.Value{
 		Value:      allocSlice,

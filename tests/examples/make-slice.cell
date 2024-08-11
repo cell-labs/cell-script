@@ -1,0 +1,10 @@
+package main
+
+import "debug"
+
+func main() {
+	s := make([]int64, 0, 4)
+	s1 := make([]int64, 2)
+	debug.Printf("%d%d%d%d", len(s), cap(s), len(s1), cap(s1))
+	return 0
+}

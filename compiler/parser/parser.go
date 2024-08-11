@@ -181,8 +181,14 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				items := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "}"})
 				p.inAllocRightHand = prevInAlloc
 
+				len := &ConstantNode{
+					Type:  NUMBER,
+					Value: int64(len(items)),
+				}
 				res = &InitializeSliceNode{
 					Type:  sliceItemType,
+					Len:   len,
+					Cap:   len,
 					Items: items,
 				}
 				if withAheadParse {
@@ -329,6 +335,42 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			return outerConditionNode
 		}
 
+		// "make" is a construtor command for composed types
+		if current.Val == "make" {
+			p.i++
+
+			lParent := p.lookAhead(0)
+			p.expect(lParent, lexer.Item{Type: lexer.OPERATOR, Val: "("})
+			p.i++
+
+			ty, err := p.parseOneType()
+			if err != nil {
+				panic(err)
+			}
+			p.i++
+
+			items := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
+			switch t := ty.(type) {
+			case *SliceTypeNode:
+				if len(items) == 2 {
+					return &InitializeSliceNode{
+						Type: t,
+						Len:  items[0],
+						Cap:  items[1],
+					}
+				} else if len(items) == 1 {
+					return &InitializeSliceNode{
+						Type: t,
+						Len:  items[0],
+						Cap:  items[0],
+					}
+				} else {
+					panic("wrong argument for slice constructor")
+				}
+			default:
+				panic("not supported")
+			}
+		}
 		// "extern" is external function without function body
 
 		// single extern: 	extern func foo() int32
@@ -385,7 +427,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 				retVals = append(retVals, p.parseOne(true))
 				p.i++
-				
+
 				checkIfComma := p.lookAhead(0)
 				if checkIfComma.Type == lexer.OPERATOR && checkIfComma.Val == "," {
 					p.i++

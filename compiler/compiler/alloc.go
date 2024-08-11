@@ -62,7 +62,10 @@ func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
 		// Set to zero values
 		// TODO: Make slices less special
 		if sliceType, ok := treType.(*types.Slice); ok {
-			sliceType.SliceZero(block, c.osFuncs.Malloc.Value.(llvmValue.Named), 2, val)
+			sliceType.SliceZero(block, c.osFuncs.Malloc.Value.(llvmValue.Named),
+				constant.NewInt(irTypes.I32, 0), // len
+				constant.NewInt(irTypes.I32, 2), // cap
+				val)
 		} else {
 			treType.Zero(block, val)
 		}
@@ -161,7 +164,7 @@ func (c *Compiler) compileAllocConstNode(v *parser.AllocNode) {
 		cnst := v.Val[i].(*parser.ConstantNode)
 		c.setVar(varName, value.Value{
 			Type:  &types.UntypedConstantNumber{},
-			Value: constant.NewInt(i64.LLVM().(*irTypes.IntType), cnst.Value),
+			Value: constant.NewInt(irTypes.I64, cnst.Value),
 		})
 	}
 }
