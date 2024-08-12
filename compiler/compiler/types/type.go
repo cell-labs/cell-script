@@ -283,12 +283,13 @@ func (Slice) Size() int64 {
 	return 3*4 + 8 // 3 int32s and a pointer
 }
 
-func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, initCap int, emptySlice llvmValue.Value) {
+func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, initLen, initCap llvmValue.Value, emptySlice llvmValue.Value) {
 	// The cap must always be larger than 0
 	// Use 2 as the default value
-	if initCap < 2 {
-		initCap = 2
-	}
+	// Todo: check initCap
+	// if initCap < 2 {
+	// 	initCap = 2
+	// }
 
 	len := block.NewGetElementPtr(pointer.ElemType(emptySlice), emptySlice, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 0))
 	len.SetName(name.Var("len"))
@@ -299,11 +300,20 @@ func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, initCap in
 	backingArray := block.NewGetElementPtr(pointer.ElemType(emptySlice), emptySlice, constant.NewInt(types.I32, 0), constant.NewInt(types.I32, 3))
 	backingArray.SetName(name.Var("backing"))
 
-	block.NewStore(constant.NewInt(types.I32, 0), len)
-	block.NewStore(constant.NewInt(types.I32, int64(initCap)), cap)
+	initLen32 := initLen
+	if initLen32.Type() != types.I32 {
+		initLen32 = block.NewTrunc(initLen32, types.I32)
+	}
+	initCap32 := initCap
+	if initCap32.Type() != types.I32 {
+		initCap32 = block.NewTrunc(initCap32, types.I32)
+	}
+	block.NewStore(initLen32, len)
+	block.NewStore(initCap32, cap)
 	block.NewStore(constant.NewInt(types.I32, 0), offset)
 
-	mallocatedSpaceRaw := block.NewCall(mallocFunc, constant.NewInt(types.I64, int64(initCap)*s.Type.Size()))
+	size := block.NewMul(initCap, constant.NewInt(types.I64, s.Type.Size()))
+	mallocatedSpaceRaw := block.NewCall(mallocFunc, size)
 	mallocatedSpaceRaw.SetName(name.Var("slicezero"))
 	bitcasted := block.NewBitCast(mallocatedSpaceRaw, types.NewPointer(s.Type.LLVM()))
 	block.NewStore(bitcasted, backingArray)
