@@ -17,8 +17,8 @@ import (
 	llvmValue "github.com/llir/llvm/ir/value"
 )
 
-func getConditionLLVMpred(operator parser.Operator) enum.IPred {
-	m := map[parser.Operator]enum.IPred{
+func getConditionLLVMpred(operator parser.Operator, isSigned bool) enum.IPred {
+	ms := map[parser.Operator]enum.IPred{
 		parser.OP_GT:   enum.IPredSGT,
 		parser.OP_GTEQ: enum.IPredSGE,
 		parser.OP_LT:   enum.IPredSLT,
@@ -27,8 +27,23 @@ func getConditionLLVMpred(operator parser.Operator) enum.IPred {
 		parser.OP_NEQ:  enum.IPredNE,
 	}
 
-	if op, ok := m[operator]; ok {
-		return op
+	mu := map[parser.Operator]enum.IPred{
+		parser.OP_GT:   enum.IPredUGT,
+		parser.OP_GTEQ: enum.IPredUGE,
+		parser.OP_LT:   enum.IPredULT,
+		parser.OP_LTEQ: enum.IPredULE,
+		parser.OP_EQ:   enum.IPredEQ,
+		parser.OP_NEQ:  enum.IPredNE,
+	}
+
+	if isSigned {
+		if op, ok := ms[operator]; ok {
+			return op
+		}
+	} else {
+		if op, ok := mu[operator]; ok {
+			return op
+		}
 	}
 
 	panic("unknown op: " + string(operator))
@@ -102,7 +117,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 			cmpRet := c.contextBlock.NewCall(c.osFuncs.Strcmp.Value.(llvmValue.Named), leftPtr, rightPtr)
 
 			return value.Value{
-				Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator), cmpRet, constant.NewInt(llvmTypes.I64, strcmpRet)),
+				Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator, i64.IsSigned()), cmpRet, constant.NewInt(llvmTypes.I64, strcmpRet)),
 				Type:       types.Bool,
 				IsVariable: false,
 			}
@@ -153,7 +168,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 		// Boolean operations
 		return value.Value{
 			Type:       types.Bool,
-			Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator), leftLLVM, rightLLVM),
+			Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator, left.Type.IsSigned()), leftLLVM, rightLLVM),
 			IsVariable: false,
 		}
 	}
