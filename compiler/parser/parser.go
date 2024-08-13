@@ -874,16 +874,16 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 
 		p.i += 2 // identifier and left paren
 
-		if _, ok := p.types[current.Val]; ok {
-			val := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
-			if len(val) != 1 {
+		vals := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"})
+		if _, ok := p.types[current.Val]; ok && len(vals) != 0 { // len(var) == 0 means it is a function call
+			if len(vals) != 1 {
 				panic("type conversion must take only one argument")
 			}
 			return p.aheadParse(&TypeCastNode{
 				Type: &SingleTypeNode{
 					TypeName: current.Val,
 				},
-				Val: val[0],
+				Val: vals[0],
 			})
 		}
 
@@ -891,7 +891,7 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 		p.inAllocRightHand = false
 		callNode := p.aheadParse(&CallNode{
 			Function:  input,
-			Arguments: p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: ")"}),
+			Arguments: vals,
 		})
 		p.inAllocRightHand = beforeAllocRightHand
 		return callNode
@@ -1420,7 +1420,8 @@ func (p *parser) parseOneType() (TypeNode, error) {
 		}
 
 		// Single types
-		if checkIfParenOrType.Type == lexer.IDENTIFIER {
+		isPointerType := checkIfParenOrType.Type == lexer.OPERATOR && checkIfParenOrType.Val == "*"
+		if checkIfParenOrType.Type == lexer.IDENTIFIER || isPointerType {
 			p.i++
 
 			t, err := p.parseOneType()
