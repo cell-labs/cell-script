@@ -81,7 +81,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	// - a NodeName (variables)
 	case lexer.IDENTIFIER:
 		res = &NameNode{Name: current.Val}
-		if withIdentifierAhead {
+		next := p.lookAhead(1)
+		// array or slice may load element
+		isIndex := next.Type == lexer.OPERATOR && next.Val == "["
+		isPackageMember := next.Type == lexer.OPERATOR && next.Val == "."
+		if withIdentifierAhead || isIndex || isPackageMember {
 			res = p.aheadParseWithOptions(res, withArithAhead, withIdentifierAhead)
 		}
 		return
@@ -672,6 +676,33 @@ func (p *parser) aheadParse(input Node) Node {
 	return p.aheadParseWithOptions(input, true, true)
 }
 
+func (p *parser) parseOperation(input Node, withArithAhead bool) Node {
+	next := p.lookAhead(1)
+	// Handle "Operations" both arith and comparision
+	operator := opsCharToOp[next.Val]
+	_, isArithOp := arithOperators[operator]
+
+	if !withArithAhead && isArithOp {
+		return input
+	}
+
+	p.i += 2
+	res := &OperatorNode{
+		Operator: operator,
+		Left:     input,
+	}
+
+	if isArithOp {
+		res.Right = p.parseOneWithOptions(false, false, false)
+		// Sort infix operations if necessary (eg: apply OP_MUL before OP_ADD)
+		res = sortInfix(res)
+	} else {
+		res.Right = p.parseOneWithOptions(true, true, true)
+	}
+
+	return p.aheadParseWithOptions(res, true, true)
+}
+
 func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifierAhead bool) Node {
 	next := p.lookAhead(1)
 
@@ -832,32 +863,6 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 			panic(fmt.Sprintf("Unexpected %+v, expected ]", expectEndBracket))
 		}
 
-		// Handle "Operations" both arith and comparision
-		if _, ok := opsCharToOp[next.Val]; ok {
-			operator := opsCharToOp[next.Val]
-			_, isArithOp := arithOperators[operator]
-
-			if !withArithAhead && isArithOp {
-				return input
-			}
-
-			p.i += 2
-			res := &OperatorNode{
-				Operator: operator,
-				Left:     input,
-			}
-
-			if isArithOp {
-				res.Right = p.parseOneWithOptions(false, false, true)
-				// Sort infix operations if necessary (eg: apply OP_MUL before OP_ADD)
-				res = sortInfix(res)
-			} else {
-				res.Right = p.parseOneWithOptions(true, true, true)
-			}
-
-			return p.aheadParseWithOptions(res, true, true)
-		}
-
 		if next.Val == "--" {
 			p.i++
 			return &DecrementNode{Item: input}
@@ -866,6 +871,10 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 		if next.Val == "++" {
 			p.i++
 			return &IncrementNode{Item: input}
+		}
+
+		if _, ok := opsCharToOp[next.Val]; ok {
+			return p.parseOperation(input, withArithAhead)
 		}
 	}
 
