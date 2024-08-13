@@ -1073,6 +1073,10 @@ func (p *parser) parseUntilEither(untils []lexer.Item) (res []Node, reached lexe
 
 		one := p.parseOne(true)
 		if one != nil {
+			next := p.lookAhead(1)
+			if _, isOperationNode := opsCharToOp[next.Val]; next.Type == lexer.OPERATOR && isOperationNode {
+				one = p.parseOperation(one, false)
+			}
 			res = append(res, one)
 		}
 

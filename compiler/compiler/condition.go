@@ -155,7 +155,7 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 	case parser.OP_RIGHT_SHIFT:
 		opRes = c.contextBlock.NewLShr(leftLLVM, rightLLVM)
 	case parser.OP_LOGICAL_AND:
-		opRes = c.contextBlock.NewAdd(leftLLVM, rightLLVM)
+		opRes = c.contextBlock.NewAnd(leftLLVM, rightLLVM)
 	case parser.OP_LOGICAL_OR:
 		opRes = c.contextBlock.NewOr(leftLLVM, rightLLVM)
 	case parser.OP_REMAINDER:

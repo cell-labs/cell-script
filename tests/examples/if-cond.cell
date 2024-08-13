@@ -1,0 +1,19 @@
+
+package main
+
+import "debug"
+func main() {
+	a := 100
+	b := false
+	c := "ss"
+	if a < 6 {
+		debug.Printf("%d", a)
+	} else if b == false && a < 6 {
+		debug.Printf("%d:%d", a, b)
+	}
+	strcmp := c == "si"
+	if strcmp == true || (b == false && a > 6) {
+		debug.Printf("%d:%d:%s", a, b, c)
+	}
+	return 0
+}
