@@ -224,7 +224,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 			isVariable = true
 		} else {
 			paramName = v.Arguments[i-argumentReturnValuesCount].Name
-			dataType = treParams[i-argumentReturnValuesCount]
+			dataType = treParams[i]
 		}
 
 		// Structs needs to be pointer-allocated
