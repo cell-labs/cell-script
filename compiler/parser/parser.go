@@ -448,11 +448,10 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				}
 
 				retVals = append(retVals, p.parseOne(true))
-				p.i++
 
-				checkIfComma := p.lookAhead(0)
+				checkIfComma := p.lookAhead(1)
 				if checkIfComma.Type == lexer.OPERATOR && checkIfComma.Val == "," {
-					p.i++
+					p.i += 2
 					continue
 				}
 
@@ -1067,6 +1066,12 @@ func (p *parser) parseUntilEither(untils []lexer.Item) (res []Node, reached lexe
 
 		// Ignore comma
 		if current.Type == lexer.OPERATOR && current.Val == "," {
+			p.i++
+			continue
+		}
+
+		// Ignore EOL EOF
+		if current.Type == lexer.EOL || current.Type == lexer.EOF {
 			p.i++
 			continue
 		}
