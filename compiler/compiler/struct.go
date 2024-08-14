@@ -131,8 +131,12 @@ func (c *Compiler) compileInitStructWithValues(v *parser.InitializeStructNode) v
 		itemPtr.SetName(name.Var(key))
 
 		compiledVal := c.compileValue(val)
-
-		c.contextBlock.NewStore(compiledVal.Value, itemPtr)
+		if compiledVal.IsVariable {
+			loaded := c.contextBlock.NewLoad(compiledVal.Type.LLVM(), compiledVal.Value)
+			c.contextBlock.NewStore(loaded, itemPtr)
+		} else {
+			c.contextBlock.NewStore(compiledVal.Value, itemPtr)
+		}
 	}
 
 	return value.Value{
