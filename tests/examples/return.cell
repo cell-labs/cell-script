@@ -2,11 +2,16 @@ import "debug"
 type T table {
 	inner []byte
 }
-func foo() T {
-	return T{}
+func foo() (T, T) {
+	return T{}, T{}
+}
+func bar() (bool, uint64, bool) {
+	return true, 1, false
 }
 func main() {
-	foo()
-	debug.Printf("%d", len(foo().inner))
+	a, b := foo()
+	c, d, e := bar()
+	debug.Printf("%d", len(a.inner))
+	debug.Printf("%d", len(b.inner))
 	return 0
 }
