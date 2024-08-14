@@ -447,11 +447,26 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					break
 				}
 
-				retVals = append(retVals, p.parseOne(true))
+				var retVal Node
+				// handle initialize struct node
+				checkIfCurly := p.lookAhead(0)
+				if checkIfCurly.Type == lexer.OPERATOR && checkIfCurly.Val == "{" {
+					// make a fake type
+					ty := &SingleTypeNode{}
+					// skip {
+					p.i++
+					retVal = p.parseInitializeStructNode(ty)
+				} else {
+					retVal = p.parseOne(true)
+				}
+				
+				p.i++
 
-				checkIfComma := p.lookAhead(1)
+				retVals = append(retVals, retVal)
+
+				checkIfComma := p.lookAhead(0)
 				if checkIfComma.Type == lexer.OPERATOR && checkIfComma.Val == "," {
-					p.i += 2
+					p.i++
 					continue
 				}
 
@@ -702,6 +717,55 @@ func (p *parser) parseOperation(input Node, withArithAhead bool) Node {
 	return p.aheadParseWithOptions(res, true, true)
 }
 
+func (p *parser) parseInitializeStructNode(inputType TypeNode) *InitializeStructNode {
+	items := make(map[string]Node)
+
+	for {
+		// Skip EOLs
+		checkIfEOL := p.lookAhead(0)
+		if checkIfEOL.Type == lexer.EOL {
+			p.i++
+		}
+
+		// Find end of parsing
+		checkIfEndBracket := p.lookAhead(0)
+		if checkIfEndBracket.Type == lexer.OPERATOR && checkIfEndBracket.Val == "}" {
+			break
+		}
+
+		key := p.lookAhead(0)
+		if key.Type != lexer.IDENTIFIER {
+			panic("Expected IDENTIFIER in struct initialization")
+		}
+
+		col := p.lookAhead(1)
+		p.expect(col, lexer.Item{Type: lexer.OPERATOR, Val: ":"})
+
+		p.i += 2
+
+		prevInAlloc := p.inAllocRightHand
+		p.inAllocRightHand = false
+		items[key.Val] = p.parseOne(true)
+		p.inAllocRightHand = prevInAlloc
+
+		p.i++
+
+		commaOrEnd := p.lookAhead(0)
+		if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == "," {
+			p.i++
+			continue
+		}
+
+		if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == "}" {
+			break
+		}
+	}
+	return &InitializeStructNode{
+		Type: inputType,
+		Items: items,
+	}
+}
+
 func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifierAhead bool) Node {
 	next := p.lookAhead(1)
 
@@ -919,55 +983,8 @@ func (p *parser) aheadParseWithOptions(input Node, withArithAhead, withIdentifie
 				}
 
 				p.i += 2
-
-				items := make(map[string]Node)
-
-				for {
-					// Skip EOLs
-					checkIfEOL := p.lookAhead(0)
-					if checkIfEOL.Type == lexer.EOL {
-						p.i++
-					}
-
-					// Find end of parsing
-					checkIfEndBracket := p.lookAhead(0)
-					if checkIfEndBracket.Type == lexer.OPERATOR && checkIfEndBracket.Val == "}" {
-						p.i++
-						break
-					}
-
-					key := p.lookAhead(0)
-					if key.Type != lexer.IDENTIFIER {
-						panic("Expected IDENTIFIER in struct initialization")
-					}
-
-					col := p.lookAhead(1)
-					p.expect(col, lexer.Item{Type: lexer.OPERATOR, Val: ":"})
-
-					p.i += 2
-
-					prevInAlloc := p.inAllocRightHand
-					p.inAllocRightHand = false
-					items[key.Val] = p.parseOne(true)
-					p.inAllocRightHand = prevInAlloc
-
-					p.i++
-
-					commaOrEnd := p.lookAhead(0)
-					if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == "," {
-						p.i++
-						continue
-					}
-
-					if commaOrEnd.Type == lexer.OPERATOR && commaOrEnd.Val == "}" {
-						break
-					}
-				}
-
-				return p.aheadParse(&InitializeStructNode{
-					Type:  inputType,
-					Items: items,
-				})
+				initStruct := p.parseInitializeStructNode(inputType)
+				return p.aheadParse(initStruct)
 			}
 		}
 	}
