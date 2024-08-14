@@ -104,7 +104,9 @@ func (c *Compiler) compileLoadArrayElement(v *parser.LoadArrayElement) value.Val
 			arrayValue = c.contextBlock.NewLoad(pointer.ElemType(arrayValue), arrayValue)
 		}
 
-		indexVal = c.contextBlock.NewTrunc(indexVal, i32.LLVM())
+		if index.Type.Size() > i32.Size() {
+			indexVal = c.contextBlock.NewTrunc(indexVal, i32.LLVM())
+		}
 
 		sliceValue := arrayValue
 
