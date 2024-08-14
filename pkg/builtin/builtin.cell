@@ -2,4 +2,6 @@ package builtin
 
 type error interface {
 	Error() string
+	IsNone() bool
+	NotNone() bool
 }

@@ -1,17 +1,32 @@
 package errors
 
-type errorString table {
-	s string
+type errorData table {
+	none	bool
+	s		string
 }
 
-func (e *errorString) Error() string {
+func (e *errorData) Error() string {
 	return e.s
 }
 
+func (e *errorData) IsNone() bool {
+	return e.none
+}
+
+func (e *errorData) NotNone() bool {
+	return !e.none
+}
+
 func New(text string) error {
-	var e errorString
+	var e errorData
 	e.s = text
-	return &e
+	return e
+}
+
+func None() error {
+	var e errorData
+	e.none = true
+	return e
 }
 
 var ErrUnsupported = New("unsupported operation")
