@@ -229,7 +229,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 		// Structs needs to be pointer-allocated
 		if _, ok := param.Type().(*llvmTypes.StructType); ok {
-			paramPtr := entry.NewAlloca(dataType.LLVM())
+						paramPtr := entry.NewAlloca(dataType.LLVM())
 			paramPtr.SetName(name.Var("paramPtr"))
 			entry.NewStore(param, paramPtr)
 
@@ -260,6 +260,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 			IsVariable: true,
 		}
 		c.setVar(r.Name, retVar)
+		funcRetType.Zero(c.contextBlock, all)
 		c.contextFuncRetVals = append(c.contextFuncRetVals, []value.Value{retVar})
 	}
 
