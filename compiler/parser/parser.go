@@ -447,19 +447,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					break
 				}
 
-				var retVal Node
-				// handle initialize struct node
-				checkIfCurly := p.lookAhead(0)
-				if checkIfCurly.Type == lexer.OPERATOR && checkIfCurly.Val == "{" {
-					// make a fake type
-					ty := &SingleTypeNode{}
-					// skip {
-					p.i++
-					retVal = p.parseInitializeStructNode(ty)
-				} else {
-					retVal = p.parseOne(true)
-				}
-				
+				retVal := p.parseOne(true)
 				p.i++
 
 				retVals = append(retVals, retVal)
