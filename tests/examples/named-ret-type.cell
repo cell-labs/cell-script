@@ -1,0 +1,9 @@
+import "debug"
+func foo() (ret uint64) {
+	return
+}
+func main() {
+	a := foo()
+	debug.Printf("%d", a)
+	return 0
+}

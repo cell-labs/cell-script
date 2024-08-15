@@ -137,6 +137,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/panic.cell && ckb-debugger --bin panic | grep "runtime panic: hah"
 	${CELL} -d -t riscv tests/examples/if-cond.cell && ckb-debugger --bin if-cond | grep "100:0:ss"
 	${CELL} -d -t riscv tests/examples/return.cell && ckb-debugger --bin return
+	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type | grep "0"
 	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func | grep "999"
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
