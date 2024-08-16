@@ -125,6 +125,21 @@ func Walk(v Visitor, node Node) (r Node) {
 		}
 	case *RangeNode:
 		n.Item = Walk(v, n.Item)
+	case *SwitchNode:
+		n.Item = Walk(v, n.Item)
+		for i, a := range n.Cases {
+			n.Cases[i] = Walk(v, a).(*SwitchCaseNode)
+		}
+		for i, a := range n.DefaultBody {
+			n.DefaultBody[i] = Walk(v, a)
+		}
+	case *SwitchCaseNode:
+		for i, a := range n.Conditions {
+			n.Conditions[i] = Walk(v, a)
+		}
+		for i, a := range n.Body {
+			n.Body[i] = Walk(v, a)
+		}
 	case *AssignNode:
 		for i, a := range n.Target {
 			n.Target[i] = Walk(v, a)
