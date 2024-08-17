@@ -7,21 +7,21 @@ import (
 )
 
 const smallBufferSize = 64
-type readOp int8
+type readOp uint64
 
 type Buffer table {
 	buf      []byte // contents are the bytes buf[off : len(buf)]
-	off      int    // read at &buf[off], write at &buf[len(buf)]
+	off      uint32    // read at &buf[off], write at &buf[len(buf)]
 	lastRead readOp // last read operation, so that Unread* can work correctly.
 }
 
 const (
-	opRead      readOp = -1 // Any other read operation.
-	opInvalid   readOp = 0  // Non-read operation.
-	opReadRune1 readOp = 1  // Read rune of size 1.
-	opReadRune2 readOp = 2  // Read rune of size 2.
-	opReadRune3 readOp = 3  // Read rune of size 3.
-	opReadRune4 readOp = 4  // Read rune of size 4.
+	opRead      = -1 // Any other read operation.
+	opInvalid   = 0  // Non-read operation.
+	opReadRune1 = 1  // Read rune of size 1.
+	opReadRune2 = 2  // Read rune of size 2.
+	opReadRune3 = 3  // Read rune of size 3.
+	opReadRune4 = 4  // Read rune of size 4.
 )
 
 var ErrTooLarge = errors.New("bytes.Buffer: too large")
@@ -29,8 +29,39 @@ var errNegativeRead = errors.New("bytes.Buffer: reader returned negative count f
 
 const maxInt = 2147483647
 
-func NewBuffer(buf []byte) *Buffer {
+func (b *Buffer) empty() bool {
+	return len(b.buf) <= b.off
+}
+
+func (b *Buffer) Reset() {
+	b.buf = []byte{}
+	b.off = 0
+	b.lastRead = opInvalid
+}
+
+func (b *Buffer) Read(p []byte) (n uint32, err error) {
+	b.lastRead = opInvalid
+	if b.empty() {
+		// Buffer is empty, reset to recover space.
+		// b.Reset()
+		if len(p) == uint32(0) {
+			return uint32(0), errors.None()
+		}
+		return uint32(0), io.EOF
+	}
+	n = len(p)
+	for i, v := range p {
+		b.buf[b.off + uint32(i)] = v
+	}
+	b.off = b.off + n
+	if n > uint32(0) {
+		b.lastRead = opRead
+	}
+	return n, errors.None()
+}
+
+func NewBuffer(bytes []byte) Buffer {
 	var b Buffer
-	b.buf = buf
-	return &b
+	b.buf = bytes
+	return b
 }
