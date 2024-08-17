@@ -48,7 +48,7 @@ build:
 		-o ${CELL} ./cmd/cell
 	@echo " ${>>>} sussecfully build cell ${<<<} "
 build/debug:
-	go build -gcflags=all="-N -l" -o ${CELL} ./cmd/cell
+	go build -trimpath -gcflags=all="-N -l -trimpath=${GOPATH}" -asmflags=-trimpath=${GOPATH} -o ${CELL} ./cmd/cell
 sudt-c:
 	@echo " ${>>>} build sudt-c ${<<<} "
 	cd third-party/ckb-c-stdlib && \
