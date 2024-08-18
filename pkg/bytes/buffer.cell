@@ -43,21 +43,28 @@ func (b *Buffer) Read(p []byte) (n uint32, err error) {
 	b.lastRead = opInvalid
 	if b.empty() {
 		// Buffer is empty, reset to recover space.
-		// b.Reset()
+		b.Reset()
 		if len(p) == uint32(0) {
 			return uint32(0), errors.None()
 		}
 		return uint32(0), io.EOF
 	}
 	n = len(p)
-	for i, v := range p {
-		b.buf[b.off + uint32(i)] = v
+	for i, _ := range p {
+		p[i] = b.buf[b.off + uint32(i)]
 	}
 	b.off = b.off + n
 	if n > uint32(0) {
 		b.lastRead = opRead
 	}
 	return n, errors.None()
+}
+
+func (b *Buffer) Write(p []byte) (n uint32, err error) {
+	for _, v := range p {
+		b.buf = append(b.buf, v)
+	}
+	return len(p), errors.None()
 }
 
 func NewBuffer(bytes []byte) Buffer {
