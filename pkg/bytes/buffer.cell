@@ -39,6 +39,10 @@ func (b *Buffer) Reset() {
 	b.lastRead = opInvalid
 }
 
+func (b *Buffer) Bytes() []byte {
+	return b.buf[b.off:]
+}
+
 func (b *Buffer) Read(p []byte) (n uint32, err error) {
 	b.lastRead = opInvalid
 	if b.empty() {

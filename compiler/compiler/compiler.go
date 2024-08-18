@@ -366,6 +366,9 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 			return c.compileSubstring(src, v)
 		}
 
+		if ty, ok := src.Type.(*types.Slice); ok {
+			src.Type = ty.Type
+		}
 		return c.compileSliceArray(src, v)
 	case *parser.InitializeStructNode:
 		return c.compileInitStructWithValues(v)

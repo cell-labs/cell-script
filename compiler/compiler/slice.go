@@ -144,6 +144,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) 
 			LlvmType: sliceType,
 		},
 		Value: alloc,
+		IsVariable: true,
 	}
 
 	return res
