@@ -1,6 +1,6 @@
 package strings
 
-const maxInt = uint64(uint64(-1)^uint64(0) >> uint64(1))
+const maxInt = 2147483647 // u32.max
 
 // Join concatenates the elements of its first argument to create a single string. The separator
 // string sep is placed between elements in the resulting string.
