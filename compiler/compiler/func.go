@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"slices"
+
 	"github.com/llir/llvm/ir"
 	"github.com/llir/llvm/ir/constant"
 	llvmTypes "github.com/llir/llvm/ir/types"
@@ -14,7 +16,7 @@ import (
 	"github.com/cell-labs/cell-script/compiler/parser"
 )
 
-func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType types.Type, treReturnTypes []types.Type, argTypes []*ir.Param, treParams []types.Type, isVariadicFunc bool, argumentReturnValuesCount int) {
+func (c *Compiler) funcType(params, returnTypes []parser.TypeNode, isMethod bool) (retType types.Type, treReturnTypes []types.Type, argTypes []*ir.Param, retValues []*ir.Param, paramValues []*ir.Param, paramTypes []types.Type, treParams []types.Type, isVariadicFunc bool, argumentReturnValuesCount int) {
 	llvmParams := make([]*ir.Param, len(params))
 	treParams = make([]types.Type, len(params))
 
@@ -43,9 +45,11 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 		llvmParams[k] = param
 		treParams[k] = paramType
 	}
+	llvmOrigParams := llvmParams
+	llvmOrigParamTypes := treParams
 
 	var funcRetType types.Type = types.Void
-
+	var llvmReturnTypesParams []*ir.Param
 	// Amount of values returned via argument pointers
 	// var argumentReturnValuesCount int
 	// var treReturnTypes []types.Type
@@ -57,7 +61,6 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 	} else if len(returnTypes) > 0 {
 		// Return values via argument pointers
 		// The return values goes first
-		var llvmReturnTypesParams []*ir.Param
 
 		for _, ret := range returnTypes {
 			t := c.parserTypeToType(ret)
@@ -66,13 +69,18 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode) (retType type
 		}
 
 		// Add return values to the start
-		treParams = append(treReturnTypes, treParams...)
-		llvmParams = append(llvmReturnTypesParams, llvmParams...)
+		if isMethod {
+			treParams = slices.Insert(treParams, 1, treReturnTypes...)
+			llvmParams = slices.Insert(llvmParams, 1, llvmReturnTypesParams...)
+		} else {
+			treParams = append(treReturnTypes, treParams...)
+			llvmParams = append(llvmReturnTypesParams, llvmParams...)
+		}
 
 		argumentReturnValuesCount = len(returnTypes)
 	}
 
-	return funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount
+	return funcRetType, treReturnTypes, llvmParams, llvmReturnTypesParams, llvmOrigParams, llvmOrigParamTypes, treParams, isVariadicFunc, argumentReturnValuesCount
 }
 
 // ABI description
@@ -121,7 +129,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		retTypes[k] = v.Type
 	}
 
-	funcRetType, treReturnTypes, llvmParams, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes)
+	funcRetType, treReturnTypes, llvmParams, llvmReturnParams, llvmOrigParams, llvmOrigParamTypes, treParams, isVariadicFunc, argumentReturnValuesCount := c.funcType(argTypes, retTypes, v.IsMethod)
 
 	var fn *ir.Func
 	var entry *ir.Block
@@ -200,9 +208,9 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	if argumentReturnValuesCount > 0 {
 		var retVals []value.Value
 
-		for i, retType := range treParams[:argumentReturnValuesCount] {
+		for i, retType := range treReturnTypes {
 			retVals = append(retVals, value.Value{
-				Value:      llvmParams[i],
+				Value:      llvmReturnParams[i],
 				Type:       retType,
 				IsVariable: true,
 			})
@@ -212,20 +220,40 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	}
 
 	// Save all parameters in the block mapping
-	for i, param := range llvmParams {
-		var paramName string
-		var dataType types.Type
-		var isVariable bool
+	// if it is a method func, the first param is the receriver
+	// treParams are like: {receiver(p-1), ret-1, ret-2, ..., p-2, ...}
+	// normally, are like: {ret-1,         ret-2, ...,   p-1, p-2, ...}
+	for i, param := range llvmOrigParams {
+		paramName := v.Arguments[i].Name
+		dataType := llvmOrigParamTypes[i]
 
-		// Named return values
-		if i < argumentReturnValuesCount {
-			paramName = v.ReturnValues[i].Name
-			dataType = treReturnTypes[i]
-			isVariable = true
-		} else {
-			paramName = v.Arguments[i-argumentReturnValuesCount].Name
-			dataType = treParams[i]
+		// Structs needs to be pointer-allocated
+		if _, ok := param.Type().(*llvmTypes.StructType); ok {
+			paramPtr := entry.NewAlloca(dataType.LLVM())
+			paramPtr.SetName(name.Var("paramPtr"))
+			entry.NewStore(param, paramPtr)
+
+			c.setVar(paramName, value.Value{
+				Value:      paramPtr,
+				Type:       dataType,
+				IsVariable: true,
+			})
+
+			continue
 		}
+
+		c.setVar(paramName, value.Value{
+			Value:      param,
+			Type:       dataType,
+			IsVariable: false,
+		})
+	}
+
+	for i, param := range llvmReturnParams {
+		// Named return values
+		paramName := v.ReturnValues[i].Name
+		dataType := treReturnTypes[i]
+		isVariable := true
 
 		// Structs needs to be pointer-allocated
 		if _, ok := param.Type().(*llvmTypes.StructType); ok {
@@ -291,8 +319,8 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 func (c *Compiler) compileInterfaceMethodJump(targetFunc *ir.Func) *ir.Func {
 	// Copy parameter types so that we can modify them
 	params := make([]*ir.Param, len(targetFunc.Sig.Params))
-	for i, p := range targetFunc.Params {
-		params[i] = ir.NewParam("", p.Type())
+	for i, p := range targetFunc.Sig.Params {
+		params[i] = ir.NewParam("", p)
 	}
 
 	originalType := targetFunc.Params[0].Type()
@@ -493,11 +521,16 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	// Convert all values to LLVM values
 	// Load the variable if needed
 	llvmArgs := make([]llvmValue.Value, len(args))
+	argumentReturnValuesCount := len(fnType.ReturnTypes)
 	for i, v := range args {
 
 		// Convert type to interface type if needed
 		if len(fnType.ArgumentTypes) > i {
-			v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
+			if len(fnType.ArgumentTypes) > len(args) {
+				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i + argumentReturnValuesCount])
+			} else {
+				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
+			}
 		}
 
 		val := internal.LoadIfVariable(c.contextBlock, v)

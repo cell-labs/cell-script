@@ -120,7 +120,7 @@ func (c *Compiler) parserTypeToType(typeNode parser.TypeNode) types.Type {
 		}
 
 	case *parser.FuncTypeNode:
-		retType, treReturnTypes, llvmArgTypes, treParams, _, _ := c.funcType(t.ArgTypes, t.RetTypes)
+		retType, treReturnTypes, llvmArgTypes, _, _, _, treParams, _, _ := c.funcType(t.ArgTypes, t.RetTypes, false)
 
 		fn := ir.NewFunc("UNNAMEDFUNC", retType.LLVM(), llvmArgTypes...)
 

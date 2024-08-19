@@ -39,11 +39,15 @@ func (i Interface) JumpTable() *types.StructType {
 		methodSignature := i.RequiredMethods[methodName]
 
 		var retType types.Type = types.Void
-		if len(methodSignature.ReturnTypes) > 0 {
-			retType = methodSignature.ReturnTypes[0].LLVM()
-		}
-
 		paramTypes := []types.Type{types.NewPointer(types.I8)}
+		if len(methodSignature.ReturnTypes) == 1 {
+			retType = methodSignature.ReturnTypes[0].LLVM()
+		} else {
+			// return types be changed to argument types if over 1
+			for _, retTy := range methodSignature.ReturnTypes {
+				paramTypes = append(paramTypes, types.NewPointer(retTy.LLVM()))
+			}
+		}
 		for _, argType := range methodSignature.ArgumentTypes {
 			paramTypes = append(paramTypes, argType.LLVM())
 		}
