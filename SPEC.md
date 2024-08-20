@@ -248,10 +248,10 @@ Type      = TypeName [ TypeArgs ] | TypeLit | "(" Type ")" .
 TypeName  = identifier | QualifiedIdent .
 TypeArgs  = "[" TypeList [ "," ] "]" .
 TypeList  = Type { "," Type } .
-TypeLit   = VectorType | TableType | FunctionType .
+TypeLit   = SliceType | TableType | FunctionType .
 ```
 
-The language predeclares certain type names. Others are introduced with type declarations or type parameter lists. Composite types—vector, table, function types—may be constructed using type literals.
+The language predeclares certain type names. Others are introduced with type declarations or type parameter lists. Composite types—slice, table, function types—may be constructed using type literals.
 
 Predeclared types, defined types, and type parameters are called named types. An alias denotes a named type if the type given in the alias declaration is a named type.
 
@@ -330,17 +330,17 @@ func(a, _ uint32, z uint64) bool
 
 TODO
 
-## Vector types
+## Slice types
 
-An vector is a numbered sequence of elements of a single type, called the element type. The number of elements is called the length of the vector and is never negative.
+An slice is a numbered sequence of elements of a single type, called the element type. The number of elements is called the length of the slice and is never negative.
 
 ```
-VectorType   = "[" VectorLength "]" ElementType .
-VectorLength = Expression .
+SliceType   = "[" SliceLength "]" ElementType .
+SliceLength = Expression .
 ElementType = Type .
 ```
 
-The length is part of the vector's type; it must evaluate to a non-negative constant representable by a value of type int. The length of vector a can be discovered using the built-in function size. The elements can be addressed by integer indices 0 through len(a)-1. Vector types are always one-dimensional but may be composed to form multi-dimensional types.
+The length is part of the slice's type; it must evaluate to a non-negative constant representable by a value of type int. The length of slice a can be discovered using the built-in function size. The elements can be addressed by integer indices 0 through len(a)-1. Slice types are always one-dimensional but may be composed to form multi-dimensional types.
 
 ## Struct
 
