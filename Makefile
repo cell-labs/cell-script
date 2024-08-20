@@ -140,6 +140,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/return.cell && ckb-debugger --bin return
 	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type | grep "0"
 	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func | grep "999"
+	${CELL} -d -t riscv tests/examples/interface.cell && ckb-debugger --bin interface | grep "0"
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
 	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs

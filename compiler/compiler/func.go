@@ -85,7 +85,7 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode, isMethod bool
 
 // ABI description
 // method:			package + _method_ + type + _ + name
-// named variable: 	package + name
+// named function: 	package + name
 // cffi(extern):	function_name
 // lambda:			package + anonName
 func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
@@ -437,6 +437,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	var fn llvmValue.Named
 
 	funcByVal := c.compileValue(v.Function)
+	isMethod := false
 	if checkIfFunc, ok := funcByVal.Type.(*types.Function); ok {
 		fnType = checkIfFunc
 		fn = funcByVal.Value.(llvmValue.Named)
@@ -444,6 +445,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 			fn = c.contextBlock.NewLoad(pointer.ElemType(fn), fn)
 		}
 	} else if checkIfMethod, ok := funcByVal.Type.(*types.Method); ok {
+		isMethod = true
 		fnType = checkIfMethod.Function
 		fn = checkIfMethod.LlvmFunction
 
@@ -521,16 +523,11 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	// Convert all values to LLVM values
 	// Load the variable if needed
 	llvmArgs := make([]llvmValue.Value, len(args))
-	argumentReturnValuesCount := len(fnType.ReturnTypes)
 	for i, v := range args {
 
 		// Convert type to interface type if needed
 		if len(fnType.ArgumentTypes) > i {
-			if len(fnType.ArgumentTypes) > len(args) {
-				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i + argumentReturnValuesCount])
-			} else {
-				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
-			}
+			v = c.valueToInterfaceValue(v, args[i].Type)
 		}
 
 		val := internal.LoadIfVariable(c.contextBlock, v)
@@ -569,7 +566,12 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		}
 
 		// Add to start of argument list
-		llvmArgs = append(retValAllocas, llvmArgs...)
+		if isMethod {
+			// method param should be arranged as {receiver, ret-1, ret-2, ..., p-1, p-2}
+			llvmArgs = append(llvmArgs, retValAllocas...)
+		} else {
+			llvmArgs = append(retValAllocas, llvmArgs...)
+		}
 	}
 
 	funcCallRes := c.contextBlock.NewCall(fn, llvmArgs...)

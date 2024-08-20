@@ -1,0 +1,21 @@
+import (
+	"errors"
+	"debug"
+)
+
+type Buffer table {
+	start uint64
+	end uint64
+}
+func (b *Buffer) Start() (n uint64, err error) {
+	return b.start, errors.None()
+}
+func main() {
+	b := Buffer {
+		start: 100
+		end: 200
+	}
+	n, _ := b.Start()
+	debug.Printf("%d", n)
+	return 0
+}
