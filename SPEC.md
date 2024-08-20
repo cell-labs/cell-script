@@ -328,7 +328,48 @@ func(a, _ uint32, z uint64) bool
 
 ## Array types
 
-TODO
+An array is an ordered sequence of elements, all of the same type. This type is referred to as the element type. The number of elements in an array, known as its length, is always a non-negative integer.
+
+Array Type Definition:
+
+```
+ArrayType   = "[" ArrayLength "]" ElementType .
+ArrayLength = Expression .
+ElementType = Type .
+```
+
+The length is an integral part of the array's type specification. It must be a non-negative constant that can be represented by an int. You can determine an array's length using the built-in len() function.
+
+Array elements are accessed using zero-based indexing, with valid indices ranging from 0 to len(a)-1, where 'a' is the array.
+
+While arrays are inherently one-dimensional, they can be nested to create multi-dimensional structures.
+
+Examples:
+
+```cellscript
+[32]byte
+[2*N] table { x uint64, y uint64 }
+[3][5]int
+```
+
+An array type T cannot contain elements of type T, nor can it contain T as a component, either directly or indirectly, if the containing types are limited to arrays or tables.
+
+```cellscript
+// invalid array types
+type (
+	T1 [10]T1                 // element type of T1 is T1
+	T2 [10]table{ f T2 }     // T2 contains T2 as component of a table
+	T3 [10]T4                 // T3 contains T3 as component of a table in T4
+	T4 table{ f T3 }         // T4 contains T4 as component of array T3 in a table
+)
+
+// valid array types
+type (
+	T5 [10]*T5                // T5 contains T5 as component of a pointer
+	T6 [10]func() T6          // T6 contains T6 as component of a function type
+	T7 [10]table{ f []T7 }   // T7 contains T7 as component of a slice in a table
+)
+```
 
 ## Slice types
 
