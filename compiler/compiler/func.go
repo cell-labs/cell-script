@@ -523,11 +523,16 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	// Convert all values to LLVM values
 	// Load the variable if needed
 	llvmArgs := make([]llvmValue.Value, len(args))
+	retTypeNum := len(fnType.ReturnTypes)
 	for i, v := range args {
 
 		// Convert type to interface type if needed
 		if len(fnType.ArgumentTypes) > i {
-			v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
+			if len(fnType.ArgumentTypes) > len(args) && !isMethod {
+				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i+retTypeNum])
+			} else {
+				v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
+			}
 		}
 
 		val := internal.LoadIfVariable(c.contextBlock, v)
