@@ -459,7 +459,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		methodCallArgs = append(methodCallArgs, args...)
 		args = methodCallArgs
 	} else if ifaceMethod, ok := funcByVal.Type.(*types.InterfaceMethod); ok {
-
+		isMethod = true
 		ifaceInstance := c.contextBlock.NewGetElementPtr(pointer.ElemType(funcByVal.Value), funcByVal.Value, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 0))
 		ifaceInstanceLoad := c.contextBlock.NewLoad(pointer.ElemType(ifaceInstance), ifaceInstance)
 
@@ -472,15 +472,15 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		args = methodCallArgs
 
 		var returnType types.Type
-		if len(ifaceMethod.ReturnTypes) > 0 {
+		if len(ifaceMethod.ReturnTypes) == 1 {
 			returnType = ifaceMethod.ReturnTypes[0]
 		} else {
 			returnType = types.Void
 		}
 
 		fnType = &types.Function{
-			// TODO: We probably need to add more fields here?
 			FuncType:       ifaceMethod.LlvmJumpFunction.Type(),
+			ReturnTypes:    ifaceMethod.ReturnTypes,
 			LlvmReturnType: returnType,
 		}
 		fn = ifaceMethod.LlvmJumpFunction
@@ -527,7 +527,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 
 		// Convert type to interface type if needed
 		if len(fnType.ArgumentTypes) > i {
-			v = c.valueToInterfaceValue(v, args[i].Type)
+			v = c.valueToInterfaceValue(v, fnType.ArgumentTypes[i])
 		}
 
 		val := internal.LoadIfVariable(c.contextBlock, v)
