@@ -22,19 +22,14 @@ White		:= \033[0;37m
 >>> := ${Yellow}>>>
 <<< := <<<${Color_Off}
 
-.PHONY: clean antlr grammar dev build test test_cell_examples
+.PHONY: clean dev build test test_cell_examples
 clean:
-	# rm -rf internal/parser
-	# rm -rf internal/lexer
 	rm -rf output
 	rm -f third-party/ckb-c-stdlib/*.o
 	rm -f third-party/ckb-c-stdlib/*.a
-grammar: antlr
 
 all: ckb-libc build install
 debug: ckb-libc build/debug install
-antlr:
-	go generate ./...
 dev:
 	go run main.go
 fmt:
