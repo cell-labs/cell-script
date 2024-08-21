@@ -2,20 +2,38 @@ import (
 	"errors"
 	"debug"
 )
-
-type Buffer table {
-	start uint64
-	end uint64
+type Demo table {
+	start uint32
+	end   uint32
 }
-func (b *Buffer) Start() (n uint64, err error) {
+func (b *Demo) st() (n uint32, err error) {
 	return b.start, errors.None()
 }
+func (b *Demo) ed() uint32 {
+	return b.end
+}
+func (b *Demo) reset() {
+	b.start = 0
+	b.end = 0
+}
+type Range interface {
+	st() (uint32, error)
+	ed() uint32
+	reset()
+}
+func foo(b Range) {
+	n, err := b.st()
+	debug.Printf("%s", err.Error())
+	end := b.ed()
+	debug.Printf("%d", end)
+	b.reset()
+}
 func main() {
-	b := Buffer {
-		start: 100
-		end: 200
+	b := Demo {
+		start: uint32(1),
+		end: uint32(3),
 	}
-	n, _ := b.Start()
-	debug.Printf("%d", n)
+	foo(b)
+	debug.Printf("reset%d%d", b.start, b.end)
 	return 0
 }
