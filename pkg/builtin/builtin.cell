@@ -1,7 +1,21 @@
 package builtin
 
-type error interface {
-	Error() string
-	IsNone() bool
-	NotNone() bool
+type error table {
+	none	bool
+	message string
 }
+
+func (e *error) Error() string {
+	return e.message
+}
+
+func (e *error) IsNone() bool {
+	return e.none
+}
+
+func (e *error) NotNone() bool {
+	return !e.none
+}
+
+type Type byte
+extern func copy(dst []Type, src []Type) int32

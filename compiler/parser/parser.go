@@ -50,6 +50,7 @@ func Parse(input []lexer.Item, options *option.Options) *FileNode {
 			"uintptr": {},
 			"byte":    {},
 			"string":  {},
+			"error":   {},
 		},
 	}
 
