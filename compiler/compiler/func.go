@@ -573,7 +573,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		// Add to start of argument list
 		if isMethod {
 			// method param should be arranged as {receiver, ret-1, ret-2, ..., p-1, p-2}
-			llvmArgs = append(llvmArgs, retValAllocas...)
+			llvmArgs = slices.Insert(llvmArgs, 1, retValAllocas...)
 		} else {
 			llvmArgs = append(retValAllocas, llvmArgs...)
 		}
