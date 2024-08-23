@@ -97,14 +97,15 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) 
 
 	startIndexValue := c.compileValue(v.Start)
 	startIndex := internal.LoadIfVariable(c.contextBlock, startIndexValue)
-	var endIndex llvmValue.Value
+	var endIndexValue value.Value
 	if v.HasEnd {
-		endIndex = c.compileValue(v.End).Value
+		endIndexValue = c.compileValue(v.End)
 	} else {
 		srcVal := internal.LoadIfVariable(c.contextBlock, src)
-		endIndex = c.contextBlock.NewExtractValue(srcVal, 1)
+		endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 1)
 	}
 
+	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
 	sliceLen := c.contextBlock.NewSub(endIndex, startIndex)
 	var sliceLen32 llvmValue.Value
 	sliceLen32 = sliceLen

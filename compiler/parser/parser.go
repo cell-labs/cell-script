@@ -384,6 +384,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				} else if len(items) == 1 {
 					return &InitializeSliceNode{
 						Type: t.ItemType,
+						Len:  items[0],
 						Cap:  items[0],
 					}
 				} else {
