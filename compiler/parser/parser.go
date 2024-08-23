@@ -377,14 +377,13 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			case *SliceTypeNode:
 				if len(items) == 2 {
 					return &InitializeSliceNode{
-						Type: t,
+						Type: t.ItemType,
 						Len:  items[0],
 						Cap:  items[1],
 					}
 				} else if len(items) == 1 {
 					return &InitializeSliceNode{
-						Type: t,
-						Len:  items[0],
+						Type: t.ItemType,
 						Cap:  items[0],
 					}
 				} else {
@@ -433,7 +432,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 			defineFunc.Body = p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "}"})
 
-			return p.aheadParse(defineFunc)
+		return p.aheadParse(defineFunc)
 		}
 
 		// "return" creates a ReturnNode
