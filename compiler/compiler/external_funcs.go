@@ -14,6 +14,7 @@ type OSFuncs struct {
 	Malloc  value.Value
 	Realloc value.Value
 	Memcpy  value.Value
+	Memset  value.Value
 	Strcat  value.Value
 	Strcpy  value.Value
 	Strncpy value.Value
@@ -46,6 +47,13 @@ func (c *Compiler) createExternalPackage() {
 		llvmTypes.NewPointer(i8.LLVM()),
 		ir.NewParam("dest", llvmTypes.NewPointer(i8.LLVM())),
 		ir.NewParam("src", llvmTypes.NewPointer(i8.LLVM())),
+		ir.NewParam("n", i64.LLVM()),
+	), false)
+
+	c.osFuncs.Memset = osPkg.setExternal("memset", c.module.NewFunc("memset",
+		llvmTypes.NewPointer(i8.LLVM()),
+		ir.NewParam("dest", llvmTypes.NewPointer(i8.LLVM())),
+		ir.NewParam("c", i64.LLVM()),
 		ir.NewParam("n", i64.LLVM()),
 	), false)
 

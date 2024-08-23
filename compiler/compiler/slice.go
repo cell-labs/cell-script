@@ -426,6 +426,12 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 	}
 	c.contextBlock.NewStore(cap32, capPtr)
 
+	if len(values) == 0 {
+		dst := backingArrayPtr
+		toset := constant.NewInt(llvmTypes.I32, 0)
+		size := len32
+		c.contextBlock.NewCall(c.osFuncs.Memset.Value, dst, toset, size)
+	}
 	return value.Value{
 		Value:      allocSlice,
 		Type:       sliceType,
