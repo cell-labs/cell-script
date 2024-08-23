@@ -48,13 +48,10 @@ func (b *Buffer) Read(p []byte) (n uint32, err error) {
 	if b.empty() {
 		// Buffer is empty, reset to recover space.
 		b.Reset()
-		if len(p) == uint32(0) {
-			return uint32(0), errors.None()
-		}
-		return uint32(0), io.EOF
+		return n, io.EOF
 	}
-	n = len(p)
-	for i, _ := range p {
+	n = len(b.buf)
+	for i, _ := range b.buf[b.off:] {
 		p[i] = b.buf[b.off + uint32(i)]
 	}
 	b.off = b.off + n

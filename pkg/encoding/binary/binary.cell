@@ -3,9 +3,7 @@ package binary
 import (
 	"errors"
 	"io"
-	// "math"
-	// "reflect"
-	// "sync"
+	"bytes"
 )
 
 type ByteOrder interface {
@@ -112,8 +110,6 @@ func (le littleEndian) GoString() string {
 	return "binary.LittleEndian"
 }
 
-
-
 // func (be bigEndian) Uint16(b []byte) uint16 {
 // 	_ = b[1] // bounds check hint to compiler; see golang.org/issue/14808
 // 	return uint16(b[1]) | uint16(b[0])<<8
@@ -202,4 +198,13 @@ func (ne nativeEndian) String() string {
 
 func (ne nativeEndian) GoString() string {
 	return "binary.NativeEndian"
+}
+
+func ReadUint32(r io.Reader, order ByteOrder) (uint32, error) {
+	bs := make([]byte, 4)
+	n, err := io.ReadFull(r, bs)
+	if err.NotNone() {
+		return uint32(0), err
+	}
+	return order.Uint32(bs), errors.None()
 }

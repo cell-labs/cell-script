@@ -1,0 +1,20 @@
+import (
+	"debug"
+	"encoding/binary"
+	"bytes"
+)
+
+type Number uint32
+func unpackNumber(b []byte) Number {
+	bytesBuffer := bytes.NewBuffer(b)
+	n, err := binary.ReadUint32(bytesBuffer, binary.LittleEndian)
+	if err.NotNone() {
+		return Number(n)
+	}
+	return Number(n)	
+}
+func main() {
+	upn := unpackNumber([]byte{'2','2'})
+	debug.Printf("upn=%d", upn)
+	return 0
+}

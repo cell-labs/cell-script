@@ -1,13 +1,20 @@
 package io
 
-import "errors"
+import (
+	"errors"
+)
 
 var EOF = errors.New("EOF")
 
 type Reader interface {
-	Read([]byte) (int, error)
+	Read([]byte) (uint32, error)
+}
+
+func ReadFull(r Reader, p []byte) (uint32, error) {
+	n, err := r.Read(p)
+	return n, err
 }
 
 type Writer interface {
-	Write([]byte) (int, error)
+	Write([]byte) (uint32, error)
 }
