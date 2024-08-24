@@ -200,11 +200,11 @@ func (ne nativeEndian) GoString() string {
 	return "binary.NativeEndian"
 }
 
-func ReadUint32(r io.Reader, order ByteOrder) (uint32, error) {
+func ReadUint32(r io.Reader, order ByteOrder) uint32 {
 	bs := make([]byte, 4)
 	n, err := io.ReadFull(r, bs)
 	if err.NotNone() {
-		return uint32(0), err
+		return uint32(0)
 	}
-	return order.Uint32(bs), errors.None()
+	return order.Uint32(bs)
 }
