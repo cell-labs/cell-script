@@ -11,7 +11,10 @@ import (
 
 func (c *Compiler) compileNegateBoolNode(v *parser.NegateNode) value.Value {
 	val := c.compileValue(v.Item)
-	loadedVal := c.contextBlock.NewLoad(pointer.ElemType(val.Value), val.Value)
+	loadedVal := val.Value
+	if val.IsVariable {
+		loadedVal = c.contextBlock.NewLoad(pointer.ElemType(val.Value), val.Value)
+	}
 
 	return value.Value{
 		Type:       types.Bool,

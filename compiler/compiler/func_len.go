@@ -44,7 +44,9 @@ func (c *Compiler) lenFuncCall(v *parser.CallNode) value.Value {
 
 	if arg.Type.Name() == "slice" {
 		val := arg.Value
-		val = c.contextBlock.NewLoad(pointer.ElemType(val), val)
+		if arg.IsVariable {
+			val = c.contextBlock.NewLoad(pointer.ElemType(val), val)
+		}
 
 		if _, ok := val.Type().(*llvmTypes.PointerType); ok {
 			val = c.contextBlock.NewLoad(pointer.ElemType(val), val)

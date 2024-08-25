@@ -258,6 +258,10 @@ func (a Array) Name() string {
 	return "array"
 }
 
+func (a Array) Size() int64 {
+	return int64(a.Len) * a.Type.Size()
+}
+
 func (a Array) Zero(block *ir.Block, alloca llvmValue.Value) {
 	for i := uint64(0); i < a.Len; i++ {
 		ptr := block.NewGetElementPtr(pointer.ElemType(alloca), alloca, constant.NewInt(types.I64, 0), constant.NewInt(types.I64, int64(i)))
