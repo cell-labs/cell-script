@@ -393,7 +393,8 @@ func (c *Compiler) panic(block *ir.Block, message string) {
 	globMsg := c.module.NewGlobalDef(strings.NextStringName(), strings.Constant("runtime panic: "+message+"\n"))
 	globMsg.Immutable = true
 	block.NewCall(c.osFuncs.Printf.Value.(llvmValue.Named), strings.Toi8Ptr(block, globMsg))
-	block.NewCall(c.osFuncs.Exit.Value.(llvmValue.Named), constant.NewInt(llvmTypes.I8, 1))
+	// todo: specify panic exit value
+	block.NewCall(c.osFuncs.Exit.Value.(llvmValue.Named), constant.NewInt(llvmTypes.I8, -1))
 }
 
 type Panic string
