@@ -46,20 +46,6 @@ const (
 	ERROR_INVALID_MOL_FORMAT
 	ERROR_BLAKE2B_ERROR
 	ERROR_HASH_MISMATCHED
-// ERROR_RCRULES_TOO_DEEP  // 50
-// ERROR_TOO_MANY_RCRULES
-// ERROR_RCRULES_PROOFS_MISMATCHED
-// ERROR_SMT_VERIFY_FAILED
-// ERROR_RCE_EMERGENCY_HALT
-// ERROR_NOT_VALIDATED
-// ERROR_TOO_MANY_LOCK
-// ERROR_ON_BLACK_LIST
-// ERROR_ON_BLACK_LIST2
-// ERROR_NOT_ON_WHITE_LIST
-// ERROR_TYPE_FREEZED  // 60
-// ERROR_APPEND_ONLY
-// ERROR_EOF
-// ERROR_TOO_LONG_PROOF
 )
 
 func getFlagFromArgs(args string) uint64 {
@@ -146,7 +132,6 @@ func main() {
 			if vecSize != argsSize-tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE {
 				return ERROR_INVALID_ARGS_FORMAT
 			}
-			// return SUCCESS
 		} else if tempFlags == XUDTFlagsInWitness {
 			hash_size := argsSize - tx.BLAKE2B_BLOCK_SIZE - FLAGS_SIZE
 			if hash_size != tx.BLAKE160_SIZE {
@@ -158,7 +143,6 @@ func main() {
 			if witnessBlake2bHash[0:tx.BLAKE160_SIZE] == blake160Hash {
 				return ERROR_HASH_MISMATCHED
 			}
-			// return SUCCESS
 		} else {
 			return ERROR_INVALID_FLAG
 		}
