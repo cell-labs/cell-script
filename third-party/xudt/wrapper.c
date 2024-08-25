@@ -319,6 +319,7 @@ mol_seg_t parse_xudt_args_as_mol_seg()
   return args;
 }
 
+// FIXME: xudt is only for xudt, we should not use it as tx package. [F]
 // get xudt args raw bytes
 String parse_args()
 {
@@ -411,6 +412,7 @@ OptionBool check_owner_mode(int64_t source, int64_t field)
       OptionBool ret = {err, owner_mode};
       return ret;
     }
+    // FIXME: here we need compare the lock hash with owner's lock hash to make sure it's the ower of this cell. [F]
     // skip memcpy here, which is not actually used later
     owner_mode = true;
     OptionBool ret = {err, owner_mode};
@@ -561,7 +563,7 @@ int64_t execute_func(String hash, uint8_t hash_type,
   if (err != 0) {
     return err;
   }
-  return func(is_owner_mode, extension_index, args.ptr, args.size);
+  return func(is_owner_mode, extension_index, args.ptr, args.size); // FIXME: here we need refactor this line to support common interface [F]
 }
 
 // uint32_t read_from_witness(uintptr_t arg[], uint8_t *ptr, uint32_t len,

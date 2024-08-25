@@ -82,13 +82,13 @@ func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
 func main() {
 	ok := tx.scriptVerify()
 	args := tx.xudtArgs()
-	val := getFlagFromArgs(args)
+	val := getFlagFromArgs(args) //FIXME: replace it with bytes/coding lib. [F]
 	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
 
 	// owner mode checking
 	var owner_mode tx.OptionBool
 	if owner_mode_for_input_lock && owner_mode.val == false {
-		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_LOCK_HASH)
+		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_LOCK_HASH) // FIXME: refactor check owner mode to check lock hash in different tx source. [F]
 		if owner_mode.err != SUCCESS {
 			os.exit(owner_mode.err)
 		}
