@@ -64,10 +64,6 @@ extern (
     // func execute_scripts(args *cell.XudtArgs) bool
 )
 
-// FIXME: xudt is only for xudt, we should not use it as tx package
-func xudtArgs() string {
-	return parse_args()
-}
 func lockScripts() []byte {
 	return lock_scripts()
 }

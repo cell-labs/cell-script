@@ -4,6 +4,8 @@ import (
 	"debug"
 	"os"
 	"tx"
+	"bytes"
+	"encoding/binary"
 )
 
 const (
@@ -51,15 +53,10 @@ const (
 func getFlagFromArgs(args string) uint64 {
 	// args.size() >= 4
 	// big-edian
-	byte0 := uint64(args[0+tx.BLAKE2B_BLOCK_SIZE])
-	byte1 := uint64(args[1+tx.BLAKE2B_BLOCK_SIZE])
-	byte2 := uint64(args[2+tx.BLAKE2B_BLOCK_SIZE])
-	byte3 := uint64(args[3+tx.BLAKE2B_BLOCK_SIZE])
-	val := (byte0 << 24)
-	val += (byte1 << 16)
-	val += (byte2 << 8)
-	val += byte3
-	return val
+	bytes = []byte{args[0], args[1], args[2], args[3]}
+	bytesBuffer := bytes.NewBuffer(b)
+	x := binary.ReadUint32(bytesBuffer, binary.BigEndian)
+	return uint64(x)
 }
 
 func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
@@ -79,9 +76,14 @@ func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
 	return owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type
 }
 
+func xudtArgs() string {
+	//todo
+	return ""
+}
+
 func main() {
 	ok := tx.scriptVerify()
-	args := tx.xudtArgs()
+	args := xudtArgs()
 	val := getFlagFromArgs(args) //FIXME: replace it with bytes/coding lib. [F]
 	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
 
