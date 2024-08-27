@@ -25,15 +25,10 @@ const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 
 typedef struct
 {
-  uint64_t data;
-} cell_meta_data;
-
-typedef struct
-{
   uint32_t size;
   uint32_t cap;
   uint32_t offset;
-  cell_meta_data *ptr;
+  uint8_t *ptr;
 } cell_data_t;
 
 cell_data_t EMPTY_CELL_DATA = {0};
@@ -195,8 +190,7 @@ cell_data_t get_utxo_inputs()
     {
       return EMPTY_CELL_DATA;
     }
-    // uint8_t* data = (uint8_t*)malloc(len * sizeof(uint8_t));
-    uint64_t cur_data = 0;
+    uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
     int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
                                  CKB_SOURCE_GROUP_INPUT);
     // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
@@ -218,7 +212,7 @@ cell_data_t get_utxo_inputs()
       free(inputs.ptr);
       return EMPTY_CELL_DATA;
     }
-    inputs.ptr[i].data = cur_data;
+    inputs.ptr = cur_data;
     i += 1;
     inputs.size = i;
   };
@@ -233,7 +227,7 @@ cell_data_t get_utxo_outputs()
   while (1)
   {
     uint64_t len = get_output_cell_data_len(i);
-    uint64_t cur_data = 0;
+    uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
     int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
                                  CKB_SOURCE_GROUP_OUTPUT);
     // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
@@ -255,7 +249,7 @@ cell_data_t get_utxo_outputs()
       free(outputs.ptr);
       return EMPTY_CELL_DATA;
     }
-    outputs.ptr[i].data = cur_data;
+    outputs.ptr = cur_data;
     i += 1;
     outputs.size = i;
   }
