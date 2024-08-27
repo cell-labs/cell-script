@@ -29,8 +29,8 @@ const (
 extern (
 	func script_verify() bool
     func is_owner_mode() bool
-    func get_utxo_inputs() []cell.Cell
-    func get_utxo_outputs() []cell.Cell
+    func get_utxo_inputs() []byte
+    func get_utxo_outputs() []byte
 )
 
 func scriptVerify() bool {
