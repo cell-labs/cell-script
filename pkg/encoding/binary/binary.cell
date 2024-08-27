@@ -110,16 +110,14 @@ func (le littleEndian) GoString() string {
 	return "binary.LittleEndian"
 }
 
-// func (be bigEndian) Uint16(b []byte) uint16 {
-// 	_ = b[1] // bounds check hint to compiler; see golang.org/issue/14808
-// 	return uint16(b[1]) | uint16(b[0])<<8
-// }
+func (be bigEndian) Uint16(b []byte) uint16 {
+	return uint16(b[1]) | uint16(b[0])<<uint16(8)
+}
 
-// func (be bigEndian) PutUint16(b []byte, v uint16) {
-// 	_ = b[1] // early bounds check to guarantee safety of writes below
-// 	b[0] = byte(v >> 8)
-// 	b[1] = byte(v)
-// }
+func (be bigEndian) PutUint16(b []byte, v uint16) {
+	b[0] = byte(v >> uint16(8))
+	b[1] = byte(v)
+}
 
 func (be bigEndian) AppendUint16(b []byte, v uint16) []byte {
 	return append(b,
