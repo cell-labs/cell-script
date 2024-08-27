@@ -151,6 +151,10 @@ func Walk(v Visitor, node Node) (r Node) {
 		for i, a := range n.Items {
 			n.Items[i] = Walk(v, a)
 		}
+	case *InitializeStringWithSliceNode:
+		for i, a := range n.Items {
+			n.Items[i] = Walk(v, a)
+		}
 	case *ExternNode:
 		for _, fn := range n.FuncNodes {
 			Walk(v, fn)

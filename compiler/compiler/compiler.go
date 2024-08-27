@@ -359,6 +359,8 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 		return c.compileNegateBoolNode(v)
 	case *parser.InitializeSliceNode:
 		return c.compileInitializeSliceNode(v)
+	case *parser.InitializeStringWithSliceNode:
+		return c.compileInitializeStringWithSliceNode(v)
 	case *parser.SliceArrayNode:
 		src := c.compileValue(v.Val)
 

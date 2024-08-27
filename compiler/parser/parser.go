@@ -390,6 +390,12 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				} else {
 					panic("wrong argument for slice constructor")
 				}
+			case *SingleTypeNode:
+				if t.TypeName == "string" {
+					return &InitializeStringWithSliceNode{
+						Items: items,
+					}
+				}
 			default:
 				panic("not supported")
 			}

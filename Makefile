@@ -127,6 +127,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld | grep "hello world! 1"
 	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table
 	${CELL} -d -t riscv tests/examples/string.cell && ckb-debugger --bin string | grep "eq"
+	${CELL} -d -t riscv tests/examples/string-ctor.cell && ckb-debugger --bin string-ctor | grep "s=12"
 	${CELL} -d -t riscv tests/examples/strings.cell && ckb-debugger --bin strings | grep "aa-bb"
 	${CELL} -d -t riscv tests/examples/make-slice.cell && ckb-debugger --bin make-slice | grep "0422"
 	${CELL} -d -t riscv tests/examples/panic.cell && ckb-debugger --bin panic | grep "runtime panic: hah"

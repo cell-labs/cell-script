@@ -1,0 +1,13 @@
+import (
+	"debug"
+)
+
+func main() {
+	b := []byte{'1','2'}
+	s := make(string, b)
+	debug.Printf("s=%s",s)
+	s1 := make(string, b[0:1])
+	debug.Printf("%s",s1)
+	debug.Printf("s1=%s",s)
+	return 0
+}
