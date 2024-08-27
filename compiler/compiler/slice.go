@@ -64,7 +64,9 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	c.contextBlock = safeBlock
 
 	offset := safeBlock.NewGetElementPtr(pointer.ElemType(srcVal), srcVal, startVar)
-
+	if length.Type() != llvmTypes.I64 {
+		length = c.contextBlock.NewZExt(length, i64.LLVM())
+	}
 	dst := safeBlock.NewCall(c.osFuncs.Strndup.Value.(llvmValue.Named), offset, length)
 
 	// Convert *i8 to %string

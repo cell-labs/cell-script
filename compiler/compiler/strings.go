@@ -21,7 +21,12 @@ func (c *Compiler) compileInitializeStringWithSliceNode(v *parser.InitializeStri
 	srcArrStartPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(srcArr), srcArr, srcOff)
 	length := c.contextBlock.NewSub(srcLen, srcOff)
 	// create new string
-	strVal := c.contextBlock.NewCall(c.osFuncs.Strndup.Value.(llvmValue.Named), srcArrStartPtr, length)
+	var len64 llvmValue.Value
+	len64 = length
+	if length.Type() != llvmTypes.I64 {
+		len64 = c.contextBlock.NewZExt(length, i64.LLVM())
+	}
+	strVal := c.contextBlock.NewCall(c.osFuncs.Strndup.Value.(llvmValue.Named), srcArrStartPtr, len64)
 	// construct a new string {i64, i8*}
 	sType, ok := c.packages["global"].GetPkgType("string", true)
 	if !ok {
