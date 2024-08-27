@@ -60,6 +60,7 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	c.contextBlock.NewCondBr(startIsInBounds, checkEndIsInBoundsBlock, outsideOfLengthBr)
 	checkEndIsInBoundsBlock.NewCondBr(endIsInBounds, safeBlock, outsideOfLengthBr)
 
+	ctxBlock := c.contextBlock
 	c.contextBlock = safeBlock
 
 	offset := safeBlock.NewGetElementPtr(pointer.ElemType(srcVal), srcVal, startVar)
@@ -83,8 +84,12 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	strItem.SetName(name.Var("str"))
 	safeBlock.NewStore(dst, strItem)
 
+	val := safeBlock.NewLoad(pointer.ElemType(alloc), alloc)
+	if safeBlock.Term == nil {
+		safeBlock.NewBr(ctxBlock)
+	}
 	return value.Value{
-		Value:      safeBlock.NewLoad(pointer.ElemType(alloc), alloc),
+		Value:      val,
 		Type:       sType,
 		IsVariable: false,
 	}
