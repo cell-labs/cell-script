@@ -342,8 +342,36 @@ ByteSlice make_byte_slice(uint32_t len, uint32_t cap, uint32_t offset, uint8_t *
   bs.bytes = ptr;
   return bs;
 }
+ByteSlice checked_load_script()
+{
+  mol_seg_t script_seg;
+  // mol_seg_t args_seg;
+  // mol_seg_t args_bytes_seg;
+  // First, let's load current running script, so we can extract owner lock
+  // script hash from script args.
+  unsigned char *script = malloc(SCRIPT_SIZE);
+  uint64_t len = SCRIPT_SIZE;
+  int ret = ckb_load_script(script, &len, 0);
+  if (ret != CKB_SUCCESS)
+  {
+    return make_byte_slice(0, 0, 0, NULL);
+  }
+  if (len > SCRIPT_SIZE)
+  {
+    return make_byte_slice(0, 0, 0, NULL);
+  }
+
+  script_seg.ptr = (uint8_t *)script;
+  script_seg.size = len;
+  if (MolReader_Script_verify(&script_seg, false) != MOL_OK)
+  {
+    return make_byte_slice(0, 0, 0, NULL);
+  }
+  return make_byte_slice(len, len, 0, (uint8_t *)script);
+}
+
 // load hashes from all inputs cells
-ByteSlice lock_scripts()
+ByteSlice lock_hashes()
 {
   uint32_t hashes_count = 0;
   uint8_t *hashes = malloc(sizeof(uint8_t) * BLAKE2B_BLOCK_SIZE * MAX_LOCK_SCRIPT_HASH_COUNT);
@@ -544,7 +572,7 @@ int load_validate_func(const uint8_t *hash, uint8_t hash_type,
   }
   ASSERT(consumed_size % RISCV_PGSIZE == 0);
 
-  *func = (ValidateFuncType)ckb_dlsym(handle, (const char*)func_name);
+  *func = (ValidateFuncType)ckb_dlsym(handle, (const char *)func_name);
   if (*func == NULL)
   {
     return ERROR_CANT_FIND_SYMBOL;
@@ -560,7 +588,8 @@ int64_t execute_func(String hash, uint8_t hash_type,
 {
   ValidateFuncType func;
   int err = load_validate_func(hash.ptr, hash_type, func_name.ptr, &func);
-  if (err != 0) {
+  if (err != 0)
+  {
     return err;
   }
   return func(is_owner_mode, extension_index, args.ptr, args.size); // FIXME: here we need refactor this line to support common interface [F]

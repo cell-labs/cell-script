@@ -2,7 +2,8 @@ package cell
 
 type Cell uint64
 
-type SudtData uint128
+type Byte byte
+type Byte32 [4]Byte
 
 type Script table {
 	codeHash string // size == 32byte

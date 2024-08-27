@@ -1,3 +1,4 @@
+
 package main
 
 import (
@@ -53,8 +54,8 @@ const (
 func getFlagFromArgs(args string) uint64 {
 	// args.size() >= 4
 	// big-edian
-	bytes = []byte{args[0], args[1], args[2], args[3]}
-	bytesBuffer := bytes.NewBuffer(b)
+	p := []byte{args[0], args[1], args[2], args[3]}
+	bytesBuffer := bytes.NewBuffer(p)
 	x := binary.ReadUint32(bytesBuffer, binary.BigEndian)
 	return uint64(x)
 }
@@ -75,45 +76,89 @@ func getOwnerModeCheckMethod(val uint64) (bool, bool, bool) {
 	}
 	return owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type
 }
+type XudtData table {
+	amount uint64
+	data []byte
+}
+type Byte32 [4]byte
+type XudtArgs table {
+	owner_lock_script_hash Byte32
+	args []byte
+}
+type TypeScript table {
+	code_hash Byte32
+    args XudtArgs
+}
+type XudtCell table {
+	data XudtData
+    type_ TypeScript
+   	lock []byte
+}
+
+func Inputs() []XudtCell {
+	// todo
+	rawIns := tx.inputs()
+	ins := []XudtCell{}
+	return ins
+}
+func Outputs() []XudtCell {
+	// todo
+	rawOuts := tx.outputs()
+	outs := []XudtCell{}
+	return outs
+}
 
 func xudtArgs() string {
-	//todo
+	// todo
 	return ""
 }
 
+func checkInputLockHash(inputs []XudtCell, args string) bool {
+	for _, i := range inputs {
+		lockHash := make(string, i.lock)
+		if lockHash == args {
+			return true
+		}
+	}
+	return false
+}
+
+func checkCellsTypeHash(cells []XudtCell, args string) bool {
+	for _, i := range cells {
+		typeHash := make(string, i.type_.args.args)
+		if typeHash == args {
+			return true
+		}
+	}
+	return false
+}
+
+func loadExtensionScripts() []cell.Script {
+	// todo
+	return []cell.Script
+}
 func main() {
+	script := tx.checkedLoadScript()
 	ok := tx.scriptVerify()
-	args := xudtArgs()
-	val := getFlagFromArgs(args) //FIXME: replace it with bytes/coding lib. [F]
+	ins := Inputs()
+	args := script.args
+	val := getFlagFromArgs(args)
 	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
 
 	// owner mode checking
-	var owner_mode tx.OptionBool
-	if owner_mode_for_input_lock && owner_mode.val == false {
-		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_LOCK_HASH) // FIXME: refactor check owner mode to check lock hash in different tx source. [F]
-		if owner_mode.err != SUCCESS {
-			os.exit(owner_mode.err)
-		}
+	var owner_mode bool
+	if owner_mode_for_input_lock && owner_mode == false {
+		owner_mode = checkInputLockHash(ins, args[0:32])
 	}
 
-	if owner_mode_for_input_type && owner_mode.val == false {
-		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_INPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
-		if owner_mode.err != SUCCESS {
-			os.exit(owner_mode.err)
-		}
-	}
-	if owner_mode_for_output_type && owner_mode.val == false {
-		owner_mode = tx.checkOwnerMode(tx.CKB_SOURCE_OUTPUT, tx.CKB_CELL_FIELD_TYPE_HASH)
-		if owner_mode.err != SUCCESS {
-			os.exit(owner_mode.err)
-		}
+	if owner_mode_for_input_type && owner_mode == false {
+		owner_mode = checkCellsTypeHash(ins, args[0:32])
 	}
 
-	hashes := tx.lockScripts()
-	debug.Printf("%d\n", len(hashes)) // 32 byte
-	// for _, ch := range hashes {
-	//     debug.Printf("%d\n", ch)
-	// }
+	outs := Outputs()
+	if owner_mode_for_output_type && owner_mode == false {
+		owner_mode = checkCellsTypeHash(outs, args[0:32])
+	}
 
 	// parse xUDT args
 	argsSize := len(args)
@@ -151,7 +196,7 @@ func main() {
 	}
 
 	// enable owner script via a script in witness
-	if owner_mode.val == false {
+	if owner_mode == false {
 		// get Owner Script, optional filed from witnessArgs.inputType
 		ownerScriptRawBytes := "" // witness.intput.ownerScript
 		// compute blake2b hash for owner script
@@ -164,9 +209,9 @@ func main() {
 
 		// decode ownerScript raw bytes to Script
 		var ownerScript cell.Script
-		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode.val, 0, ownerScript.args)
+		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode, 0, ownerScript.args)
 		if err == SUCCESS {
-			owner_mode.val = true
+			owner_mode = true
 		}
 	}
 
@@ -193,10 +238,10 @@ func main() {
     	return SUCCESS
   	}
 	// todo: decode extension scripts
-	var extensionScripts []cell.Script
+	extensionScripts := loadExtensionScripts()
 	// execute all scripts
 	for i, script := range(extensionScripts) {
-		tx.executeFunc(script.codeHash, script.hashType, "validate", owner_mode.val, i, script.args)
+		tx.executeFunc(script.codeHash, script.hashType, "validate", owner_mode, i, script.args)
 	}
 	return SUCCESS
 }
