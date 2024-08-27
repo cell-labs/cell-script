@@ -5,9 +5,6 @@ import "tx"
 func main() {
 	ok := tx.scriptVerify()
 	debug.Printf("%d:", ok)
-	var ins []cell.Cell
-	ins = tx.inputs()
-	var ret int64
-	ret = int64(len(ins))
+	// todo
 	return 0
 }

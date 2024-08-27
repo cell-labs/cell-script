@@ -53,8 +53,8 @@ func (c *Compiler) createExternalPackage() {
 	c.osFuncs.Memset = osPkg.setExternal("memset", c.module.NewFunc("memset",
 		llvmTypes.NewPointer(i8.LLVM()),
 		ir.NewParam("dest", llvmTypes.NewPointer(i8.LLVM())),
-		ir.NewParam("c", i64.LLVM()),
-		ir.NewParam("n", i64.LLVM()),
+		ir.NewParam("c", i32.LLVM()),
+		ir.NewParam("n", i32.LLVM()),
 	), false)
 
 	c.osFuncs.Strcat = osPkg.setExternal("strcat", c.module.NewFunc("strcat",

@@ -3,7 +3,6 @@ package main
 import "cell"
 
 func main() {
-	var c cell.Cell
-	c = 1234
+	// todo
 	return 0
 }

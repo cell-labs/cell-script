@@ -135,7 +135,7 @@ func checkCellsTypeHash(cells []XudtCell, args string) bool {
 
 func loadExtensionScripts() []cell.Script {
 	// todo
-	return []cell.Script
+	return []cell.Script{}
 }
 func main() {
 	script := tx.checkedLoadScript()
