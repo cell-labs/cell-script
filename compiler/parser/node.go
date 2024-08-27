@@ -433,7 +433,7 @@ type InitializeStringWithSliceNode struct {
 }
 
 func (i InitializeStringWithSliceNode) String() string {
-	return fmt.Sprintf("InitializeStringWithSliceNode-%s{%+v}", i.Items)
+	return fmt.Sprintf("InitializeStringWithSliceNode-{%+v}", i.Items)
 }
 
 type DeVariadicSliceNode struct {
