@@ -391,10 +391,12 @@ func (c *Compiler) compileInitializeSliceNode(v *parser.InitializeSliceNode) val
 	len := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 0)}
 	if v.Len != nil {
 		len = c.compileValue(v.Len)
+		len.Value = internal.LoadIfVariable(c.contextBlock, len)
 	}
 	cap := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 0)}
 	if v.Cap != nil {
 		cap = c.compileValue(v.Cap)
+		cap.Value = internal.LoadIfVariable(c.contextBlock, cap)
 	}
 	return c.compileInitializeSliceWithValues(itemType, len, cap, values...)
 }
