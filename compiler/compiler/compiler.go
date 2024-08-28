@@ -371,13 +371,14 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 
 		if ty, ok := src.Type.(*types.Slice); ok {
 			src.Type = ty.Type
+			return c.compileSliceArray(src, v, true)
 		}
 		// array type as pointer receriver
 		if ptr, ok := src.Type.(*types.Pointer); ok {
 			src.Type = ptr.Type
 			src.Value = c.contextBlock.NewLoad(pointer.ElemType(src.Value), src.Value)
 		}
-		return c.compileSliceArray(src, v)
+		return c.compileSliceArray(src, v, false)
 	case *parser.InitializeStructNode:
 		return c.compileInitStructWithValues(v)
 	case *parser.TypeCastInterfaceNode:

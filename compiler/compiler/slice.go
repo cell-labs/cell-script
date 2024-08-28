@@ -97,7 +97,7 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 	}
 }
 
-func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) value.Value {
+func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, isSliceSlice bool) value.Value {
 	sliceType := internal.Slice(src.Type.LLVM())
 
 	alloc := c.contextBlock.NewAlloca(sliceType)
@@ -109,7 +109,12 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode) 
 		endIndexValue = c.compileValue(v.End)
 	} else {
 		srcVal := internal.LoadIfVariable(c.contextBlock, src)
-		endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 1)
+		if isSliceSlice {
+			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 1)
+		} else {
+			arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
+			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
+		}
 	}
 
 	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
