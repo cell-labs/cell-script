@@ -93,7 +93,7 @@ func Len16(v uint16) int64 {
 	var n int64
 	x := v
 	if x >= uint16(1<<8) {
-		x = x >> 8
+		x = x >> uint16(8)
 		n = 8
 	}
 	return n + int64(len8tab[x])
@@ -104,11 +104,11 @@ func Len32(v uint32) int64 {
 	var n int64
 	x := v
 	if x >= uint32(1<<16) {
-		x = x >> 16
+		x = x >> uint32(16)
 		n = 16
 	}
 	if x >= uint32(1<<8) {
-		x = x >> 8
+		x = x >> uint32(8)
 		n = n + 8
 	}
 	return n + int64(len8tab[x])
@@ -167,7 +167,7 @@ func Len(x uint64) int64 {
 
 const deBruijn64 = 0x03f79d71b4ca8b09
 
-var deBruijn64tab = [64]byte{
+var deBruijn64tab = [64]uint64{
 	0, 1, 56, 2, 57, 49, 28, 3, 61, 58, 42, 50, 38, 29, 17, 4,
 	62, 47, 59, 36, 45, 43, 51, 22, 53, 39, 33, 30, 24, 18, 12, 5,
 	63, 55, 48, 27, 60, 41, 37, 16, 46, 35, 44, 21, 52, 32, 23, 11,

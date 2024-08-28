@@ -7,6 +7,8 @@ import (
 	"tx"
 	"bytes"
 	"encoding/binary"
+	"errors"
+	"blockchain"
 )
 
 const (
@@ -97,7 +99,8 @@ type XudtCell table {
 
 func Inputs() []XudtCell {
 	// todo
-	rawIns := tx.inputs()
+	raw := tx.inputs()
+
 	ins := []XudtCell{}
 	return ins
 }
@@ -132,13 +135,23 @@ func checkCellsTypeHash(cells []XudtCell, args string) bool {
 	}
 	return false
 }
-
-func loadExtensionScripts() []cell.Script {
+type CellScript table {
+	codeHash string // size == 32byte
+	hashType byte
+	args	 string
+}
+func loadExtensionScripts() []CellScript {
 	// todo
-	return []cell.Script{}
+	return []CellScript{}
+}
+
+func loadScript() CellScript {
+	raw := tx.checkedLoadScript()
+	var ret CellScript
+	return ret
 }
 func main() {
-	script := tx.checkedLoadScript()
+	script := loadScript()
 	ok := tx.scriptVerify()
 	ins := Inputs()
 	args := script.args
@@ -148,16 +161,16 @@ func main() {
 	// owner mode checking
 	var owner_mode bool
 	if owner_mode_for_input_lock && owner_mode == false {
-		owner_mode = checkInputLockHash(ins, args[0:32])
+		owner_mode = checkInputLockHash(ins, args[FLAGS_SIZE:tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE])
 	}
 
 	if owner_mode_for_input_type && owner_mode == false {
-		owner_mode = checkCellsTypeHash(ins, args[0:32])
+		owner_mode = checkCellsTypeHash(ins, args[FLAGS_SIZE:tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE])
 	}
 
 	outs := Outputs()
 	if owner_mode_for_output_type && owner_mode == false {
-		owner_mode = checkCellsTypeHash(outs, args[0:32])
+		owner_mode = checkCellsTypeHash(outs, args[FLAGS_SIZE:tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE])
 	}
 
 	// parse xUDT args
@@ -208,7 +221,7 @@ func main() {
 		}
 
 		// decode ownerScript raw bytes to Script
-		var ownerScript cell.Script
+		var ownerScript CellScript
 		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode, 0, ownerScript.args)
 		if err == SUCCESS {
 			owner_mode = true
@@ -237,7 +250,7 @@ func main() {
 	if flags == XUDTFlagsPlain {
     	return SUCCESS
   	}
-	// todo: decode extension scripts
+
 	extensionScripts := loadExtensionScripts()
 	// execute all scripts
 	for i, script := range(extensionScripts) {

@@ -35,7 +35,7 @@ func (b *Buffer) empty() bool {
 
 func (b *Buffer) Reset() {
 	b.buf = []byte{}
-	b.off = 0
+	b.off = uint32(0)
 	b.lastRead = opInvalid
 }
 

@@ -1,3 +1,4 @@
+
 import (
 	"errors"
 	"debug"
@@ -13,8 +14,8 @@ func (b *Demo) ed() uint32 {
 	return b.end
 }
 func (b *Demo) reset() {
-	b.start = 0
-	b.end = 0
+	b.start = uint32(0)
+	b.end = uint32(0)
 }
 type Range interface {
 	st() (uint32, error)
