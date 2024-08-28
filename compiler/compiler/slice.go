@@ -434,7 +434,7 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 	c.contextBlock.NewStore(cap32, capPtr)
 
 	if len(values) == 0 {
-		dst := backingArrayPtr
+		dst := c.contextBlock.NewBitCast(backingArrayPtr, llvmTypes.I8Ptr)
 		toset := constant.NewInt(llvmTypes.I32, 0)
 		size := len32
 		c.contextBlock.NewCall(c.osFuncs.Memset.Value, dst, toset, size)
