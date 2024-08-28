@@ -99,6 +99,7 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 
 func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, isSliceSlice bool) value.Value {
 	sliceType := internal.Slice(src.Type.LLVM())
+	_, isSrcArray := src.Value.Type().(*llvmTypes.ArrayType)
 
 	alloc := c.contextBlock.NewAlloca(sliceType)
 
@@ -108,7 +109,15 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 	if v.HasEnd {
 		endIndexValue = c.compileValue(v.End)
 	} else {
-		srcVal := internal.LoadIfVariable(c.contextBlock, src)
+		srcVal := src.Value
+		if isSrcArray {
+			// array pointer as receiver, do nothing
+			// type B [1]byte
+			// func (b *B) foo() {}
+			isSrcArray = true
+		} else {
+			srcVal = internal.LoadIfVariable(c.contextBlock, src)
+		}
 		if isSliceSlice {
 			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 1)
 		} else {
@@ -148,7 +157,10 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 	backingArrayItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 3))
 	backingArrayItem.SetName(name.Var("backing"))
 
-	itemPtr := c.contextBlock.NewBitCast(src.Value, llvmTypes.NewPointer(src.Type.LLVM()))
+	itemPtr := src.Value
+	if !isSrcArray && backingArrayItem.Type() != llvmTypes.NewPointer(src.Type.LLVM()) {
+		itemPtr = c.contextBlock.NewBitCast(src.Value, llvmTypes.NewPointer(src.Type.LLVM()))
+	}
 	c.contextBlock.NewStore(itemPtr, backingArrayItem)
 
 	res := value.Value{
