@@ -16,27 +16,25 @@ type Number uint32
 const HeaderSizeUint = uint32(4)
 
 // Byte is the primitive type
-type Byte [1]byte
+type Byte byte
 
 func NewByte(b byte) Byte {
-	return [1]byte{b}
-}
-func ByteDefault() Byte {
-	return [1]byte{0}
-}
-func ByteFromSliceUnchecked(slice []byte) Byte {
-	var b Byte
-	b[0] = slice[0]
 	return b
 }
-func (b *Byte) AsSlice() []byte {
-	return b[0:]
+func ByteDefault() Byte {
+	return byte(0)
+}
+func ByteFromSliceUnchecked(slice []byte) Byte {
+	return slice[0]
+}
+func (b Byte) AsSlice() []byte {
+	return []byte{b}
 }
 func ByteFromSlice(slice []byte, _compatible bool) (b Byte, e error) {
 	if len(slice) != uint32(1) {
 		return b, errors.New("TotalSizeNotMatch")
 	}
-	b[0] = slice[0]
+	b = slice[0]
 	return b, errors.None()
 }
 func unpackNumber(b []byte) Number {
@@ -82,27 +80,27 @@ func (s *Uint32Builder) Build() Uint32 {
 	return Uint32{inner: b.Bytes()}
 }
 
-func (s *Uint32Builder) Set(v [4]Byte) Uint32Builder {
+func (s *Uint32Builder) Set(v [4]Byte) *Uint32Builder {
 	s.inner = v
 	return s
 }
 
-func (s *Uint32Builder) Nth0(v Byte) Uint32Builder {
+func (s *Uint32Builder) Nth0(v Byte) *Uint32Builder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *Uint32Builder) Nth1(v Byte) Uint32Builder {
+func (s *Uint32Builder) Nth1(v Byte) *Uint32Builder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *Uint32Builder) Nth2(v Byte) Uint32Builder {
+func (s *Uint32Builder) Nth2(v Byte) *Uint32Builder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *Uint32Builder) Nth3(v Byte) Uint32Builder {
+func (s *Uint32Builder) Nth3(v Byte) *Uint32Builder {
 	s.inner[3] = v
 	return s
 }
@@ -181,47 +179,47 @@ func (s *Uint64Builder) Build() Uint64 {
 	return Uint64{inner: b.Bytes()}
 }
 
-func (s *Uint64Builder) Set(v [8]Byte) Uint64Builder {
+func (s *Uint64Builder) Set(v [8]Byte) *Uint64Builder {
 	s.inner = v
 	return s
 }
 
-func (s *Uint64Builder) Nth0(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth0(v Byte) *Uint64Builder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth1(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth1(v Byte) *Uint64Builder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth2(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth2(v Byte) *Uint64Builder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth3(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth3(v Byte) *Uint64Builder {
 	s.inner[3] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth4(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth4(v Byte) *Uint64Builder {
 	s.inner[4] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth5(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth5(v Byte) *Uint64Builder {
 	s.inner[5] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth6(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth6(v Byte) *Uint64Builder {
 	s.inner[6] = v
 	return s
 }
 
-func (s *Uint64Builder) Nth7(v Byte) Uint64Builder {
+func (s *Uint64Builder) Nth7(v Byte) *Uint64Builder {
 	s.inner[7] = v
 	return s
 }
@@ -324,87 +322,87 @@ func (s *Uint128Builder) Build() Uint128 {
 	return Uint128{inner: b.Bytes()}
 }
 
-func (s *Uint128Builder) Set(v [16]Byte) Uint128Builder {
+func (s *Uint128Builder) Set(v [16]Byte) *Uint128Builder {
 	s.inner = v
 	return s
 }
 
-func (s *Uint128Builder) Nth0(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth0(v Byte) *Uint128Builder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth1(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth1(v Byte) *Uint128Builder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth2(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth2(v Byte) *Uint128Builder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth3(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth3(v Byte) *Uint128Builder {
 	s.inner[3] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth4(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth4(v Byte) *Uint128Builder {
 	s.inner[4] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth5(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth5(v Byte) *Uint128Builder {
 	s.inner[5] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth6(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth6(v Byte) *Uint128Builder {
 	s.inner[6] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth7(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth7(v Byte) *Uint128Builder {
 	s.inner[7] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth8(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth8(v Byte) *Uint128Builder {
 	s.inner[8] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth9(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth9(v Byte) *Uint128Builder {
 	s.inner[9] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth10(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth10(v Byte) *Uint128Builder {
 	s.inner[10] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth11(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth11(v Byte) *Uint128Builder {
 	s.inner[11] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth12(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth12(v Byte) *Uint128Builder {
 	s.inner[12] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth13(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth13(v Byte) *Uint128Builder {
 	s.inner[13] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth14(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth14(v Byte) *Uint128Builder {
 	s.inner[14] = v
 	return s
 }
 
-func (s *Uint128Builder) Nth15(v Byte) Uint128Builder {
+func (s *Uint128Builder) Nth15(v Byte) *Uint128Builder {
 	s.inner[15] = v
 	return s
 }
@@ -555,167 +553,167 @@ func (s *Byte32Builder) Build() Byte32 {
 	return Byte32{inner: b.Bytes()}
 }
 
-func (s *Byte32Builder) Set(v [32]Byte) Byte32Builder {
+func (s *Byte32Builder) Set(v [32]Byte) *Byte32Builder {
 	s.inner = v
 	return s
 }
 
-func (s *Byte32Builder) Nth0(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth0(v Byte) *Byte32Builder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth1(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth1(v Byte) *Byte32Builder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth2(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth2(v Byte) *Byte32Builder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth3(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth3(v Byte) *Byte32Builder {
 	s.inner[3] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth4(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth4(v Byte) *Byte32Builder {
 	s.inner[4] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth5(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth5(v Byte) *Byte32Builder {
 	s.inner[5] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth6(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth6(v Byte) *Byte32Builder {
 	s.inner[6] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth7(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth7(v Byte) *Byte32Builder {
 	s.inner[7] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth8(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth8(v Byte) *Byte32Builder {
 	s.inner[8] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth9(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth9(v Byte) *Byte32Builder {
 	s.inner[9] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth10(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth10(v Byte) *Byte32Builder {
 	s.inner[10] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth11(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth11(v Byte) *Byte32Builder {
 	s.inner[11] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth12(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth12(v Byte) *Byte32Builder {
 	s.inner[12] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth13(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth13(v Byte) *Byte32Builder {
 	s.inner[13] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth14(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth14(v Byte) *Byte32Builder {
 	s.inner[14] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth15(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth15(v Byte) *Byte32Builder {
 	s.inner[15] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth16(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth16(v Byte) *Byte32Builder {
 	s.inner[16] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth17(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth17(v Byte) *Byte32Builder {
 	s.inner[17] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth18(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth18(v Byte) *Byte32Builder {
 	s.inner[18] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth19(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth19(v Byte) *Byte32Builder {
 	s.inner[19] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth20(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth20(v Byte) *Byte32Builder {
 	s.inner[20] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth21(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth21(v Byte) *Byte32Builder {
 	s.inner[21] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth22(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth22(v Byte) *Byte32Builder {
 	s.inner[22] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth23(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth23(v Byte) *Byte32Builder {
 	s.inner[23] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth24(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth24(v Byte) *Byte32Builder {
 	s.inner[24] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth25(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth25(v Byte) *Byte32Builder {
 	s.inner[25] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth26(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth26(v Byte) *Byte32Builder {
 	s.inner[26] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth27(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth27(v Byte) *Byte32Builder {
 	s.inner[27] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth28(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth28(v Byte) *Byte32Builder {
 	s.inner[28] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth29(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth29(v Byte) *Byte32Builder {
 	s.inner[29] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth30(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth30(v Byte) *Byte32Builder {
 	s.inner[30] = v
 	return s
 }
 
-func (s *Byte32Builder) Nth31(v Byte) Byte32Builder {
+func (s *Byte32Builder) Nth31(v Byte) *Byte32Builder {
 	s.inner[31] = v
 	return s
 }
@@ -962,167 +960,167 @@ func (s *Uint256Builder) Build() Uint256 {
 	return Uint256{inner: b.Bytes()}
 }
 
-func (s *Uint256Builder) Set(v [32]Byte) Uint256Builder {
+func (s *Uint256Builder) Set(v [32]Byte) *Uint256Builder {
 	s.inner = v
 	return s
 }
 
-func (s *Uint256Builder) Nth0(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth0(v Byte) *Uint256Builder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth1(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth1(v Byte) *Uint256Builder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth2(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth2(v Byte) *Uint256Builder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth3(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth3(v Byte) *Uint256Builder {
 	s.inner[3] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth4(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth4(v Byte) *Uint256Builder {
 	s.inner[4] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth5(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth5(v Byte) *Uint256Builder {
 	s.inner[5] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth6(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth6(v Byte) *Uint256Builder {
 	s.inner[6] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth7(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth7(v Byte) *Uint256Builder {
 	s.inner[7] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth8(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth8(v Byte) *Uint256Builder {
 	s.inner[8] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth9(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth9(v Byte) *Uint256Builder {
 	s.inner[9] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth10(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth10(v Byte) *Uint256Builder {
 	s.inner[10] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth11(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth11(v Byte) *Uint256Builder {
 	s.inner[11] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth12(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth12(v Byte) *Uint256Builder {
 	s.inner[12] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth13(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth13(v Byte) *Uint256Builder {
 	s.inner[13] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth14(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth14(v Byte) *Uint256Builder {
 	s.inner[14] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth15(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth15(v Byte) *Uint256Builder {
 	s.inner[15] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth16(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth16(v Byte) *Uint256Builder {
 	s.inner[16] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth17(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth17(v Byte) *Uint256Builder {
 	s.inner[17] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth18(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth18(v Byte) *Uint256Builder {
 	s.inner[18] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth19(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth19(v Byte) *Uint256Builder {
 	s.inner[19] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth20(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth20(v Byte) *Uint256Builder {
 	s.inner[20] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth21(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth21(v Byte) *Uint256Builder {
 	s.inner[21] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth22(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth22(v Byte) *Uint256Builder {
 	s.inner[22] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth23(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth23(v Byte) *Uint256Builder {
 	s.inner[23] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth24(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth24(v Byte) *Uint256Builder {
 	s.inner[24] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth25(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth25(v Byte) *Uint256Builder {
 	s.inner[25] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth26(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth26(v Byte) *Uint256Builder {
 	s.inner[26] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth27(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth27(v Byte) *Uint256Builder {
 	s.inner[27] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth28(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth28(v Byte) *Uint256Builder {
 	s.inner[28] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth29(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth29(v Byte) *Uint256Builder {
 	s.inner[29] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth30(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth30(v Byte) *Uint256Builder {
 	s.inner[30] = v
 	return s
 }
 
-func (s *Uint256Builder) Nth31(v Byte) Uint256Builder {
+func (s *Uint256Builder) Nth31(v Byte) *Uint256Builder {
 	s.inner[31] = v
 	return s
 }
@@ -1372,15 +1370,15 @@ func (s *BytesBuilder) Build() Bytes {
 	return sb
 }
 
-func (s *BytesBuilder) Set(v []Byte) BytesBuilder {
+func (s *BytesBuilder) Set(v []Byte) *BytesBuilder {
 	s.inner = v
 	return s
 }
-func (s *BytesBuilder) Push(v Byte) BytesBuilder {
+func (s *BytesBuilder) Push(v Byte) *BytesBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *BytesBuilder) Extend(iter []Byte) BytesBuilder {
+func (s *BytesBuilder) Extend(iter []Byte) *BytesBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -1482,7 +1480,7 @@ type BytesOptBuilder struct {
 func NewBytesOptBuilder() BytesOptBuilder {
 	return BytesOptBuilder{isNone: true, inner: BytesDefault()}
 }
-func (s *BytesOptBuilder) Set(v Bytes) BytesOptBuilder {
+func (s *BytesOptBuilder) Set(v Bytes) *BytesOptBuilder {
 	s.isNone = false
 	s.inner = v
 	return s
@@ -1564,8 +1562,8 @@ func (s *BytesVecBuilder) Build() BytesVec {
 	offsets := make([]uint32, 0, itemCount)
 	offsets = append(offsets, totalSize)
 	for i := uint32(1); i < itemCount; i++ {
-		totalSize += uint32(len(s.inner[i-1].AsSlice()))
-		offsets = append(offsets, offsets[i-1]+uint32(len(s.inner[i-1].AsSlice())))
+		totalSize += uint32(len(s.inner[i-uint32(1)].AsSlice()))
+		offsets = append(offsets, offsets[i-uint32(1)]+uint32(len(s.inner[i-uint32(1)].AsSlice())))
 	}
 	totalSize += uint32(len(s.inner[itemCount-uint32(1)].AsSlice()))
 
@@ -1582,15 +1580,15 @@ func (s *BytesVecBuilder) Build() BytesVec {
 	return BytesVec{inner: b.Bytes()}
 }
 
-func (s *BytesVecBuilder) Set(v []Bytes) BytesVecBuilder {
+func (s *BytesVecBuilder) Set(v []Bytes) *BytesVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *BytesVecBuilder) Push(v Bytes) BytesVecBuilder {
+func (s *BytesVecBuilder) Push(v Bytes) *BytesVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *BytesVecBuilder) Extend(iter []Bytes) BytesVecBuilder {
+func (s *BytesVecBuilder) Extend(iter []Bytes) *BytesVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -1764,15 +1762,15 @@ func (s *Byte32VecBuilder) Build() Byte32Vec {
 	return sb
 }
 
-func (s *Byte32VecBuilder) Set(v []Byte32) Byte32VecBuilder {
+func (s *Byte32VecBuilder) Set(v []Byte32) *Byte32VecBuilder {
 	s.inner = v
 	return s
 }
-func (s *Byte32VecBuilder) Push(v Byte32) Byte32VecBuilder {
+func (s *Byte32VecBuilder) Push(v Byte32) *Byte32VecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *Byte32VecBuilder) Extend(iter []Byte32) Byte32VecBuilder {
+func (s *Byte32VecBuilder) Extend(iter []Byte32) *Byte32VecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -1893,17 +1891,17 @@ func (s *ScriptBuilder) Build() Script {
 	return Script{inner: b.Bytes()}
 }
 
-func (s *ScriptBuilder) CodeHash(v Byte32) ScriptBuilder {
+func (s *ScriptBuilder) CodeHash(v Byte32) *ScriptBuilder {
 	s.code_hash = v
 	return s
 }
 
-func (s *ScriptBuilder) HashType(v Byte) ScriptBuilder {
+func (s *ScriptBuilder) HashType(v Byte) *ScriptBuilder {
 	s.hash_type = v
 	return s
 }
 
-func (s *ScriptBuilder) Args(v Bytes) ScriptBuilder {
+func (s *ScriptBuilder) Args(v Bytes) *ScriptBuilder {
 	s.args = v
 	return s
 }
@@ -2041,9 +2039,9 @@ func (s *Script) Args() Bytes {
 
 func (s *Script) AsBuilder() ScriptBuilder {
 	ret := NewScriptBuilder()
-	ret.CodeHash(s.CodeHash())
-	ret.HashType(s.HashType())
-	ret.Args(s.Args())
+	ret.code_hash = s.CodeHash()
+	ret.hash_type = s.HashType()
+	ret.args = s.Args()
 	return ret
 }
 
@@ -2070,7 +2068,7 @@ type ScriptOptBuilder struct {
 func NewScriptOptBuilder() ScriptOptBuilder {
 	return ScriptOptBuilder{isNone: true, inner: ScriptDefault()}
 }
-func (s *ScriptOptBuilder) Set(v Script) ScriptOptBuilder {
+func (s *ScriptOptBuilder) Set(v Script) *ScriptOptBuilder {
 	s.isNone = false
 	s.inner = v
 	return s
@@ -2149,57 +2147,57 @@ func (s *ProposalShortIdBuilder) Build() ProposalShortId {
 	return ProposalShortId{inner: b.Bytes()}
 }
 
-func (s *ProposalShortIdBuilder) Set(v [10]Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Set(v [10]Byte) *ProposalShortIdBuilder {
 	s.inner = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth0(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth0(v Byte) *ProposalShortIdBuilder {
 	s.inner[0] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth1(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth1(v Byte) *ProposalShortIdBuilder {
 	s.inner[1] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth2(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth2(v Byte) *ProposalShortIdBuilder {
 	s.inner[2] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth3(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth3(v Byte) *ProposalShortIdBuilder {
 	s.inner[3] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth4(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth4(v Byte) *ProposalShortIdBuilder {
 	s.inner[4] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth5(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth5(v Byte) *ProposalShortIdBuilder {
 	s.inner[5] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth6(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth6(v Byte) *ProposalShortIdBuilder {
 	s.inner[6] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth7(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth7(v Byte) *ProposalShortIdBuilder {
 	s.inner[7] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth8(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth8(v Byte) *ProposalShortIdBuilder {
 	s.inner[8] = v
 	return s
 }
 
-func (s *ProposalShortIdBuilder) Nth9(v Byte) ProposalShortIdBuilder {
+func (s *ProposalShortIdBuilder) Nth9(v Byte) *ProposalShortIdBuilder {
 	s.inner[9] = v
 	return s
 }
@@ -2317,15 +2315,15 @@ func (s *ProposalShortIdVecBuilder) Build() ProposalShortIdVec {
 	return sb
 }
 
-func (s *ProposalShortIdVecBuilder) Set(v []ProposalShortId) ProposalShortIdVecBuilder {
+func (s *ProposalShortIdVecBuilder) Set(v []ProposalShortId) *ProposalShortIdVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *ProposalShortIdVecBuilder) Push(v ProposalShortId) ProposalShortIdVecBuilder {
+func (s *ProposalShortIdVecBuilder) Push(v ProposalShortId) *ProposalShortIdVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *ProposalShortIdVecBuilder) Extend(iter []ProposalShortId) ProposalShortIdVecBuilder {
+func (s *ProposalShortIdVecBuilder) Extend(iter []ProposalShortId) *ProposalShortIdVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -2427,12 +2425,12 @@ func (s *OutPointBuilder) Build() OutPoint {
 	return OutPoint{inner: b.Bytes()}
 }
 
-func (s *OutPointBuilder) TxHash(v Byte32) OutPointBuilder {
+func (s *OutPointBuilder) TxHash(v Byte32) *OutPointBuilder {
 	s.tx_hash = v
 	return s
 }
 
-func (s *OutPointBuilder) Index(v Uint32) OutPointBuilder {
+func (s *OutPointBuilder) Index(v Uint32) *OutPointBuilder {
 	s.index = v
 	return s
 }
@@ -2462,8 +2460,8 @@ func (s *OutPoint) Index() Uint32 {
 
 func (s *OutPoint) AsBuilder() OutPointBuilder {
 	ret := NewOutPointBuilder()
-	ret.TxHash(s.TxHash())
-	ret.Index(s.Index())
+	ret.tx_hash = s.TxHash()
+	ret.index = s.Index()
 	return ret
 }
 
@@ -2494,12 +2492,12 @@ func (s *CellInputBuilder) Build() CellInput {
 	return CellInput{inner: b.Bytes()}
 }
 
-func (s *CellInputBuilder) Since(v Uint64) CellInputBuilder {
+func (s *CellInputBuilder) Since(v Uint64) *CellInputBuilder {
 	s.since = v
 	return s
 }
 
-func (s *CellInputBuilder) PreviousOutput(v OutPoint) CellInputBuilder {
+func (s *CellInputBuilder) PreviousOutput(v OutPoint) *CellInputBuilder {
 	s.previous_output = v
 	return s
 }
@@ -2529,8 +2527,8 @@ func (s *CellInput) PreviousOutput() OutPoint {
 
 func (s *CellInput) AsBuilder() CellInputBuilder {
 	ret := NewCellInputBuilder()
-	ret.Since(s.Since())
-	ret.PreviousOutput(s.PreviousOutput())
+	ret.since = s.Since()
+	ret.previous_output = s.PreviousOutput()
 	return ret
 }
 
@@ -2580,17 +2578,17 @@ func (s *CellOutputBuilder) Build() CellOutput {
 	return CellOutput{inner: b.Bytes()}
 }
 
-func (s *CellOutputBuilder) Capacity(v Uint64) CellOutputBuilder {
+func (s *CellOutputBuilder) Capacity(v Uint64) *CellOutputBuilder {
 	s.capacity = v
 	return s
 }
 
-func (s *CellOutputBuilder) Lock(v Script) CellOutputBuilder {
+func (s *CellOutputBuilder) Lock(v Script) *CellOutputBuilder {
 	s.lock = v
 	return s
 }
 
-func (s *CellOutputBuilder) Type(v ScriptOpt) CellOutputBuilder {
+func (s *CellOutputBuilder) Type(v ScriptOpt) *CellOutputBuilder {
 	s.type_ = v
 	return s
 }
@@ -2728,9 +2726,9 @@ func (s *CellOutput) Type() ScriptOpt {
 
 func (s *CellOutput) AsBuilder() CellOutputBuilder {
 	ret := NewCellOutputBuilder()
-	ret.Capacity(s.Capacity())
-	ret.Lock(s.Lock())
-	ret.Type(s.Type())
+	ret.capacity = s.Capacity()
+	ret.lock = s.Lock()
+	ret.type_ = s.Type()
 	return ret
 }
 
@@ -2761,12 +2759,12 @@ func (s *CellDepBuilder) Build() CellDep {
 	return CellDep{inner: b.Bytes()}
 }
 
-func (s *CellDepBuilder) OutPoint(v OutPoint) CellDepBuilder {
+func (s *CellDepBuilder) OutPoint(v OutPoint) *CellDepBuilder {
 	s.out_point = v
 	return s
 }
 
-func (s *CellDepBuilder) DepType(v Byte) CellDepBuilder {
+func (s *CellDepBuilder) DepType(v Byte) *CellDepBuilder {
 	s.dep_type = v
 	return s
 }
@@ -2836,15 +2834,15 @@ func (s *CellDepVecBuilder) Build() CellDepVec {
 	return sb
 }
 
-func (s *CellDepVecBuilder) Set(v []CellDep) CellDepVecBuilder {
+func (s *CellDepVecBuilder) Set(v []CellDep) *CellDepVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *CellDepVecBuilder) Push(v CellDep) CellDepVecBuilder {
+func (s *CellDepVecBuilder) Push(v CellDep) *CellDepVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *CellDepVecBuilder) Extend(iter []CellDep) CellDepVecBuilder {
+func (s *CellDepVecBuilder) Extend(iter []CellDep) *CellDepVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -2954,15 +2952,15 @@ func (s *CellInputVecBuilder) Build() CellInputVec {
 	return sb
 }
 
-func (s *CellInputVecBuilder) Set(v []CellInput) CellInputVecBuilder {
+func (s *CellInputVecBuilder) Set(v []CellInput) *CellInputVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *CellInputVecBuilder) Push(v CellInput) CellInputVecBuilder {
+func (s *CellInputVecBuilder) Push(v CellInput) *CellInputVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *CellInputVecBuilder) Extend(iter []CellInput) CellInputVecBuilder {
+func (s *CellInputVecBuilder) Extend(iter []CellInput) *CellInputVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -3072,8 +3070,8 @@ func (s *CellOutputVecBuilder) Build() CellOutputVec {
 	offsets := make([]uint32, 0, itemCount)
 	offsets = append(offsets, totalSize)
 	for i := uint32(1); i < itemCount; i++ {
-		totalSize += uint32(len(s.inner[i-1].AsSlice()))
-		offsets = append(offsets, offsets[i-1]+uint32(len(s.inner[i-1].AsSlice())))
+		totalSize += uint32(len(s.inner[i-uint32(1)].AsSlice()))
+		offsets = append(offsets, offsets[i-uint32(1)]+uint32(len(s.inner[i-uint32(1)].AsSlice())))
 	}
 	totalSize += uint32(len(s.inner[itemCount-uint32(1)].AsSlice()))
 
@@ -3090,15 +3088,15 @@ func (s *CellOutputVecBuilder) Build() CellOutputVec {
 	return CellOutputVec{inner: b.Bytes()}
 }
 
-func (s *CellOutputVecBuilder) Set(v []CellOutput) CellOutputVecBuilder {
+func (s *CellOutputVecBuilder) Set(v []CellOutput) *CellOutputVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *CellOutputVecBuilder) Push(v CellOutput) CellOutputVecBuilder {
+func (s *CellOutputVecBuilder) Push(v CellOutput) *CellOutputVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *CellOutputVecBuilder) Extend(iter []CellOutput) CellOutputVecBuilder {
+func (s *CellOutputVecBuilder) Extend(iter []CellOutput) *CellOutputVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -3295,32 +3293,32 @@ func (s *RawTransactionBuilder) Build() RawTransaction {
 	return RawTransaction{inner: b.Bytes()}
 }
 
-func (s *RawTransactionBuilder) Version(v Uint32) RawTransactionBuilder {
+func (s *RawTransactionBuilder) Version(v Uint32) *RawTransactionBuilder {
 	s.version = v
 	return s
 }
 
-func (s *RawTransactionBuilder) CellDeps(v CellDepVec) RawTransactionBuilder {
+func (s *RawTransactionBuilder) CellDeps(v CellDepVec) *RawTransactionBuilder {
 	s.cell_deps = v
 	return s
 }
 
-func (s *RawTransactionBuilder) HeaderDeps(v Byte32Vec) RawTransactionBuilder {
+func (s *RawTransactionBuilder) HeaderDeps(v Byte32Vec) *RawTransactionBuilder {
 	s.header_deps = v
 	return s
 }
 
-func (s *RawTransactionBuilder) Inputs(v CellInputVec) RawTransactionBuilder {
+func (s *RawTransactionBuilder) Inputs(v CellInputVec) *RawTransactionBuilder {
 	s.inputs = v
 	return s
 }
 
-func (s *RawTransactionBuilder) Outputs(v CellOutputVec) RawTransactionBuilder {
+func (s *RawTransactionBuilder) Outputs(v CellOutputVec) *RawTransactionBuilder {
 	s.outputs = v
 	return s
 }
 
-func (s *RawTransactionBuilder) OutputsData(v BytesVec) RawTransactionBuilder {
+func (s *RawTransactionBuilder) OutputsData(v BytesVec) *RawTransactionBuilder {
 	s.outputs_data = v
 	return s
 }
@@ -3491,12 +3489,12 @@ func (s *RawTransaction) OutputsData() BytesVec {
 
 func (s *RawTransaction) AsBuilder() RawTransactionBuilder {
 	ret := NewRawTransactionBuilder()
-	ret.Version(s.Version())
-	ret.CellDeps(s.CellDeps())
-	ret.HeaderDeps(s.HeaderDeps())
-	ret.Inputs(s.Inputs())
-	ret.Outputs(s.Outputs())
-	ret.OutputsData(s.OutputsData())
+	ret.version = s.Version()
+	ret.cell_deps = s.CellDeps()
+	ret.header_deps = s.HeaderDeps()
+	ret.inputs = s.Inputs()
+	ret.outputs = s.Outputs()
+	ret.outputs_data = s.OutputsData()
 	return ret
 }
 
@@ -3542,12 +3540,12 @@ func (s *TransactionBuilder) Build() Transaction {
 	return Transaction{inner: b.Bytes()}
 }
 
-func (s *TransactionBuilder) Raw(v RawTransaction) TransactionBuilder {
+func (s *TransactionBuilder) Raw(v RawTransaction) *TransactionBuilder {
 	s.raw = v
 	return s
 }
 
-func (s *TransactionBuilder) Witnesses(v BytesVec) TransactionBuilder {
+func (s *TransactionBuilder) Witnesses(v BytesVec) *TransactionBuilder {
 	s.witnesses = v
 	return s
 }
@@ -3674,8 +3672,8 @@ func (s *Transaction) Witnesses() BytesVec {
 
 func (s *Transaction) AsBuilder() TransactionBuilder {
 	ret := NewTransactionBuilder()
-	ret.Raw(s.Raw())
-	ret.Witnesses(s.Witnesses())
+	ret.raw = s.Raw()
+	ret.witnesses = s.Witnesses()
 	return ret
 }
 
@@ -3714,8 +3712,8 @@ func (s *TransactionVecBuilder) Build() TransactionVec {
 	offsets := make([]uint32, 0, itemCount)
 	offsets = append(offsets, totalSize)
 	for i := uint32(1); i < itemCount; i++ {
-		totalSize += uint32(len(s.inner[i-1].AsSlice()))
-		offsets = append(offsets, offsets[i-1]+uint32(len(s.inner[i-1].AsSlice())))
+		totalSize += uint32(len(s.inner[i-uint32(1)].AsSlice()))
+		offsets = append(offsets, offsets[i-uint32(1)]+uint32(len(s.inner[i-uint32(1)].AsSlice())))
 	}
 	totalSize += uint32(len(s.inner[itemCount-uint32(1)].AsSlice()))
 
@@ -3732,15 +3730,15 @@ func (s *TransactionVecBuilder) Build() TransactionVec {
 	return TransactionVec{inner: b.Bytes()}
 }
 
-func (s *TransactionVecBuilder) Set(v []Transaction) TransactionVecBuilder {
+func (s *TransactionVecBuilder) Set(v []Transaction) *TransactionVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *TransactionVecBuilder) Push(v Transaction) TransactionVecBuilder {
+func (s *TransactionVecBuilder) Push(v Transaction) *TransactionVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *TransactionVecBuilder) Extend(iter []Transaction) TransactionVecBuilder {
+func (s *TransactionVecBuilder) Extend(iter []Transaction) *TransactionVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -3922,52 +3920,52 @@ func (s *RawHeaderBuilder) Build() RawHeader {
 	return RawHeader{inner: b.Bytes()}
 }
 
-func (s *RawHeaderBuilder) Version(v Uint32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) Version(v Uint32) *RawHeaderBuilder {
 	s.version = v
 	return s
 }
 
-func (s *RawHeaderBuilder) CompactTarget(v Uint32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) CompactTarget(v Uint32) *RawHeaderBuilder {
 	s.compact_target = v
 	return s
 }
 
-func (s *RawHeaderBuilder) Timestamp(v Uint64) RawHeaderBuilder {
+func (s *RawHeaderBuilder) Timestamp(v Uint64) *RawHeaderBuilder {
 	s.timestamp = v
 	return s
 }
 
-func (s *RawHeaderBuilder) Number(v Uint64) RawHeaderBuilder {
+func (s *RawHeaderBuilder) Number(v Uint64) *RawHeaderBuilder {
 	s.number = v
 	return s
 }
 
-func (s *RawHeaderBuilder) Epoch(v Uint64) RawHeaderBuilder {
+func (s *RawHeaderBuilder) Epoch(v Uint64) *RawHeaderBuilder {
 	s.epoch = v
 	return s
 }
 
-func (s *RawHeaderBuilder) ParentHash(v Byte32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) ParentHash(v Byte32) *RawHeaderBuilder {
 	s.parent_hash = v
 	return s
 }
 
-func (s *RawHeaderBuilder) TransactionsRoot(v Byte32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) TransactionsRoot(v Byte32) *RawHeaderBuilder {
 	s.transactions_root = v
 	return s
 }
 
-func (s *RawHeaderBuilder) ProposalsHash(v Byte32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) ProposalsHash(v Byte32) *RawHeaderBuilder {
 	s.proposals_hash = v
 	return s
 }
 
-func (s *RawHeaderBuilder) UnclesHash(v Byte32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) UnclesHash(v Byte32) *RawHeaderBuilder {
 	s.uncles_hash = v
 	return s
 }
 
-func (s *RawHeaderBuilder) Dao(v Byte32) RawHeaderBuilder {
+func (s *RawHeaderBuilder) Dao(v Byte32) *RawHeaderBuilder {
 	s.dao = v
 	return s
 }
@@ -4037,16 +4035,16 @@ func (s *RawHeader) Dao() Byte32 {
 
 func (s *RawHeader) AsBuilder() RawHeaderBuilder {
 	ret := NewRawHeaderBuilder()
-	ret.Version(s.Version())
-	ret.CompactTarget(s.CompactTarget())
-	ret.Timestamp(s.Timestamp())
-	ret.Number(s.Number())
-	ret.Epoch(s.Epoch())
-	ret.ParentHash(s.ParentHash())
-	ret.TransactionsRoot(s.TransactionsRoot())
-	ret.ProposalsHash(s.ProposalsHash())
-	ret.UnclesHash(s.UnclesHash())
-	ret.Dao(s.Dao())
+	ret.version = s.Version()
+	ret.compact_target = s.CompactTarget()
+	ret.timestamp = s.Timestamp()
+	ret.number = s.Number()
+	ret.epoch = s.Epoch()
+	ret.parent_hash = s.ParentHash()
+	ret.transactions_root = s.TransactionsRoot()
+	ret.proposals_hash = s.ProposalsHash()
+	ret.uncles_hash = s.UnclesHash()
+	ret.dao = s.Dao()
 	return ret
 }
 
@@ -4077,12 +4075,12 @@ func (s *HeaderBuilder) Build() Header {
 	return Header{inner: b.Bytes()}
 }
 
-func (s *HeaderBuilder) Raw(v RawHeader) HeaderBuilder {
+func (s *HeaderBuilder) Raw(v RawHeader) *HeaderBuilder {
 	s.raw = v
 	return s
 }
 
-func (s *HeaderBuilder) Nonce(v Uint128) HeaderBuilder {
+func (s *HeaderBuilder) Nonce(v Uint128) *HeaderBuilder {
 	s.nonce = v
 	return s
 }
@@ -4112,8 +4110,8 @@ func (s *Header) Nonce() Uint128 {
 
 func (s *Header) AsBuilder() HeaderBuilder {
 	ret := NewHeaderBuilder()
-	ret.Raw(s.Raw())
-	ret.Nonce(s.Nonce())
+	ret.raw = s.Raw()
+	ret.nonce = s.Nonce()
 	return ret
 }
 
@@ -4159,12 +4157,12 @@ func (s *UncleBlockBuilder) Build() UncleBlock {
 	return UncleBlock{inner: b.Bytes()}
 }
 
-func (s *UncleBlockBuilder) Header(v Header) UncleBlockBuilder {
+func (s *UncleBlockBuilder) Header(v Header) *UncleBlockBuilder {
 	s.header = v
 	return s
 }
 
-func (s *UncleBlockBuilder) Proposals(v ProposalShortIdVec) UncleBlockBuilder {
+func (s *UncleBlockBuilder) Proposals(v ProposalShortIdVec) *UncleBlockBuilder {
 	s.proposals = v
 	return s
 }
@@ -4291,8 +4289,8 @@ func (s *UncleBlock) Proposals() ProposalShortIdVec {
 
 func (s *UncleBlock) AsBuilder() UncleBlockBuilder {
 	ret := NewUncleBlockBuilder()
-	ret.Header(s.Header())
-	ret.Proposals(s.Proposals())
+	ret.header = s.Header()
+	ret.proposals = s.Proposals()
 	return ret
 }
 
@@ -4331,8 +4329,8 @@ func (s *UncleBlockVecBuilder) Build() UncleBlockVec {
 	offsets := make([]uint32, 0, itemCount)
 	offsets = append(offsets, totalSize)
 	for i := uint32(1); i < itemCount; i++ {
-		totalSize += uint32(len(s.inner[i-1].AsSlice()))
-		offsets = append(offsets, offsets[i-1]+uint32(len(s.inner[i-1].AsSlice())))
+		totalSize += uint32(len(s.inner[i-uint32(1)].AsSlice()))
+		offsets = append(offsets, offsets[i-uint32(1)]+uint32(len(s.inner[i-uint32(1)].AsSlice())))
 	}
 	totalSize += uint32(len(s.inner[itemCount-uint32(1)].AsSlice()))
 
@@ -4349,15 +4347,15 @@ func (s *UncleBlockVecBuilder) Build() UncleBlockVec {
 	return UncleBlockVec{inner: b.Bytes()}
 }
 
-func (s *UncleBlockVecBuilder) Set(v []UncleBlock) UncleBlockVecBuilder {
+func (s *UncleBlockVecBuilder) Set(v []UncleBlock) *UncleBlockVecBuilder {
 	s.inner = v
 	return s
 }
-func (s *UncleBlockVecBuilder) Push(v UncleBlock) UncleBlockVecBuilder {
+func (s *UncleBlockVecBuilder) Push(v UncleBlock) *UncleBlockVecBuilder {
 	s.inner = append(s.inner, v)
 	return s
 }
-func (s *UncleBlockVecBuilder) Extend(iter []UncleBlock) UncleBlockVecBuilder {
+func (s *UncleBlockVecBuilder) Extend(iter []UncleBlock) *UncleBlockVecBuilder {
 	for i := uint32(0); i < len(iter); i++ {
 		s.inner = append(s.inner, iter[i])
 	}
@@ -4546,22 +4544,22 @@ func (s *BlockBuilder) Build() Block {
 	return Block{inner: b.Bytes()}
 }
 
-func (s *BlockBuilder) Header(v Header) BlockBuilder {
+func (s *BlockBuilder) Header(v Header) *BlockBuilder {
 	s.header = v
 	return s
 }
 
-func (s *BlockBuilder) Uncles(v UncleBlockVec) BlockBuilder {
+func (s *BlockBuilder) Uncles(v UncleBlockVec) *BlockBuilder {
 	s.uncles = v
 	return s
 }
 
-func (s *BlockBuilder) Transactions(v TransactionVec) BlockBuilder {
+func (s *BlockBuilder) Transactions(v TransactionVec) *BlockBuilder {
 	s.transactions = v
 	return s
 }
 
-func (s *BlockBuilder) Proposals(v ProposalShortIdVec) BlockBuilder {
+func (s *BlockBuilder) Proposals(v ProposalShortIdVec) *BlockBuilder {
 	s.proposals = v
 	return s
 }
@@ -4710,10 +4708,10 @@ func (s *Block) Proposals() ProposalShortIdVec {
 
 func (s *Block) AsBuilder() BlockBuilder {
 	ret := NewBlockBuilder()
-	ret.Header(s.Header())
-	ret.Uncles(s.Uncles())
-	ret.Transactions(s.Transactions())
-	ret.Proposals(s.Proposals())
+	ret.header = s.Header()
+	ret.uncles = s.Uncles()
+	ret.transactions = s.Transactions()
+	ret.proposals = s.Proposals()
 	return ret
 }
 
@@ -4759,12 +4757,12 @@ func (s *CellbaseWitnessBuilder) Build() CellbaseWitness {
 	return CellbaseWitness{inner: b.Bytes()}
 }
 
-func (s *CellbaseWitnessBuilder) Lock(v Script) CellbaseWitnessBuilder {
+func (s *CellbaseWitnessBuilder) Lock(v Script) *CellbaseWitnessBuilder {
 	s.lock = v
 	return s
 }
 
-func (s *CellbaseWitnessBuilder) Message(v Bytes) CellbaseWitnessBuilder {
+func (s *CellbaseWitnessBuilder) Message(v Bytes) *CellbaseWitnessBuilder {
 	s.message = v
 	return s
 }
@@ -4891,8 +4889,8 @@ func (s *CellbaseWitness) Message() Bytes {
 
 func (s *CellbaseWitness) AsBuilder() CellbaseWitnessBuilder {
 	ret := NewCellbaseWitnessBuilder()
-	ret.Lock(s.Lock())
-	ret.Message(s.Message())
+	ret.lock = s.Lock()
+	ret.message = s.Message()
 	return ret
 }
 
@@ -4942,17 +4940,17 @@ func (s *WitnessArgsBuilder) Build() WitnessArgs {
 	return WitnessArgs{inner: b.Bytes()}
 }
 
-func (s *WitnessArgsBuilder) Lock(v BytesOpt) WitnessArgsBuilder {
+func (s *WitnessArgsBuilder) Lock(v BytesOpt) *WitnessArgsBuilder {
 	s.lock = v
 	return s
 }
 
-func (s *WitnessArgsBuilder) InputType(v BytesOpt) WitnessArgsBuilder {
+func (s *WitnessArgsBuilder) InputType(v BytesOpt) *WitnessArgsBuilder {
 	s.input_type = v
 	return s
 }
 
-func (s *WitnessArgsBuilder) OutputType(v BytesOpt) WitnessArgsBuilder {
+func (s *WitnessArgsBuilder) OutputType(v BytesOpt) *WitnessArgsBuilder {
 	s.output_type = v
 	return s
 }
@@ -5090,8 +5088,8 @@ func (s *WitnessArgs) OutputType() BytesOpt {
 
 func (s *WitnessArgs) AsBuilder() WitnessArgsBuilder {
 	ret := NewWitnessArgsBuilder()
-	ret.Lock(s.Lock())
-	ret.InputType(s.InputType())
-	ret.OutputType(s.OutputType())
+	ret.lock = s.Lock()
+	ret.input_type = s.InputType()
+	ret.output_type = s.OutputType()
 	return ret
 }

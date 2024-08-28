@@ -125,8 +125,13 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
 		}
 	}
-
 	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
+	if startIndex.Type() != llvmTypes.I64 {
+		startIndex = c.contextBlock.NewZExt(startIndex, i64.LLVM())
+	}
+	if endIndex.Type() != llvmTypes.I64 {
+		endIndex = c.contextBlock.NewZExt(endIndex, i64.LLVM())
+	}
 	sliceLen := c.contextBlock.NewSub(endIndex, startIndex)
 	var sliceLen32 llvmValue.Value
 	sliceLen32 = sliceLen
