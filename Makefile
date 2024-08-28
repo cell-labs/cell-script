@@ -142,8 +142,6 @@ test/example:
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
 	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs
 	${CELL} -t riscv tests/examples/sudt.cell && ckb-debugger --bin sudt || true
-	
-	${CELL} -t riscv tests/examples/binary-test.cell && ckb-debugger --bin binary-test || true
 
 	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files
 	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package
@@ -151,6 +149,8 @@ test/example:
 	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm
 	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte
 	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt || true
+	
+	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test
 
 test/cross:
 	@echo " ${>>>} test cross compiling ${<<<} "
