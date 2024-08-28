@@ -23,17 +23,21 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 	case parser.NUMBER:
 		var intType *types.Int = i64
 
+		if v.TargetType != nil {
+			intType = c.parserTypeToType(v.TargetType).(*types.Int)
+		}
 		// Use context to detect which type that should be returned
 		// Is used to detect if a number should be i32 or i64 etc...
-		var wantedType types.Type
-		if len(c.contextAssignDest) > 0 {
-			wantedType = c.contextAssignDest[len(c.contextAssignDest)-1].Type
-		}
+		// todo: better strategy
+		// var wantedType types.Type
+		// if len(c.contextAssignDest) > 0 {
+		// 	wantedType = c.contextAssignDest[len(c.contextAssignDest)-1].Type
+		// }
 
 		// Create the correct type of int based on context
-		if t, ok := wantedType.(*types.Int); ok {
-			intType = t
-		}
+		// if t, ok := wantedType.(*types.Int); ok {
+		// 	intType = t
+		// }
 
 		return value.Value{
 			Value:      constant.NewInt(intType.Type, v.Value),

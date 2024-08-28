@@ -190,6 +190,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 					Type:  NUMBER,
 					Value: int64(len(items)),
 				}
+				for _, i := range items {
+					if ii, ok := i.(*ConstantNode); ok {
+						ii.TargetType = sliceItemType
+					}
+				}
 				res = &InitializeSliceNode{
 					Type:  sliceItemType,
 					Len:   len,
@@ -239,6 +244,11 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 			items := p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "}"})
 			p.inAllocRightHand = prevInAlloc
 
+			for _, i := range items {
+				if ii, ok := i.(*ConstantNode); ok {
+					ii.TargetType = arrayItemType
+				}
+			}
 			// Array init
 			res = &InitializeArrayNode{
 				Type:  arrayItemType,

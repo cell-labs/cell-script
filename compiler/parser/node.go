@@ -146,9 +146,10 @@ func (on OperatorNode) String() string {
 type ConstantNode struct {
 	baseNode
 
-	Type     DataType
-	Value    int64
-	ValueStr string
+	Type       DataType
+	TargetType TypeNode
+	Value      int64
+	ValueStr   string
 }
 
 type DataType uint8
