@@ -7,6 +7,7 @@ import (
 	"runtime/debug"
 
 	"github.com/cell-labs/cell-script/compiler/compiler/internal"
+	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/name"
 	"github.com/cell-labs/cell-script/compiler/compiler/strings"
 	"github.com/cell-labs/cell-script/compiler/compiler/types"
@@ -370,6 +371,11 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 
 		if ty, ok := src.Type.(*types.Slice); ok {
 			src.Type = ty.Type
+		}
+		// array type as pointer receriver
+		if ptr, ok := src.Type.(*types.Pointer); ok {
+			src.Type = ptr.Type
+			src.Value = c.contextBlock.NewLoad(pointer.ElemType(src.Value), src.Value)
 		}
 		return c.compileSliceArray(src, v)
 	case *parser.InitializeStructNode:
