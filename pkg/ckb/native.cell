@@ -1,0 +1,22 @@
+package ckb
+
+extern (
+	// reference from ckb_syscall_apis.h
+	func ckb_load_tx_hash(addr uintptr, len uint64, offset uint) int
+	func ckb_load_transaction(addr uintptr, len uint64, offset uint) int
+	func ckb_load_script_hash(addr uintptr, len uint64, offset uint) int
+	func ckb_load_script(addr uintptr, len uint64, offset uint) int
+
+	func ckb_load_cell(addr uintptr, len uint64, offset uint, index uint, source uint) int
+	func ckb_load_input(addr uintptr, len uint64, offset uint, index uint, source uint) int
+	func ckb_load_header(addr uintptr, len uint64, offset uint, index uint, source uint) int
+	func ckb_load_witness(addr uintptr, len uint64, offset uint, index uint, source uint) int
+	func ckb_load_cell_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+	func ckb_load_header_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+	func ckb_load_input_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+	func ckb_load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
+	func ckb_vm_version() int
+	func ckb_current_cycles() uint64
+	// todo
+	// func ckb_exec_cell(code_hash *byte, hash_type uint8, offset uint32, length uint8, argc int, argv []*byte) int
+)

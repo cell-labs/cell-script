@@ -205,6 +205,7 @@ func (c *Compiler) addGlobal() {
 
 	global.DefinePkgType("bool", types.Bool)
 	global.DefinePkgType("int", types.I64) // TODO: Size based on arch
+	global.DefinePkgType("uint", types.U64) // TODO: Size based on arch
 	global.DefinePkgType("int8", types.I8)
 	global.DefinePkgType("uint8", types.U8)
 	global.DefinePkgType("int16", types.I16)
