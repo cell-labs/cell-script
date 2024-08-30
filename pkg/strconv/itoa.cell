@@ -3,7 +3,6 @@ package strconv
 
 import (
 	"math/bits"
-	"strings"
 )
 
 const nSmalls = 100

@@ -2,8 +2,7 @@ package bytes
 
 import (
 	"errors"
-	"io" // 
-	"unicode/utf8" //
+	"io"
 )
 
 const smallBufferSize = 64

@@ -1,8 +1,6 @@
 package bytes
 
 import (
-	// "internal/bytealg"
-	"unicode"
 	"unicode/utf8"
 )
 
