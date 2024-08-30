@@ -1,6 +1,8 @@
 package ckb
 
 extern (
+	func __slice_get_ptr(s []byte) uintptr
+
 	// reference from ckb_syscall_apis.h
 	func ckb_load_tx_hash(addr uintptr, len uint64, offset uint) int
 	func ckb_load_transaction(addr uintptr, len uint64, offset uint) int
@@ -19,4 +21,8 @@ extern (
 	func ckb_current_cycles() uint64
 	// todo
 	// func ckb_exec_cell(code_hash *byte, hash_type uint8, offset uint32, length uint8, argc int, argv []*byte) int
+)
+
+const (
+	CKB_SUCCESS = 0
 )

@@ -1,0 +1,18 @@
+package ckb
+
+import (
+	// "blockchain"
+)
+
+const SIZE_H256 = 32
+
+func loadTxhash() []byte {
+	hash := make([]byte, SIZE_H256, SIZE_H256)
+	ptr := __slice_get_ptr(hash)
+	err := ckb_load_tx_hash(ptr, SIZE_H256, 0)
+	if err != CKB_SUCCESS {
+		return []byte{}
+	}
+	// var a blockchain.Byte32
+	return hash
+}
