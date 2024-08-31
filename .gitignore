@@ -3,4 +3,6 @@ output
 .vscode
 *.out
 *.a
-.o
+*.o
+node_modules
+*.json

@@ -2,7 +2,6 @@ package ckb
 
 import (
 	"blockchain"
-	// "debug"
 )
 
 const (

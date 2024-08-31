@@ -414,7 +414,7 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 
 	// Create slice with cap set to the requested size
 	allocSlice := c.contextBlock.NewAlloca(sliceType.LLVM())
-	sliceType.SliceZero(c.contextBlock, c.osFuncs.Malloc.Value.(llvmValue.Named), initLen.Value, initCap.Value, allocSlice)
+	sliceType.SliceZero(c.contextBlock, c.osFuncs.Malloc.Value.(llvmValue.Named), c.osFuncs.Memset.Value.(llvmValue.Named), initLen.Value, initCap.Value, allocSlice)
 
 	backingArrayPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(allocSlice), allocSlice,
 		constant.NewInt(llvmTypes.I32, 0),
@@ -457,12 +457,6 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 	}
 	c.contextBlock.NewStore(cap32, capPtr)
 
-	if len(values) == 0 {
-		dst := c.contextBlock.NewBitCast(backingArrayPtr, llvmTypes.I8Ptr)
-		toset := constant.NewInt(llvmTypes.I32, 0)
-		size := cap32
-		c.contextBlock.NewCall(c.osFuncs.Memset.Value, dst, toset, size)
-	}
 	return value.Value{
 		Value:      allocSlice,
 		Type:       sliceType,

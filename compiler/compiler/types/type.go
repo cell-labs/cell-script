@@ -287,7 +287,7 @@ func (Slice) Size() int64 {
 	return 3*4 + 8 // 3 int32s and a pointer
 }
 
-func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, initLen, initCap llvmValue.Value, emptySlice llvmValue.Value) {
+func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, memsetFunc llvmValue.Named, initLen, initCap llvmValue.Value, emptySlice llvmValue.Value) {
 	// The cap must always be larger than 0
 	// Use 2 as the default value
 	// Todo: check initCap
@@ -322,6 +322,7 @@ func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, initLen, i
 		size64 = block.NewSExt(size64, types.I64)
 	}
 	mallocatedSpaceRaw := block.NewCall(mallocFunc, size64)
+	block.NewCall(memsetFunc, constant.NewInt(types.I32, 0), size64)
 	mallocatedSpaceRaw.SetName(name.Var("slicezero"))
 	bitcasted := block.NewBitCast(mallocatedSpaceRaw, types.NewPointer(s.Type.LLVM()))
 	block.NewStore(bitcasted, backingArray)

@@ -63,6 +63,7 @@ func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
 		// TODO: Make slices less special
 		if sliceType, ok := treType.(*types.Slice); ok {
 			sliceType.SliceZero(block, c.osFuncs.Malloc.Value.(llvmValue.Named),
+				c.osFuncs.Memset.Value.(llvmValue.Named),
 				constant.NewInt(irTypes.I32, 0), // len
 				constant.NewInt(irTypes.I32, 2), // cap
 				val)
