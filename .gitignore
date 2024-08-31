@@ -1,3 +1,5 @@
 output
 .idea
 .vscode
+*.out
+*.a

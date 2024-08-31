@@ -19,7 +19,7 @@ import (
 
 func Build(options *option.Options) error {
 	path := options.Path
-	outputBinaryPath := options.Output
+	outputBinaryPath := options.Output + ".out"
 	optimize := options.Optimize
 	root := options.Root
 	c := compiler.NewCompiler(&compiler.Options{Target: options.Target})

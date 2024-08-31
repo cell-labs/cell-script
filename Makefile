@@ -9,6 +9,18 @@ MOLECULEC := moleculec
 MOLECULEC2 := ${MKFILE_DIR}/third-party/molecule2-c2/target/release/moleculec-c2
 
 CELL := ${RELEASE_DIR}/cell
+exe := .out
+
+# clang
+CLANG_FLAGS := --target=riscv64 \
+		-march=rv64imc \
+		-nostdlib \
+		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
+		-I third-party/ckb-c-stdlib/libc \
+		-I third-party/ckb-c-stdlib/molecule \
+		-I third-party/ckb-c-stdlib \
+		-I third-party/sparse-merkle-tree/c
+
 
 # Color helper
 # Reset
@@ -46,17 +58,9 @@ build/debug:
 	go build -trimpath -gcflags=all="-N -l -trimpath=${GOPATH}" -asmflags=-trimpath=${GOPATH} -o ${CELL} ./cmd/cell
 sudt-c:
 	@echo " ${>>>} build sudt-c ${<<<} "
-	cd third-party/ckb-c-stdlib && \
-	clang --target=riscv64 \
-		-march=rv64imc \
-		-nostdlib \
-		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
-		-I libc \
-		-I molecule \
-		-I . \
-		../sudt.c \
-		-o sudt-c && \
-	cp sudt-c ../..
+	clang ${CLANG_FLAGS} \
+		third-party/sudt.c \
+		-o sudt-c${exe}
 	@echo " ${>>>} sussecfully build sudt-c ${<<<} "
 molecule-xudt:
 	cd third-party/molecule2-c2 && cargo build --release
@@ -70,33 +74,15 @@ xudt-c: molecule-xudt
 ckb-libc: ckb-libc-debug ckb-libc-release install
 ckb-libc-debug:
 	@echo " ${>>>} build libdummylibc-debug.a ${<<<} "
-	cd third-party/ckb-c-stdlib && \
-	clang --target=riscv64 -v \
-		-march=rv64imc \
-		-nostdlib \
-		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -g -fdata-sections -ffunction-sections \
-		-Wno-implicit-function-declaration -Wno-visibility \
-		-I libc \
-		-I molecule \
-		-I . \
-		-I ../sparse-merkle-tree/c \
-		-c ../xudt/wrapper.c \
+	clang ${CLANG_FLAGS} \
+		-c third-party/xudt/wrapper.c \
 		-DCKB_C_STDLIB_PRINTF=1 \
 		-DCKB_PRINTF_DECLARATION_ONLY=1 && \
 	riscv64-unknown-elf-ar rcs libdummylibc-debug.a wrapper.o
 ckb-libc-release:
 	@echo " ${>>>} build libdummylibc.a ${<<<} "
-	cd third-party/ckb-c-stdlib && \
-	clang --target=riscv64 \
-		-march=rv64imc \
-		-nostdlib \
-		-Wall -Werror -Wextra -Wno-unused-parameter -Wno-nonnull -fno-builtin-printf -fno-builtin-memcmp -O3 -fdata-sections -ffunction-sections \
-		-Wno-implicit-function-declaration -Wno-visibility \
-		-I libc \
-		-I molecule \
-		-I . \
-		-I ../sparse-merkle-tree/c \
-		-c ../xudt/wrapper.c && \
+	clang ${CLANG_FLAGS} \
+		-c third-party/xudt/wrapper.c && \
 	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
 install:
 	mkdir -p output/pkg
