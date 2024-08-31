@@ -1,0 +1,1 @@
+ckb-cli --url https://mainnet.ckbapp.dev/rpc mock-tx dump --tx-hash $1 --output-file mock_tx.json
