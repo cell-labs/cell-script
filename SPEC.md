@@ -717,6 +717,22 @@ len(s)    string type      string length in bytes
 
 ```
 
+# C foreign language interoperation
+
+Type mapping
+
+| C Type   | CellScript Type | Note |
+| -------- | --------------- | ---- |
+| int      | int             |      |
+| uint8_t  | uint8           |      |
+| uint16_t | uint16          |      |
+| uint32_t | uint32          |      |
+| uint64_t | uint64          |      |
+| void*    | uintptr         |      |
+| size_t   | uint            |      |
+|          |                 |      |
+|          |                 |      |
+
 # Names
 
 ## tx
