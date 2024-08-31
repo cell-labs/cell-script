@@ -25,13 +25,33 @@ const uint32_t MAX_DATA_SIZE = 4 * 1024 * 1024;
 
 typedef struct
 {
+  uint32_t len;
+  uint32_t cap;
+  uint32_t offset;
+  uint8_t *bytes;
+} ByteSlice;
+typedef struct
+{
   uint32_t size;
   uint32_t cap;
   uint32_t offset;
-  uint8_t *ptr;
+  ByteSlice *ptr;
 } cell_data_t;
 
 cell_data_t EMPTY_CELL_DATA = {0};
+
+typedef struct
+{
+  uint32_t len;
+  uint32_t cap;
+  uint32_t offset;
+  void *ptr;
+} SliceType;
+
+void *__slice_get_ptr(SliceType s)
+{
+  return s.ptr;
+}
 
 bool script_verify()
 {
@@ -178,44 +198,66 @@ uint64_t get_output_cell_data_len(int i)
   return len;
 }
 
-cell_data_t get_utxo_inputs()
+int get_utxo_inputs_size()
 {
-  cell_data_t inputs = {0};
-  inputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
   int i = 0;
   while (1)
   {
     uint64_t len = get_input_cell_data_len(i);
-    if (len < 16)
+    if (len == 0)
     {
-      return EMPTY_CELL_DATA;
+      return i;
     }
-    uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
-    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
-                                 CKB_SOURCE_GROUP_INPUT);
-    // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
-    // through all cells of current type.
-    if (ret == CKB_INDEX_OUT_OF_BOUND)
-    {
-      break;
-    }
-    if (ret != CKB_SUCCESS)
-    {
-      return EMPTY_CELL_DATA;
-    }
-    if (len < 16)
-    {
-      return EMPTY_CELL_DATA;
-    }
-    if (i >= (int)MAX_CELLS)
-    {
-      free(inputs.ptr);
-      return EMPTY_CELL_DATA;
-    }
-    inputs.ptr = cur_data;
     i += 1;
-    inputs.size = i;
   };
+  return i;
+}
+
+cell_data_t get_utxo_inputs()
+{
+  cell_data_t inputs = {0};
+  int size = get_utxo_inputs_size();
+  inputs.ptr = malloc(size * sizeof(ByteSlice));
+  for (int i = 0; i < size; i++)
+  {
+    uint64_t len = get_input_cell_data_len(i);
+    uint8_t *cur_data = (uint8_t *)malloc(len * sizeof(uint8_t));
+    ckb_load_cell_data(&cur_data, &len, 0, i,
+                       CKB_SOURCE_GROUP_INPUT);
+  }
+  // int i = 0;
+  // while (1)
+  // {
+  //   uint64_t len = get_input_cell_data_len(i);
+  //   if (len < 16)
+  //   {
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
+  //
+  //   // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
+  //   // through all cells of current type.
+  //   if (ret == CKB_INDEX_OUT_OF_BOUND)
+  //   {
+  //     break;
+  //   }
+  //   if (ret != CKB_SUCCESS)
+  //   {
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   if (len < 16)
+  //   {
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   if (i >= (int)MAX_CELLS)
+  //   {
+  //     free(inputs.ptr);
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   inputs.ptr = cur_data;
+  //   i += 1;
+  //   inputs.size = i;
+  // };
   return inputs;
 }
 
@@ -223,36 +265,36 @@ cell_data_t get_utxo_outputs()
 {
   cell_data_t outputs = {0};
   outputs.ptr = malloc(MAX_CELLS * sizeof(mol_seg_t));
-  int i = 0;
-  while (1)
-  {
-    uint64_t len = get_output_cell_data_len(i);
-    uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
-    int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
-                                 CKB_SOURCE_GROUP_OUTPUT);
-    // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
-    // through all cells of current type.
-    if (ret == CKB_INDEX_OUT_OF_BOUND)
-    {
-      break;
-    }
-    if (ret != CKB_SUCCESS)
-    {
-      return EMPTY_CELL_DATA;
-    }
-    if (len < 16)
-    {
-      return EMPTY_CELL_DATA;
-    }
-    if (i >= (int)MAX_CELLS)
-    {
-      free(outputs.ptr);
-      return EMPTY_CELL_DATA;
-    }
-    outputs.ptr = cur_data;
-    i += 1;
-    outputs.size = i;
-  }
+  // int i = 0;
+  // while (1)
+  // {
+  //   uint64_t len = get_output_cell_data_len(i);
+  //   uint8_t* cur_data = (uint8_t*)malloc(len * sizeof(uint8_t));
+  //   int ret = ckb_load_cell_data(&cur_data, &len, 0, i,
+  //                                CKB_SOURCE_GROUP_OUTPUT);
+  //   // When `CKB_INDEX_OUT_OF_BOUND` is reached, we know we have iterated
+  //   // through all cells of current type.
+  //   if (ret == CKB_INDEX_OUT_OF_BOUND)
+  //   {
+  //     break;
+  //   }
+  //   if (ret != CKB_SUCCESS)
+  //   {
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   if (len < 16)
+  //   {
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   if (i >= (int)MAX_CELLS)
+  //   {
+  //     free(outputs.ptr);
+  //     return EMPTY_CELL_DATA;
+  //   }
+  //   outputs.ptr = cur_data;
+  //   i += 1;
+  //   outputs.size = i;
+  // }
   return outputs;
 }
 
@@ -321,13 +363,6 @@ String parse_args()
   return mol_seg_to_string(&args);
 }
 
-typedef struct
-{
-  uint32_t len;
-  uint32_t cap;
-  uint32_t offset;
-  uint8_t *bytes;
-} ByteSlice;
 ByteSlice make_byte_slice(uint32_t len, uint32_t cap, uint32_t offset, uint8_t *ptr)
 {
   ByteSlice bs;

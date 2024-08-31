@@ -86,9 +86,9 @@ ckb-libc-release:
 	riscv64-unknown-elf-ar rcs libdummylibc.a wrapper.o
 install:
 	mkdir -p output/pkg
-	cp -r third-party/ckb-c-stdlib/libdummylibc-debug.a output/pkg
+	cp -r libdummylibc-debug.a output/pkg
 	@echo " ${>>>} sussecfully install libdummylibc-debug.a ${<<<} "
-	cp -r third-party/ckb-c-stdlib/libdummylibc.a output/pkg
+	cp -r libdummylibc.a output/pkg
 	@echo " ${>>>} sussecfully install libdummylibc.a ${<<<} "
 	cp -r pkg/* output/pkg
 	@echo " ${>>>} sussecfully install stdlib ${<<<} "
@@ -108,35 +108,35 @@ test/example:
 	@echo " ${>>>} test cell examples ${<<<} "
 	make build
 	${CELL} || true
-	${CELL} tests/examples/hi.cell && ./hi
-	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true
-	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld | grep "hello world! 1"
-	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table
-	${CELL} -d -t riscv tests/examples/string.cell && ckb-debugger --bin string | grep "eq"
-	${CELL} -d -t riscv tests/examples/string-ctor.cell && ckb-debugger --bin string-ctor | grep "s=12"
-	${CELL} -d -t riscv tests/examples/strings.cell && ckb-debugger --bin strings | grep "aa-bb"
-	${CELL} -d -t riscv tests/examples/make-slice.cell && ckb-debugger --bin make-slice | grep "0422"
-	${CELL} -d -t riscv tests/examples/panic.cell && ckb-debugger --bin panic | grep "runtime panic: hah"
-	${CELL} -d -t riscv tests/examples/if-cond.cell && ckb-debugger --bin if-cond | grep "100:0:ss"
-	${CELL} -d -t riscv tests/examples/switch.cell && ckb-debugger --bin switch | grep "five"
-	${CELL} -d -t riscv tests/examples/return.cell && ckb-debugger --bin return
-	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type | grep "0"
-	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func | grep "999"
-	${CELL} -d -t riscv tests/examples/method.cell && ckb-debugger --bin method | grep "100"
-	${CELL} -d -t riscv tests/examples/interface.cell && ckb-debugger --bin interface | grep "reset00"
-	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data
-	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs
-	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs
-	${CELL} -t riscv tests/examples/sudt.cell && ckb-debugger --bin sudt || true
+	${CELL} tests/examples/hi.cell && ./hi${exe}
+	${CELL} -d -t riscv tests/examples/always-true.cell && ckb-debugger --bin always-true${exe}
+	${CELL} -d -t riscv tests/examples/helloworld.cell && ckb-debugger --bin helloworld${exe} | grep "hello world! 1"
+	${CELL} -t riscv tests/examples/table.cell && ckb-debugger --bin table${exe}
+	${CELL} -d -t riscv tests/examples/string.cell && ckb-debugger --bin string${exe} | grep "eq"
+	${CELL} -d -t riscv tests/examples/string-ctor.cell && ckb-debugger --bin string-ctor${exe} | grep "s=12"
+	${CELL} -d -t riscv tests/examples/strings.cell && ckb-debugger --bin strings${exe} | grep "aa-bb"
+	${CELL} -d -t riscv tests/examples/make-slice.cell && ckb-debugger --bin make-slice${exe} | grep "0422"
+	${CELL} -d -t riscv tests/examples/panic.cell && ckb-debugger --bin panic${exe} | grep "runtime panic: hah"
+	${CELL} -d -t riscv tests/examples/if-cond.cell && ckb-debugger --bin if-cond${exe} | grep "100:0:ss"
+	${CELL} -d -t riscv tests/examples/switch.cell && ckb-debugger --bin switch${exe} | grep "five"
+	${CELL} -d -t riscv tests/examples/return.cell && ckb-debugger --bin return${exe}
+	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type${exe} | grep "0"
+	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func${exe} | grep "999"
+	${CELL} -d -t riscv tests/examples/method.cell && ckb-debugger --bin method${exe} | grep "100"
+	${CELL} -d -t riscv tests/examples/interface.cell && ckb-debugger --bin interface${exe} | grep "reset00"
+	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data${exe}
+	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs${exe}
+	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs${exe}
+	${CELL} -t riscv tests/examples/sudt.cell && ckb-debugger --bin sudt${exe} || true
 
-	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files
-	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package
+	${CELL} -t riscv tests/examples/multi-files && ckb-debugger --bin multi-files${exe}
+	${CELL} -t riscv tests/examples/import-package && ckb-debugger --bin import-package${exe}
 	
-	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm
-	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte
-	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt || true
+	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm${exe}
+	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte${exe}
+	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt${exe} || true
 	
-	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test
+	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test${exe}
 
 test/cross:
 	@echo " ${>>>} test cross compiling ${<<<} "

@@ -17,5 +17,3 @@ func (e *error) NotNone() bool {
 	return !e.none
 }
 
-type Type byte
-extern func copy(dst []Type, src []Type) int32
