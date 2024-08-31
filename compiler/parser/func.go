@@ -185,7 +185,7 @@ func (p *parser) parseFuncDefinition() *DefineFuncNode {
 
 			// Next can be type, that means that the previous was the name of the var
 			isType := p.lookAhead(0)
-			if isType.Type == lexer.IDENTIFIER || 
+			if isType.Type == lexer.IDENTIFIER ||
 				isType.Type == lexer.OPERATOR && isType.Val == "[" {
 				retType, err := p.parseOneType()
 				if err != nil {

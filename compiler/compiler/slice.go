@@ -173,7 +173,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 			Type:     src.Type,
 			LlvmType: sliceType,
 		},
-		Value: alloc,
+		Value:      alloc,
 		IsVariable: true,
 	}
 
@@ -445,11 +445,11 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 		len32 = c.contextBlock.NewTrunc(len32, i32.LLVM())
 	}
 	c.contextBlock.NewStore(len32, lenPtr)
-	
+
 	capPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(allocSlice), allocSlice,
 		constant.NewInt(llvmTypes.I32, 0),
 		constant.NewInt(llvmTypes.I32, 1),
-		)
+	)
 	capPtr.SetName(name.Var("cap"))
 	cap32 := initCap.Value
 	if cap32.Type() != llvmTypes.I32 {

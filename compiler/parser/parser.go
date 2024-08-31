@@ -448,7 +448,7 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 
 			defineFunc.Body = p.parseUntil(lexer.Item{Type: lexer.OPERATOR, Val: "}"})
 
-		return p.aheadParse(defineFunc)
+			return p.aheadParse(defineFunc)
 		}
 
 		// "return" creates a ReturnNode
@@ -769,7 +769,7 @@ func (p *parser) parseInitializeStructNode(inputType TypeNode) *InitializeStruct
 		}
 	}
 	return &InitializeStructNode{
-		Type: inputType,
+		Type:  inputType,
 		Items: items,
 	}
 }

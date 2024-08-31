@@ -315,14 +315,14 @@ func TestFunction(t *testing.T) {
 			&ExternNode{
 				FuncNodes: []*DefineFuncNode{
 					&DefineFuncNode{
-						Name: "foo",
-						IsNamed: true,
+						Name:     "foo",
+						IsNamed:  true,
 						IsMethod: false,
 						IsExtern: true,
 
-						MethodOnType: nil,
+						MethodOnType:      nil,
 						IsPointerReceiver: false,
-						InstanceName: "",
+						InstanceName:      "",
 
 						Arguments: nil,
 						ReturnValues: []*NameNode{

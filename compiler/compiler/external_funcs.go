@@ -19,7 +19,7 @@ type OSFuncs struct {
 	Strcpy  value.Value
 	Strncpy value.Value
 	Strndup value.Value
-	Strcmp value.Value
+	Strcmp  value.Value
 	Exit    value.Value
 }
 

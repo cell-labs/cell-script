@@ -37,8 +37,8 @@ White		:= \033[0;37m
 .PHONY: clean dev build test test_cell_examples
 clean:
 	rm -rf output
-	rm -f third-party/ckb-c-stdlib/*.o
-	rm -f third-party/ckb-c-stdlib/*.a
+	rm -f *.o
+	rm -f *.a
 
 all: ckb-libc build install
 debug: ckb-libc build/debug install

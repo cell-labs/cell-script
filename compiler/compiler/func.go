@@ -257,7 +257,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 		// Structs needs to be pointer-allocated
 		if _, ok := param.Type().(*llvmTypes.StructType); ok {
-						paramPtr := entry.NewAlloca(dataType.LLVM())
+			paramPtr := entry.NewAlloca(dataType.LLVM())
 			paramPtr.SetName(name.Var("paramPtr"))
 			entry.NewStore(param, paramPtr)
 
