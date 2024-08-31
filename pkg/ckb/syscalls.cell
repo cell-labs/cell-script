@@ -1,18 +1,58 @@
 package ckb
 
 import (
-	// "blockchain"
+	"blockchain"
 )
 
-const SIZE_H256 = 32
+const (
+	SIZE_H256 = 32
+	SIZE_TX = 65536
+)
 
-func loadTxhash() []byte {
-	hash := make([]byte, SIZE_H256, SIZE_H256)
-	ptr := __slice_get_ptr(hash)
-	err := ckb_load_tx_hash(ptr, SIZE_H256, 0)
+func loadTxhash() blockchain.Byte32 {
+	data := make([]byte, SIZE_H256, SIZE_H256)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_tx_hash(ptr, &size, 0)
+	if err != CKB_SUCCESS {
+		return blockchain.Byte32Default()
+	}
+	return blockchain.Byte32FromSliceUnchecked()
+}
+func loadTx() []byte {
+	data := make([]byte, SIZE_TX, SIZE_TX)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_transaction(ptr, &size, 0)
 	if err != CKB_SUCCESS {
 		return []byte{}
 	}
-	// var a blockchain.Byte32
-	return hash
+	// pack into a transaction
+	// Fileds - RawTx - Tx
+	// builder := blockchain.NewTransactionBuilder()
+	// // builder.Raw(data)
+	// return Build.Build()
+	return data
 }
+func loadScriptHash() blockchain.Byte32 {
+	data := make([]byte, SIZE_H256, SIZE_H256)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_script_hash(ptr, &size, 0)
+	if err != CKB_SUCCESS {
+		return blockchain.Byte32Default()
+	}
+	return blockchain.Byte32FromSliceUnchecked()
+}
+// func load_script(addr uintptr, len uint64, offset uint) int
+// func loadScript()
+// func load_cell(addr uintptr, len uint64, offset uint, index uint, source uint) int
+// func load_input(addr uintptr, len uint64, offset uint, index uint, source uint) int
+// func load_header(addr uintptr, len uint64, offset uint, index uint, source uint) int
+// func load_witness(addr uintptr, len uint64, offset uint, index uint, source uint) int
+// func load_cell_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+// func load_header_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+// func load_input_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
+// func load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
+// func vm_version() int
+// func current_cycles() uint64
