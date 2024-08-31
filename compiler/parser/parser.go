@@ -198,7 +198,6 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 				res = &InitializeSliceNode{
 					Type:  sliceItemType,
 					Len:   len,
-					Cap:   len,
 					Items: items,
 				}
 				if withAheadParse {

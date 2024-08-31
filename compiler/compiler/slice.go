@@ -398,7 +398,7 @@ func (c *Compiler) compileInitializeSliceNode(v *parser.InitializeSliceNode) val
 		len = c.compileValue(v.Len)
 		len.Value = internal.LoadIfVariable(c.contextBlock, len)
 	}
-	cap := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 0)}
+	cap := value.Value{Type: i32, Value: constant.NewInt(llvmTypes.I32, 2)}
 	if v.Cap != nil {
 		cap = c.compileValue(v.Cap)
 		cap.Value = internal.LoadIfVariable(c.contextBlock, cap)
@@ -460,7 +460,7 @@ func (c *Compiler) compileInitializeSliceWithValues(itemType types.Type, initLen
 	if len(values) == 0 {
 		dst := c.contextBlock.NewBitCast(backingArrayPtr, llvmTypes.I8Ptr)
 		toset := constant.NewInt(llvmTypes.I32, 0)
-		size := len32
+		size := cap32
 		c.contextBlock.NewCall(c.osFuncs.Memset.Value, dst, toset, size)
 	}
 	return value.Value{
