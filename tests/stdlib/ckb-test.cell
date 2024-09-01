@@ -1,0 +1,20 @@
+import (
+	"debug"
+	"ckb"
+)
+
+func main() {
+	ckb.loadTxHash()
+	ckb.loadTx()
+	ckb.loadScriptHash()
+	ckb.loadScript()
+
+	CKB_SOURCE_INPUT := 1
+	ckb.loadInput(0, CKB_SOURCE_INPUT)
+	ckb.loadHeader(0, CKB_SOURCE_INPUT)
+	ckb.loadWitness(0, CKB_SOURCE_INPUT)
+	ckb.loadCellData(0, CKB_SOURCE_INPUT)
+
+	ckb.VMVersion()
+	return 0
+}

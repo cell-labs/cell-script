@@ -137,6 +137,7 @@ test/example:
 	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt${exe} || true
 	
 	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test${exe}
+	${CELL} -t riscv tests/stdlib/ckb-test.cell && ckb-debugger --bin ckb-test${exe}
 
 test/cross:
 	@echo " ${>>>} test cross compiling ${<<<} "

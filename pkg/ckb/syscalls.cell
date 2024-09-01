@@ -7,7 +7,11 @@ import (
 const (
 	SIZE_H256 = 32
 	SIZE_TX = 65536
-	SIZE_SCRIPT = 65536
+	SIZE_SCRIPT = 32768
+	SIZE_CELL = 32768
+	SIZE_HEADER = 256
+	SIZE_WITNESS = 32768
+	SIZE_DATA = 256 * 1024
 )
 
 func loadTxHash() blockchain.Byte32 {
@@ -55,13 +59,55 @@ func loadScript() blockchain.Script {
 	}
 	return blockchain.ScriptFromSliceUnchecked(data)
 }
-// func load_cell(addr uintptr, len uint64, offset uint, index uint, source uint) int
-// func load_input(addr uintptr, len uint64, offset uint, index uint, source uint) int
-// func load_header(addr uintptr, len uint64, offset uint, index uint, source uint) int
+func loadInput(index uint32, source uint32) []byte {
+	data := make([]byte, SIZE_CELL, SIZE_CELL)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_input(ptr, &size, 0, index, source)
+	if err != CKB_SUCCESS {
+		return []byte{}
+	}
+	return data
+}
+// header is a sub-structure of block and UncleBlock
+func loadHeader(index uint32, source uint32) []byte {
+	data := make([]byte, SIZE_HEADER, SIZE_HEADER)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_header(ptr, &size, 0, index, source)
+	if err != CKB_SUCCESS {
+		return []byte{}
+	}
+	return data
+}
 // func load_witness(addr uintptr, len uint64, offset uint, index uint, source uint) int
+func loadWitness(index uint32, source uint32) []byte {
+	data := make([]byte, SIZE_WITNESS, SIZE_WITNESS)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_witness(ptr, &size, 0, index, source)
+	if err != CKB_SUCCESS {
+		return []byte{}
+	}
+	return data
+}
+// func load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
+func loadCellData(index uint32, source uint32) []byte {
+	data := make([]byte, SIZE_DATA, SIZE_DATA)
+	ptr := __slice_get_ptr(data)
+	size := 0
+	err := ckb_load_cell_data(ptr, &size, 0, index, source)
+	if err != CKB_SUCCESS {
+		return []byte{}
+	}
+	return data
+}
+func VMVersion() uint64 {
+	return ckb_vm_version()
+}
+
+// func load_cell(addr uintptr, len uint64, offset uint, index uint, source uint) int
 // func load_cell_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
 // func load_header_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
 // func load_input_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
-// func load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
-// func vm_version() int
 // func current_cycles() uint64
