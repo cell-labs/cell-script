@@ -49,8 +49,8 @@ func (b *Buffer) Read(p []byte) (n uint32, err error) {
 		b.Reset()
 		return n, io.EOF
 	}
-	n = len(b.buf)
-	for i, _ := range b.buf[b.off:] {
+	n = len(p)
+	for i, _ := range p {
 		p[i] = b.buf[b.off + uint32(i)]
 	}
 	b.off = b.off + n
