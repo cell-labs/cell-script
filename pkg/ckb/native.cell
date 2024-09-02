@@ -2,6 +2,7 @@ package ckb
 
 extern (
 	func __slice_get_ptr(s []byte) uintptr
+	func __slice_set_len(s *uintptr, size uint32)
 
 	// reference from ckb_syscall_apis.h
 	func ckb_load_tx_hash(addr uintptr, len uint64, offset uint) int

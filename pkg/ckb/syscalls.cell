@@ -57,6 +57,10 @@ func loadScript() blockchain.Script {
 	if err != CKB_SUCCESS {
 		return blockchain.ScriptDefault()
 	}
+	if size > SIZE_SCRIPT {
+		return blockchain.ScriptDefault()
+	}
+	__slice_set_len(&data, size)
 	return blockchain.ScriptFromSliceUnchecked(data)
 }
 func loadInput(index uint32, source uint32) []byte {

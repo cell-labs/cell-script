@@ -53,6 +53,11 @@ void *__slice_get_ptr(SliceType s)
   return s.ptr;
 }
 
+void __slice_set_len(SliceType* s, uint32_t len)
+{
+  s->len = len;
+}
+
 bool script_verify()
 {
   mol_seg_t script_seg;

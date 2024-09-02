@@ -174,6 +174,10 @@ func (p *parser) parseFuncDefinition() *DefineFuncNode {
 		}
 
 		for {
+			if checkIfOpenParen.Type == lexer.EOL || checkIfOpenParen.Type == lexer.EOF {
+				break
+			}
+
 			nameNode := &NameNode{}
 
 			// Support both named return values and when we only get the type
