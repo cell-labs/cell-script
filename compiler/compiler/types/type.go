@@ -322,7 +322,7 @@ func (s Slice) SliceZero(block *ir.Block, mallocFunc llvmValue.Named, memsetFunc
 		size64 = block.NewSExt(size64, types.I64)
 	}
 	mallocatedSpaceRaw := block.NewCall(mallocFunc, size64)
-	block.NewCall(memsetFunc, constant.NewInt(types.I32, 0), size64)
+	block.NewCall(memsetFunc, mallocatedSpaceRaw, constant.NewInt(types.I32, 0), size64)
 	mallocatedSpaceRaw.SetName(name.Var("slicezero"))
 	bitcasted := block.NewBitCast(mallocatedSpaceRaw, types.NewPointer(s.Type.LLVM()))
 	block.NewStore(bitcasted, backingArray)
