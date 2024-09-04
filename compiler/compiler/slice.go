@@ -99,6 +99,9 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 
 func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, isSliceSlice bool) value.Value {
 	sliceType := internal.Slice(src.Type.LLVM())
+	// array pointer as receiver, do nothing
+	// type B [1]byte
+	// func (b *B) foo() {}
 	_, isSrcArray := src.Value.Type().(*llvmTypes.ArrayType)
 
 	alloc := c.contextBlock.NewAlloca(sliceType)
@@ -110,14 +113,6 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 		endIndexValue = c.compileValue(v.End)
 	} else {
 		srcVal := src.Value
-		if isSrcArray {
-			// array pointer as receiver, do nothing
-			// type B [1]byte
-			// func (b *B) foo() {}
-			isSrcArray = true
-		} else {
-			srcVal = internal.LoadIfVariable(c.contextBlock, src)
-		}
 		if isSliceSlice {
 			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 0)
 		} else {
@@ -142,6 +137,13 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 	if startIndex.Type() != llvmTypes.I32 {
 		offset32 = c.contextBlock.NewTrunc(startIndex, i32.LLVM())
 	}
+	var capVal llvmValue.Value
+	if isSliceSlice {
+		capVal = c.contextBlock.NewExtractValue(src.Value, 1)
+	} else {
+		arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
+		capVal = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
+	}
 
 	// Len
 	lenItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 0))
@@ -150,7 +152,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 
 	// Cap
 	capItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 1))
-	c.contextBlock.NewStore(sliceLen32, capItem)
+	c.contextBlock.NewStore(capVal, capItem)
 	capItem.SetName(name.Var("cap"))
 
 	// Offset
@@ -164,7 +166,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 
 	itemPtr := src.Value
 	if !isSrcArray {
-		itemPtr = c.contextBlock.NewLoad(llvmTypes.NewPointer(src.Type.LLVM()), backingArrayItem)
+		itemPtr = c.contextBlock.NewExtractValue(src.Value, 3)
 	}
 	c.contextBlock.NewStore(itemPtr, backingArrayItem)
 
