@@ -6,5 +6,19 @@ func main() {
 	s := make([]int64, 0, 4)
 	s1 := make([]int64, 2)
 	debug.Printf("%d%d%d%d", len(s), cap(s), len(s1), cap(s1))
+	for i, _ := range s {
+		s[i] = i
+	}
+	s2 := s[2:]
+	for i, v := range s2 {
+		if v != i + 2 {
+			return 1
+		}
+	}
+	for i, v := range s[2:] {
+		if v != s2[i] {
+			return 1
+		}
+	}
 	return 0
 }
