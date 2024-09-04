@@ -48,9 +48,9 @@ typedef struct
   void *ptr;
 } SliceType;
 
-void *__slice_get_ptr(SliceType s)
+uint8_t *__slice_get_ptr(SliceType *s)
 {
-  return s.ptr;
+  return s->ptr;
 }
 
 void __slice_set_len(SliceType* s, uint32_t len)

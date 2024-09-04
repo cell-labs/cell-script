@@ -1,0 +1,28 @@
+package ckb
+
+import (
+	"blockchain"
+)
+
+func verifyByte32(b blockchain.Byte32) bool {
+	return true
+}
+
+func verifyByte(b blockchain.Byte) bool {
+	return true
+}
+
+func verifyScript(script blockchain.Script, compatible bool) bool {
+	length := uint64(len(script.AsSlice()))
+	if script.TotalSize() != length {
+		return false
+	}
+	filedCnt := uint64(script.FieldCount())
+	if !compatible && filedCnt > 3 {
+		return false
+	}
+	if length / 4 < filedCnt + 1 {
+		return false
+	}
+	return true
+}
