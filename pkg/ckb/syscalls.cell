@@ -55,7 +55,7 @@ func loadScriptHash() blockchain.Byte32 {
 }
 func loadScript() blockchain.Script {
 	data := make([]byte, SIZE_SCRIPT, SIZE_SCRIPT)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_script(ptr, &size, 0)
 	if err != CKB_SUCCESS {

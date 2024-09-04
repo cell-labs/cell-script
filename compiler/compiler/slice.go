@@ -119,7 +119,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 			srcVal = internal.LoadIfVariable(c.contextBlock, src)
 		}
 		if isSliceSlice {
-			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 1)
+			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 0)
 		} else {
 			arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
 			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
@@ -163,8 +163,8 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 	backingArrayItem.SetName(name.Var("backing"))
 
 	itemPtr := src.Value
-	if !isSrcArray && backingArrayItem.Type() != llvmTypes.NewPointer(src.Type.LLVM()) {
-		itemPtr = c.contextBlock.NewBitCast(src.Value, llvmTypes.NewPointer(src.Type.LLVM()))
+	if !isSrcArray {
+		itemPtr = c.contextBlock.NewLoad(llvmTypes.NewPointer(src.Type.LLVM()), backingArrayItem)
 	}
 	c.contextBlock.NewStore(itemPtr, backingArrayItem)
 
