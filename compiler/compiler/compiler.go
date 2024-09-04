@@ -371,6 +371,7 @@ func (c *Compiler) compileValue(node parser.Node) value.Value {
 		}
 
 		if ty, ok := src.Type.(*types.Slice); ok {
+			src.Value = internal.LoadIfVariable(c.contextBlock, src)
 			src.Type = ty.Type
 			return c.compileSliceArray(src, v, true)
 		}
