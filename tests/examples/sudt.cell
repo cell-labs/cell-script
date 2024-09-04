@@ -1,9 +1,12 @@
-import "debug"
-import "tx"
-import "cell"
+import (
+	"debug"
+	"tx"
+	"ckb"
+)
 
 func main() {
-	// tx.scriptVerify()
+	script := ckb.loadScript()
+	// ckb.scriptVerify(script)
 	// isOwnerMode return a bool value:
 	// true - Indicate that the verification was successful and the device owner mode has been successfully set.
 	// false - Means that either the verification process failed or the device owner mode has not been set.

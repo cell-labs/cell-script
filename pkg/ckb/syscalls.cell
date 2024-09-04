@@ -15,6 +15,15 @@ const (
 	SIZE_DATA = 256 * 1024
 )
 
+const (
+	CKB_SOURCE_INPUT = 1
+	CKB_SOURCE_OUTPUT = 2
+	CKB_SOURCE_CELL_DEP = 3
+	CKB_SOURCE_HEADER_DEP = 4
+	CKB_SOURCE_GROUP_INPUT = 72057594037927937 // 0x0100000000000001
+	CKB_SOURCE_GROUP_OUTPUT = 72057594037927938 // 0x0100000000000002
+)
+
 func loadTxHash() blockchain.Byte32 {
 	data := make([]byte, SIZE_H256, SIZE_H256)
 	ptr := __slice_get_ptr(data)
@@ -28,7 +37,7 @@ func loadTxHash() blockchain.Byte32 {
 }
 func loadTx() []byte {
 	data := make([]byte, SIZE_TX, SIZE_TX)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_transaction(ptr, &size, 0)
 	if err != CKB_SUCCESS {
@@ -44,7 +53,7 @@ func loadTx() []byte {
 }
 func loadScriptHash() blockchain.Byte32 {
 	data := make([]byte, SIZE_H256, SIZE_H256)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_script_hash(ptr, &size, 0)
 	if err != CKB_SUCCESS {
@@ -69,7 +78,7 @@ func loadScript() blockchain.Script {
 }
 func loadInput(index uint32, source uint32) []byte {
 	data := make([]byte, SIZE_CELL, SIZE_CELL)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_input(ptr, &size, 0, index, source)
 	if err != CKB_SUCCESS {
@@ -80,7 +89,7 @@ func loadInput(index uint32, source uint32) []byte {
 // header is a sub-structure of block and UncleBlock
 func loadHeader(index uint32, source uint32) []byte {
 	data := make([]byte, SIZE_HEADER, SIZE_HEADER)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_header(ptr, &size, 0, index, source)
 	if err != CKB_SUCCESS {
@@ -92,7 +101,7 @@ func loadHeader(index uint32, source uint32) []byte {
 // func load_witness(addr uintptr, len uint64, offset uint, index uint, source uint) int
 func loadWitness(index uint32, source uint32) []byte {
 	data := make([]byte, SIZE_WITNESS, SIZE_WITNESS)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_witness(ptr, &size, 0, index, source)
 	if err != CKB_SUCCESS {
@@ -104,7 +113,7 @@ func loadWitness(index uint32, source uint32) []byte {
 // func load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
 func loadCellData(index uint32, source uint32) []byte {
 	data := make([]byte, SIZE_DATA, SIZE_DATA)
-	ptr := __slice_get_ptr(data)
+	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
 	err := ckb_load_cell_data(ptr, &size, 0, index, source)
 	if err != CKB_SUCCESS {
@@ -112,6 +121,12 @@ func loadCellData(index uint32, source uint32) []byte {
 	}
 	__slice_set_len(&data, size)
 	return data
+}
+func loadInputCellData(index uint32) []byte {
+	return loadCellData(index, CKB_SOURCE_INPUT)
+}
+func loadOutputCellData(index uint32) []byte {
+	return loadCellData(index, CKB_SOURCE_OUTPUT)
 }
 func VMVersion() uint64 {
 	return ckb_vm_version()

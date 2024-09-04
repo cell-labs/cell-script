@@ -10,10 +10,10 @@ func main() {
 	ckb.loadScript()
 
 	CKB_SOURCE_INPUT := 1
-	ckb.loadInput(0, CKB_SOURCE_INPUT)
-	ckb.loadHeader(0, CKB_SOURCE_INPUT)
-	ckb.loadWitness(0, CKB_SOURCE_INPUT)
-	ckb.loadCellData(0, CKB_SOURCE_INPUT)
+	ckb.loadInput(0, ckb.CKB_SOURCE_INPUT)
+	ckb.loadHeader(0, ckb.CKB_SOURCE_INPUT)
+	ckb.loadWitness(0, ckb.CKB_SOURCE_INPUT)
+	ckb.loadCellData(0, ckb.CKB_SOURCE_INPUT)
 
 	ckb.VMVersion()
 	return 0
