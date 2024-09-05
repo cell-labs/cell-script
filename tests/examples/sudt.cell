@@ -1,38 +1,64 @@
+
 import (
 	"debug"
 	"tx"
 	"ckb"
 )
 
+const (
+	ERROR_SCRIPT_ERROR = 0
+
+)
+
 func main() {
 	script := ckb.loadScript()
-	// ckb.scriptVerify(script)
-	// isOwnerMode return a bool value:
-	// true - Indicate that the verification was successful and the device owner mode has been successfully set.
-	// false - Means that either the verification process failed or the device owner mode has not been set.
-	//         In the case where verification fails, the program should terminate immediately.
-	// For the time being, simply returning 'false' does not adequately convey the distinction between two states.
-	if tx.isOwnerMode() {
+	if !ckb.verifyScript(script) {
+		return ERROR_SCRIPT_ERROR
+	}
+	rawArgs := script.Args().AsSlice()
+	// debug.Printf("%d %d", len(rawArgs), cap(rawArgs))
+	lockInScriptArgs := make(string, rawArgs)
+	for j := 0; j < 32; j++ {
+		debug.Printf("%x %x", lockInScriptArgs[j], rawArgs[j])
+	}
+
+	// check owner mode
+	ownerMode := false
+	numInputCells := ckb.inputCells()
+	if numInputCells == 0 {
+		return 1
+	}
+	debug.Printf("====%d", numInputCells)
+	
+	for i := 0; i < numInputCells; i++ {
+		debug.Printf("=========")
+		cell := ckb.inputCell(i)
+		lock := cell.Lock()
+		codeHash := cell.Lock().CodeHash()
+		lock := make(string, codeHash.AsSlice())
+		if lock == lockInScriptArgs {
+			for j := 0; j < 8; j++ {
+				debug.Printf("%x %x", lock[j], lockInScriptArgs[j])
+			}
+ 			ownerMode = true
+			break
+		}
+	}
+
+	debug.Printf("%d", ownerMode)
+	if ownerMode {
 		return 0
 	}
 
-	in_sum, out_sum := 0, 0
-	ins := tx.inputs()
-	if len(ins) == int32(0) {
-		return 1
-	}
-	for input := range tx.inputs() {
-		in_sum += input
-	}
+	// in_sum, out_sum := 0, 0
+	// for output := range tx.outputs() {
+	// 	out_sum += output
+	// }
 
-	for output := range tx.outputs() {
-		out_sum += output
-	}
-
-	if in_sum < out_sum {
-		debug.Printf("Invalid Amount")
-		return 1
-	}
+	// if in_sum < out_sum {
+	// 	debug.Printf("Invalid Amount")
+	// 	return 1
+	// }
 
 	return 0
 }
