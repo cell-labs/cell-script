@@ -108,6 +108,7 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 
 	startIndexValue := c.compileValue(v.Start)
 	startIndex := internal.LoadIfVariable(c.contextBlock, startIndexValue)
+	offsetBefore := llvmValue.Value(constant.NewInt(llvmTypes.I32, 0))
 	var endIndexValue value.Value
 	if v.HasEnd {
 		endIndexValue = c.compileValue(v.End)
@@ -115,15 +116,20 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 		srcVal := src.Value
 		if isSliceSlice {
 			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 0)
+			offsetBefore = c.contextBlock.NewExtractValue(srcVal, 2)
 		} else {
 			arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
 			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
 		}
 	}
-	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
 	if startIndex.Type() != llvmTypes.I64 {
 		startIndex = c.contextBlock.NewZExt(startIndex, i64.LLVM())
 	}
+	if offsetBefore.Type() != llvmTypes.I64 {
+		offsetBefore = c.contextBlock.NewZExt(offsetBefore, i64.LLVM())
+	}
+	startIndex = c.contextBlock.NewAdd(startIndex, offsetBefore)
+	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
 	if endIndex.Type() != llvmTypes.I64 {
 		endIndex = c.contextBlock.NewZExt(endIndex, i64.LLVM())
 	}
