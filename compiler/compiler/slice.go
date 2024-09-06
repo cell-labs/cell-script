@@ -99,28 +99,13 @@ func (c *Compiler) compileSubstring(src value.Value, v *parser.SliceArrayNode) v
 
 func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, isSliceSlice bool) value.Value {
 	sliceType := internal.Slice(src.Type.LLVM())
-	// array pointer as receiver, do nothing
-	// type B [1]byte
-	// func (b *B) foo() {}
-	_, isSrcArray := src.Value.Type().(*llvmTypes.ArrayType)
-
 	alloc := c.contextBlock.NewAlloca(sliceType)
-
+	// actual start index = old offset + new start index
 	startIndexValue := c.compileValue(v.Start)
 	startIndex := internal.LoadIfVariable(c.contextBlock, startIndexValue)
 	offsetBefore := llvmValue.Value(constant.NewInt(llvmTypes.I32, 0))
-	var endIndexValue value.Value
-	if v.HasEnd {
-		endIndexValue = c.compileValue(v.End)
-	} else {
-		srcVal := src.Value
-		if isSliceSlice {
-			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 0)
-			offsetBefore = c.contextBlock.NewExtractValue(srcVal, 2)
-		} else {
-			arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
-			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
-		}
+	if isSliceSlice {
+		offsetBefore = c.contextBlock.NewExtractValue(src.Value, 2)
 	}
 	if startIndex.Type() != llvmTypes.I64 {
 		startIndex = c.contextBlock.NewZExt(startIndex, i64.LLVM())
@@ -129,10 +114,24 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 		offsetBefore = c.contextBlock.NewZExt(offsetBefore, i64.LLVM())
 	}
 	startIndex = c.contextBlock.NewAdd(startIndex, offsetBefore)
+	// end index
+	var endIndexValue value.Value
+	if v.HasEnd {
+		endIndexValue = c.compileValue(v.End)
+	} else {
+		srcVal := src.Value
+		if isSliceSlice {
+			endIndexValue.Value = c.contextBlock.NewExtractValue(srcVal, 0)
+		} else {
+			arrTy := src.Type.LLVM().(*llvmTypes.ArrayType)
+			endIndexValue.Value = constant.NewInt(llvmTypes.I32, int64(arrTy.Len))
+		}
+	}
 	endIndex := internal.LoadIfVariable(c.contextBlock, endIndexValue)
 	if endIndex.Type() != llvmTypes.I64 {
 		endIndex = c.contextBlock.NewZExt(endIndex, i64.LLVM())
 	}
+	// len
 	sliceLen := c.contextBlock.NewSub(endIndex, startIndex)
 	var sliceLen32 llvmValue.Value
 	sliceLen32 = sliceLen
@@ -171,6 +170,10 @@ func (c *Compiler) compileSliceArray(src value.Value, v *parser.SliceArrayNode, 
 	backingArrayItem.SetName(name.Var("backing"))
 
 	itemPtr := src.Value
+	// array pointer as receiver, do nothing
+	// type B [1]byte
+	// func (b *B) foo() {}
+	_, isSrcArray := src.Value.Type().(*llvmTypes.ArrayType)
 	if !isSrcArray {
 		itemPtr = c.contextBlock.NewExtractValue(src.Value, 3)
 	}

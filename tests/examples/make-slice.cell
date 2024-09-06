@@ -20,5 +20,28 @@ func main() {
 			return 1
 		}
 	}
+	a := []byte{'0','1','2','3','4','5','6','7'}
+	b := a[3:7] // 3 4 5 6
+	okb := []byte{'3', '4', '5', '6'}
+	if len(b) != len(okb) {
+		return 1
+	}
+	for i, v := range b {
+		if v != okb[i] {
+			return 2
+		}
+	}
+	c := b[0:2] // 3 4
+	okc := []byte{'3', '4'}
+	if len(c) != len(okc) {
+		return 3
+	}
+	for i, v := range c {
+		if v != okc[i] {
+			return 4
+		}
+	}
+	debug.Printf("%d%d",b[0], c[0])
+	debug.Printf("%d%d",b[0], c[0])
 	return 0
 }
