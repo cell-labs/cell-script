@@ -18,16 +18,16 @@ func (c *Compiler) compileInitializeStringWithSliceNode(v *parser.InitializeStri
 	srcLen := c.contextBlock.NewExtractValue(srcVal, 0)
 	srcOff := c.contextBlock.NewExtractValue(srcVal, 2)
 	srcArr := c.contextBlock.NewExtractValue(srcVal, 3)
-	srcArrStartPtr := c.contextBlock.NewGetElementPtr(pointer.ElemType(srcArr), srcArr, srcOff)
-	length := c.contextBlock.NewSub(srcLen, srcOff)
+	srcArrStartPtr := c.contextBlock.NewGetElementPtr(llvmTypes.I8, srcArr, srcOff)
 	// create new string
 	var len64 llvmValue.Value
-	len64 = length
-	if length.Type() != llvmTypes.I64 {
-		len64 = c.contextBlock.NewZExt(length, i64.LLVM())
+	len64 = srcLen
+	if srcLen.Type() != llvmTypes.I64 {
+		len64 = c.contextBlock.NewZExt(srcLen, i64.LLVM())
 	}
-	strVal := c.contextBlock.NewCall(c.osFuncs.Strndup.Value.(llvmValue.Named), srcArrStartPtr, len64)
+	// todo: c.contextBlock.NewCall(c.osFuncs.Strndup.Value.(llvmValue.Named), srcArrStartPtr, len64)
 	// construct a new string {i64, i8*}
+	strVal := srcArrStartPtr
 	sType, ok := c.packages["global"].GetPkgType("string", true)
 	if !ok {
 		panic("string type not found")
@@ -37,11 +37,7 @@ func (c *Compiler) compileInitializeStringWithSliceNode(v *parser.InitializeStri
 	// Save length of the string
 	lenItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 0))
 	lenItem.SetName(name.Var("len"))
-	if length.Type() != llvmTypes.I64 {
-		c.contextBlock.NewStore(c.contextBlock.NewZExt(length, i64.LLVM()), lenItem)
-	} else {
-		c.contextBlock.NewStore(length, lenItem)
-	}
+	c.contextBlock.NewStore(len64, lenItem)
 
 	// Save i8* version of string
 	strItem := c.contextBlock.NewGetElementPtr(pointer.ElemType(alloc), alloc, constant.NewInt(llvmTypes.I32, 0), constant.NewInt(llvmTypes.I32, 1))
