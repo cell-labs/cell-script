@@ -95,7 +95,7 @@ install:
 
 	@echo " ${>>>} manually run following command ${<<<} "
 	@echo "source ./install.sh"
-test: unittest test/example
+test: unittest test/example test/sudt
 unittest:
 	@echo "unit test"
 	go mod tidy
