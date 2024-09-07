@@ -48,14 +48,14 @@ typedef struct
   void *ptr;
 } SliceType;
 
-uint8_t *__slice_get_ptr(SliceType *s)
+uint8_t *__slice_get_ptr(uint8_t *s)
 {
-  return s->ptr;
+  return ((SliceType*)s)->ptr;
 }
 
-void __slice_set_len(SliceType* s, uint32_t len)
+void __slice_set_len(uint8_t* s, uint32_t len)
 {
-  s->len = len;
+  ((SliceType*)s)->len = len;
 }
 
 bool script_verify()
