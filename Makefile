@@ -124,6 +124,8 @@ test/example:
 	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func${exe} | grep "999"
 	${CELL} -d -t riscv tests/examples/method.cell && ckb-debugger --bin method${exe} | grep "100"
 	${CELL} -d -t riscv tests/examples/interface.cell && ckb-debugger --bin interface${exe} | grep "reset00"
+	${CELL} -d -t riscv tests/examples/typecast.cell && ckb-debugger --bin typecast${exe} | grep "128-128"
+
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data${exe}
 	${CELL} -t riscv tests/examples/inputs.cell && ckb-debugger --bin inputs${exe}
 	${CELL} -t riscv tests/examples/outputs.cell && ckb-debugger --bin outputs${exe}

@@ -163,8 +163,13 @@ func (c *Compiler) compileTypeCastNode(v *parser.TypeCastNode) value.Value {
 
 	var changedSize llvmValue.Value
 
+	intTy := targetType.(*types.Int)
 	if current.BitSize < target.BitSize {
-		changedSize = c.contextBlock.NewSExt(llvmVal, target)
+		if intTy.TypeName[0:1] == "u" {
+			changedSize = c.contextBlock.NewZExt(llvmVal, target)
+		} else {
+			changedSize = c.contextBlock.NewSExt(llvmVal, target)
+		}
 	} else {
 		changedSize = c.contextBlock.NewTrunc(llvmVal, target)
 	}

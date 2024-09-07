@@ -1,0 +1,11 @@
+import (
+	"debug"
+)
+
+func main() {
+	a := byte(128)
+	b := uint64(a)
+	c := int64(a)
+	debug.Printf("%d%d", b, c)
+	return 0
+}
