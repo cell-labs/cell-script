@@ -1,15 +1,10 @@
 package ckb
 
-type ByteSlice table {
-	len		uint32
-	cap		uint32
-	offset 	uint32
-	ptr 	*uint8
-}
+type cpointer *uint8
 
 extern (
-	func __slice_get_ptr(s *ByteSlice) *uint8
-	func __slice_set_len(s *ByteSlice, size uint32)
+	func __slice_get_ptr(s cpointer) *uint8
+	func __slice_set_len(s cpointer, size uint32)
 	// reference from ckb_syscall_apis.h
 	func ckb_load_tx_hash(addr *uint8, len *uint64, offset uint) int
 	func ckb_load_transaction(addr *uint8, len *uint64, offset uint) int
