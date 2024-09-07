@@ -32,7 +32,7 @@ func loadTxHash() blockchain.Byte32 {
 	if err != CKB_SUCCESS {
 		return blockchain.Byte32Default()
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return blockchain.Byte32FromSliceUnchecked(data)
 }
 func loadTx() []byte {
@@ -43,7 +43,7 @@ func loadTx() []byte {
 	if err != CKB_SUCCESS {
 		return []byte{}
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	// pack into a transaction
 	// Fileds - RawTx - Tx
 	// builder := blockchain.NewTransactionBuilder()
@@ -59,7 +59,7 @@ func loadScriptHash() blockchain.Byte32 {
 	if err != CKB_SUCCESS {
 		return blockchain.Byte32Default()
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return blockchain.Byte32FromSliceUnchecked(data)
 }
 func loadScript() blockchain.Script {
@@ -73,7 +73,7 @@ func loadScript() blockchain.Script {
 	if size > SIZE_SCRIPT {
 		return blockchain.ScriptDefault()
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return blockchain.ScriptFromSliceUnchecked(data)
 }
 func loadInput(index uint32, source uint32) []byte {
@@ -95,7 +95,7 @@ func loadHeader(index uint32, source uint32) []byte {
 	if err != CKB_SUCCESS {
 		return []byte{}
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return data
 }
 // func load_witness(addr uintptr, len uint64, offset uint, index uint, source uint) int
@@ -107,7 +107,7 @@ func loadWitness(index uint32, source uint32) []byte {
 	if err != CKB_SUCCESS {
 		return []byte{}
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return data
 }
 // func load_cell_data(addr uintptr, len uint64, offset uint, index uint, source uint) int
@@ -119,7 +119,7 @@ func loadCellData(index uint32, source uint32) []byte {
 	if err != CKB_SUCCESS {
 		return []byte{}
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return data
 }
 // load cell data from cells grouped by script
@@ -143,7 +143,7 @@ func inputCell(index uint) blockchain.CellOutput {
 	if err != CKB_SUCCESS {
 		return blockchain.CellOutputDefault()
 	}
-	__slice_set_len(&data, size)
+	__slice_set_len(&data, uint32(size))
 	return blockchain.CellOutputFromSliceUnchecked(data)
 }
 func txInputCells() uint64 {
