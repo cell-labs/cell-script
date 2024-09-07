@@ -222,3 +222,8 @@ func ReadUint64(r io.Reader, order ByteOrder) uint64 {
 	}
 	return order.Uint64(bs)
 }
+
+func ReadUint64FromSlice(slice []byte, order ByteOrder) uint64 {
+	buffer := bytes.NewBuffer(slice)
+	return ReadUint64(buffer, order)
+}

@@ -146,7 +146,7 @@ func inputCell(index uint) blockchain.CellOutput {
 	__slice_set_len(&data, size)
 	return blockchain.CellOutputFromSliceUnchecked(data)
 }
-func inputCells() uint64 {
+func txInputCells() uint64 {
 	for i := 0; i >= 0; i++ {
 		// use nullptr to try load, ckb_load_cell return error if failed
 		nullptr := 0
@@ -158,19 +158,43 @@ func inputCells() uint64 {
 	}
 	return 0
 }
+func txOutputCells() uint64 {
+	for i := 0; i >= 0; i++ {
+		// use nullptr to try load, ckb_load_cell return error if failed
+		nullptr := 0
+		size := SIZE_MAX
+		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_OUTPUT)
+		if err != CKB_SUCCESS {
+			return i
+		}
+	}
+	return 0
+}
+func scriptInputCells() uint64 {
+	for i := 0; i >= 0; i++ {
+		// use nullptr to try load, ckb_load_cell return error if failed
+		nullptr := 0
+		size := SIZE_MAX
+		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_GROUP_INPUT)
+		if err != CKB_SUCCESS {
+			return i
+		}
+	}
+	return 0
+}
+func scriptOutputCells() uint64 {
+	for i := 0; i >= 0; i++ {
+		// use nullptr to try load, ckb_load_cell return error if failed
+		nullptr := 0
+		size := SIZE_MAX
+		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_GROUP_OUTPUT)
+		if err != CKB_SUCCESS {
+			return i
+		}
+	}
+	return 0
+}
 // func load_cell_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
 // func load_header_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
 // func load_input_by_field(addr uintptr, len uint64, offset uint, index uint, source uint, field uint) int
 // func current_cycles() uint64
-
-// func loadInputCellHashes() []blockchain.Byte32 {
-// 	data := make([]byte, SIZE_DATA, SIZE_DATA)
-// 	ptr := __slice_get_ptr(&data)
-// 	size := SIZE_MAX
-// 	err := ckb_load_cell_by_field(ptr, &size, 0, index, source, )
-// 	if err != CKB_SUCCESS {
-// 		return []byte{}
-// 	}
-// 	__slice_set_len(&data, size)
-// 	return data
-// }
