@@ -351,6 +351,11 @@ func (p Pointer) Size() int64 {
 	return 8
 }
 
+func (p Pointer) Zero(block *ir.Block, alloca llvmValue.Value) {
+	i8PtrPtr := block.NewBitCast(alloca, types.NewPointer(types.NewPointer(types.I8)))
+	block.NewStore(constant.NewIntToPtr(constant.NewInt(types.I64, 0), types.NewPointer(types.I8)), i8PtrPtr)
+}
+
 // MultiValue is used when returning multiple values from a function
 type MultiValue struct {
 	backingType

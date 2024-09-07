@@ -148,7 +148,7 @@ func inputCell(index uint64) blockchain.CellOutput {
 func txInputCells() uint64 {
 	for i := 0; i >= 0; i++ {
 		// use nullptr to try load, ckb_load_cell return error if failed
-		nullptr := 0
+		var nullptr *uint8
 		size := SIZE_MAX
 		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_INPUT)
 		if err != CKB_SUCCESS {
@@ -160,7 +160,7 @@ func txInputCells() uint64 {
 func txOutputCells() uint64 {
 	for i := 0; i >= 0; i++ {
 		// use nullptr to try load, ckb_load_cell return error if failed
-		nullptr := 0
+		var nullptr *uint8
 		size := SIZE_MAX
 		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_OUTPUT)
 		if err != CKB_SUCCESS {
@@ -172,7 +172,7 @@ func txOutputCells() uint64 {
 func scriptInputCells() uint64 {
 	for i := 0; i >= 0; i++ {
 		// use nullptr to try load, ckb_load_cell return error if failed
-		nullptr := 0
+		var nullptr *uint8
 		size := SIZE_MAX
 		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_GROUP_INPUT)
 		if err != CKB_SUCCESS {
@@ -184,7 +184,7 @@ func scriptInputCells() uint64 {
 func scriptOutputCells() uint64 {
 	for i := 0; i >= 0; i++ {
 		// use nullptr to try load, ckb_load_cell return error if failed
-		nullptr := 0
+		var nullptr *uint8
 		size := SIZE_MAX
 		err := ckb_load_cell(nullptr, &size, 0, i, CKB_SOURCE_GROUP_OUTPUT)
 		if err != CKB_SUCCESS {
