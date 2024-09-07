@@ -161,6 +161,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		LlvmReturnType: funcRetType,
 		ReturnTypes:    treReturnTypes,
 		IsVariadic:     isVariadicFunc,
+		IsExtern:		v.IsExtern,
 		ArgumentTypes:  treParams,
 	}
 
@@ -482,6 +483,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 			FuncType:       ifaceMethod.LlvmJumpFunction.Type(),
 			ReturnTypes:    ifaceMethod.ReturnTypes,
 			LlvmReturnType: returnType,
+			ArgumentTypes:  ifaceMethod.ArgumentTypes,
 		}
 		fn = ifaceMethod.LlvmJumpFunction
 	} else {
@@ -538,7 +540,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		val := internal.LoadIfVariable(c.contextBlock, v)
 
 		// Convert strings and arrays to i8* when calling external functions
-		if fnType.IsExternal {
+		if fnType.IsBuiltin {
 			if v.Type.Name() == "string" {
 				llvmArgs[i] = c.contextBlock.NewExtractValue(val, 1)
 				continue
@@ -549,6 +551,17 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 				continue
 			}
 		}
+		if fnType.IsExtern {
+			// Convert pointer to target type as needed
+			if len(fnType.ArgumentTypes) > 0 {
+				if _, isPointer := v.Type.(*types.Pointer); isPointer {
+					if arg := fnType.ArgumentTypes[i]; arg != v.Type {
+						val = c.contextBlock.NewBitCast(val, arg.LLVM())
+					}
+				}
+			}
+		}
+
 
 		llvmArgs[i] = val
 	}

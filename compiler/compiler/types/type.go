@@ -125,8 +125,9 @@ type Function struct {
 	ReturnTypes []Type
 
 	IsVariadic    bool
+	IsExtern 	  bool
 	ArgumentTypes []Type
-	IsExternal    bool
+	IsBuiltin    bool
 
 	// Is used when calling an interface method
 	JumpFunction *ir.Func

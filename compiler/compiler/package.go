@@ -31,7 +31,7 @@ func (p *pkg) setExternal(internalName string, fn *ir.Func, variadic bool) value
 		Type: &types.Function{
 			LlvmReturnType: types.Void,
 			FuncType:       fn.Type(),
-			IsExternal:     true,
+			IsBuiltin:     true,
 		},
 		Value: fn,
 	}
