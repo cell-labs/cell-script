@@ -76,7 +76,7 @@ func loadScript() blockchain.Script {
 	__slice_set_len(&data, uint32(size))
 	return blockchain.ScriptFromSliceUnchecked(data)
 }
-func loadInput(index uint32, source uint32) []byte {
+func loadInput(index uint64, source uint64) []byte {
 	data := make([]byte, SIZE_CELL, SIZE_CELL)
 	ptr := __slice_get_ptr(&data)
 	size := SIZE_MAX
