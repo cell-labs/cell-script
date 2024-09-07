@@ -16,36 +16,26 @@ func main() {
 		return ERROR_SCRIPT_ERROR
 	}
 	rawArgs := script.Args().AsSlice()
-	// debug.Printf("%d %d", len(rawArgs), cap(rawArgs))
 	lockInScriptArgs := make(string, rawArgs)
-	for j := 0; j < 32; j++ {
-		debug.Printf("%x %x", lockInScriptArgs[j], rawArgs[j])
-	}
 
 	// check owner mode
 	ownerMode := false
 	numInputCells := ckb.inputCells()
+	// at least one input
 	if numInputCells == 0 {
 		return 1
 	}
-	debug.Printf("====%d", numInputCells)
-	
 	for i := 0; i < numInputCells; i++ {
-		debug.Printf("=========")
 		cell := ckb.inputCell(i)
 		lock := cell.Lock()
 		codeHash := cell.Lock().CodeHash()
 		lock := make(string, codeHash.AsSlice())
 		if lock == lockInScriptArgs {
-			for j := 0; j < 8; j++ {
-				debug.Printf("%x %x", lock[j], lockInScriptArgs[j])
-			}
  			ownerMode = true
 			break
 		}
 	}
 
-	debug.Printf("%d", ownerMode)
 	if ownerMode {
 		return 0
 	}

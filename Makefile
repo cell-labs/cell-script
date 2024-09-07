@@ -139,6 +139,11 @@ test/example:
 	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test${exe}
 	${CELL} -t riscv tests/stdlib/ckb-test.cell && ckb-debugger --bin ckb-test${exe}
 
+test/sudt:
+	${CELL} -t riscv tests/examples/sudt.cell && \
+		ckb-debugger --bin sudt${exe} --tx-file tests/sudt/dump.json --script-group-type type \
+		--cell-index 0 --cell-type input
+
 test/cross:
 	@echo " ${>>>} test cross compiling ${<<<} "
 	@echo cross hi.ll with linking dummy.c
