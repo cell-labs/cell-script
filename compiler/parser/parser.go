@@ -98,10 +98,35 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		if err != nil {
 			panic(err)
 		}
+		next := p.lookAhead(1)
+		var ty TypeNode
+		if next.Type == lexer.IDENTIFIER {
+			switch next.Val {
+			case "u8":
+				ty = &SingleTypeNode{SourceName: "uint8", TypeName: "uint8"}
+				p.i++
+			case "u16":
+				ty = &SingleTypeNode{SourceName: "uint16", TypeName: "uint16"}
+				p.i++
+			case "u32":
+				ty = &SingleTypeNode{SourceName: "uint32", TypeName: "uint32"}
+				p.i++
+			case "u64":
+				ty = &SingleTypeNode{SourceName: "uint64", TypeName: "uint64"}
+				p.i++
+			case "u128":
+				ty = &SingleTypeNode{SourceName: "uint128", TypeName: "uint128"}
+				p.i++
+			case "u256":
+				ty = &SingleTypeNode{SourceName: "uint256", TypeName: "uint256"}
+				p.i++
+			}
+		}
 
 		res = &ConstantNode{
-			Type:  NUMBER,
-			Value: val,
+			Type:       NUMBER,
+			TargetType: ty,
+			Value:      val,
 		}
 		if withAheadParse {
 			res = p.aheadParse(res)

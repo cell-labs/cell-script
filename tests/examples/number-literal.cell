@@ -1,0 +1,31 @@
+import (
+	"debug"
+)
+
+func main() {
+	a := 100u8
+	b := 200u16
+	c := 300u32
+	d := 400u64
+	e := 500u128
+	f := 600u256
+	if a != uint8(100) {
+		return 1
+	}
+	if b != uint16(200) {
+		return 2
+	}
+	if c != uint32(300) {
+		return 3
+	}
+	if d != uint64(400) {
+		return 4
+	}
+	if e != uint128(500) {
+		return 5
+	}
+	if f != uint256(600) {
+		return 6
+	}
+	return 0
+}
