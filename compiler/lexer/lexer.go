@@ -11,6 +11,7 @@ const (
 	IDENTIFIER lexType = iota
 	KEYWORD
 	NUMBER
+	HEX
 	STRING
 	BYTE
 	OPERATOR
@@ -238,8 +239,29 @@ func Lex(inputFullSource string) []Item {
 			// NUMBER
 			// 0-9
 			lexNumber := func() bool {
+				isHex := false
+				if i + 1 < len(input) {
+					if input[i] == '0' && input[i+1] == 'x' {
+						isHex = true
+						i += 2
+					}
+				}
 				if i >= len(input) {
 					return false
+				}
+				if isHex {
+					if (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'a' && input[i] <= 'f') || (input[i] >= 'A' && input[i] <= 'F') {
+						val := ""
+						for (input[i] >= '0' && input[i] <= '9') || (input[i] >= 'a' && input[i] <= 'f') || (input[i] >= 'A' && input[i] <= 'F') {
+							val += string(input[i])
+							i++
+							if i >= len(input) {
+								break
+							}
+						}
+						res = append(res, Item{Type: HEX, Val: val, Line: line})
+						return true
+					}
 				}
 				if input[i] >= '0' && input[i] <= '9' {
 					val := ""

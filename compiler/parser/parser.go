@@ -63,6 +63,33 @@ func (p *parser) parseOne(withAheadParse bool) (res Node) {
 	return p.parseOneWithOptions(withAheadParse, withAheadParse, withAheadParse)
 }
 
+func (p *parser) parseNumberSuffix() (ty TypeNode) {
+	next := p.lookAhead(1)
+	if next.Type == lexer.IDENTIFIER {
+		switch next.Val {
+		case "u8":
+			ty = &SingleTypeNode{SourceName: "uint8", TypeName: "uint8"}
+			p.i++
+		case "u16":
+			ty = &SingleTypeNode{SourceName: "uint16", TypeName: "uint16"}
+			p.i++
+		case "u32":
+			ty = &SingleTypeNode{SourceName: "uint32", TypeName: "uint32"}
+			p.i++
+		case "u64":
+			ty = &SingleTypeNode{SourceName: "uint64", TypeName: "uint64"}
+			p.i++
+		case "u128":
+			ty = &SingleTypeNode{SourceName: "uint128", TypeName: "uint128"}
+			p.i++
+		case "u256":
+			ty = &SingleTypeNode{SourceName: "uint256", TypeName: "uint256"}
+			p.i++
+		}
+	}
+	return
+}
+
 func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentifierAhead bool) (res Node) {
 	current := p.input[p.i]
 
@@ -91,6 +118,24 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		}
 		return
 
+
+	// HEX always returns a ConstantNode
+	// Convert string hex representation to int64
+	case lexer.HEX:
+		val, err := strconv.ParseInt(current.Val, 16, 64)
+		if err != nil {
+			panic(err)
+		}
+		res = &ConstantNode{
+			Type:       NUMBER,
+			TargetType: p.parseNumberSuffix(),
+			Value:      val,
+		}
+		if withAheadParse {
+			res = p.aheadParse(res)
+		}
+		return
+
 	// NUMBER always returns a ConstantNode
 	// Convert string representation to int64
 	case lexer.NUMBER:
@@ -98,34 +143,10 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 		if err != nil {
 			panic(err)
 		}
-		next := p.lookAhead(1)
-		var ty TypeNode
-		if next.Type == lexer.IDENTIFIER {
-			switch next.Val {
-			case "u8":
-				ty = &SingleTypeNode{SourceName: "uint8", TypeName: "uint8"}
-				p.i++
-			case "u16":
-				ty = &SingleTypeNode{SourceName: "uint16", TypeName: "uint16"}
-				p.i++
-			case "u32":
-				ty = &SingleTypeNode{SourceName: "uint32", TypeName: "uint32"}
-				p.i++
-			case "u64":
-				ty = &SingleTypeNode{SourceName: "uint64", TypeName: "uint64"}
-				p.i++
-			case "u128":
-				ty = &SingleTypeNode{SourceName: "uint128", TypeName: "uint128"}
-				p.i++
-			case "u256":
-				ty = &SingleTypeNode{SourceName: "uint256", TypeName: "uint256"}
-				p.i++
-			}
-		}
 
 		res = &ConstantNode{
 			Type:       NUMBER,
-			TargetType: ty,
+			TargetType: p.parseNumberSuffix(),
 			Value:      val,
 		}
 		if withAheadParse {

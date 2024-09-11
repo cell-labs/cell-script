@@ -27,5 +27,10 @@ func main() {
 	if f != uint256(600) {
 		return 6
 	}
+
+	aa := 0xffffu32
+	if aa != uint32(65535) {
+		return 11
+	}
 	return 0
 }
