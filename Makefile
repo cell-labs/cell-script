@@ -120,6 +120,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/if-cond.cell && ckb-debugger --bin if-cond${exe} | grep "100:0:ss"
 	${CELL} -d -t riscv tests/examples/switch.cell && ckb-debugger --bin switch${exe} | grep "five"
 	${CELL} -d -t riscv tests/examples/number-literal.cell && ckb-debugger --bin number-literal${exe}
+	${CELL} -d -t riscv tests/examples/to-string.cell && ckb-debugger --bin to-string${exe}
 	${CELL} -d -t riscv tests/examples/return.cell && ckb-debugger --bin return${exe}
 	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type${exe} | grep "0"
 	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func${exe} | grep "999"

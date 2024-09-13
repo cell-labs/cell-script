@@ -17,3 +17,38 @@ func (e *error) NotNone() bool {
 	return !e.none
 }
 
+type uint256 uint256
+type uint128 uint128
+
+func (x uint256) toString() string {
+	digits := []uint8{}
+	for i := x; i > 0u256; i /= 10u256 {
+		mod := byte(i % 10u256)
+		digits = append(digits, mod + '0')
+	}
+	length := uint64(len(digits))
+	digits = append(digits, byte(0))
+	str := make(string, digits[0:length])
+	for i := 0; i < length - length / 2; i++ {
+		v := str[i]
+		str[i] = str[length - 1 - i]
+		str[length - 1 - i] = v
+	}
+	return str
+}
+
+func (x uint128) toString() string {
+	digits := []uint8{}
+	for i := x; i > 0u128; i /= 10u128 {
+		mod := byte(i % 10u128)
+		digits = append(digits, mod + '0')
+	}
+	str := make(string, digits)
+	length := len(str)
+	for i := 0; i < length - length / 2; i++ {
+		v := str[i]
+		str[i] = str[length - 1 - i]
+		str[length - 1 - i] = v
+	}
+	return str
+}

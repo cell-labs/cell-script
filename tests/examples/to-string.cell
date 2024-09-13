@@ -1,0 +1,12 @@
+
+func main() {
+	str := 100348u256.toString()
+	if str != "100348" {
+		return 1
+	}
+	str = 1003249u128.toString()
+	if str != "1003249" {
+		return 2
+	}
+	return 0
+}
