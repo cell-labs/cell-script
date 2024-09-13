@@ -1,0 +1,99 @@
+package math
+
+type uint8 uint8
+type uint16 uint16
+type uint32 uint32
+type uint64 uint64
+type uint128 uint128
+type uint256 uint256
+
+// x ** y
+func (x uint8) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}
+
+func (x uint16) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}
+
+func (x uint32) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}
+
+func (x uint64) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}
+
+func (x uint128) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}
+
+func (x uint256) pow(y uint64) uint256 {
+	if y == 0 {
+		return 1u256
+	}
+	ret := uint256(x)
+	for i := 1; i < y; i += 2 {
+		ret *= ret
+	}
+	mod := y % 2
+	if mod == 1 {
+		ret *= uint256(x)
+	}
+	return ret
+}

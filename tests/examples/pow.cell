@@ -1,0 +1,55 @@
+import (
+	"math"
+)
+
+func u8() {
+	a := 10u8.pow(3)
+	if a != 1000u256 {
+		panic("error")
+	}
+}
+
+func u16() {
+	a := 10u16.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
+}
+
+func u32() {
+	a := 10u32.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
+}
+
+func u64() {
+	a := 10u64.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
+}
+
+func u128() {
+	a := 10u128.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
+}
+
+func u256() {
+	a := 10u256.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
+}
+
+func main() {
+	u8()
+	u16()
+	u32()
+	u64()
+	u128()
+	u256()
+	return 0
+}
