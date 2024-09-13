@@ -122,32 +122,37 @@ func (p *parser) parseOneWithOptions(withAheadParse, withArithAhead, withIdentif
 	// HEX always returns a ConstantNode
 	// Convert string hex representation to int64
 	case lexer.HEX:
-		val, err := strconv.ParseInt(current.Val, 16, 64)
-		if err != nil {
-			panic(err)
-		}
-		res = &ConstantNode{
-			Type:       NUMBER,
-			TargetType: p.parseNumberSuffix(),
-			Value:      val,
-		}
-		if withAheadParse {
-			res = p.aheadParse(res)
-		}
-		return
-
+		fallthrough
 	// NUMBER always returns a ConstantNode
 	// Convert string representation to int64
 	case lexer.NUMBER:
-		val, err := strconv.ParseInt(current.Val, 10, 64)
-		if err != nil {
-			panic(err)
+		base := 10
+		if current.Type == lexer.HEX {
+			base = 16
+		}
+		targetTy := p.parseNumberSuffix()
+		var val int64
+		valStr := ""
+		if targetTy != nil && (targetTy.GetName() == "uint128" || targetTy.GetName() == "uint256") {
+			valStr = current.Val
+			// try to parse integer as 64-bit integer, set ValStr only if failed
+			tmpVal, err := strconv.ParseInt(current.Val, base, 64)
+			if err == nil {
+				val = tmpVal
+			}
+		} else {
+			tmpVal, err := strconv.ParseInt(current.Val, base, 64)
+			if err != nil {
+				panic(err)
+			}
+			val = tmpVal
 		}
 
 		res = &ConstantNode{
 			Type:       NUMBER,
-			TargetType: p.parseNumberSuffix(),
+			TargetType: targetTy,
 			Value:      val,
+			ValueStr:   valStr, 
 		}
 		if withAheadParse {
 			res = p.aheadParse(res)
