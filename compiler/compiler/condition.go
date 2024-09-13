@@ -107,17 +107,14 @@ func (c *Compiler) compileOperatorNode(v *parser.OperatorNode) value.Value {
 			}
 		}
 		if v.Operator == parser.OP_EQ || v.Operator == parser.OP_NEQ {
-			strcmpRet := int64(0)
-			if v.Operator == parser.OP_NEQ {
-				strcmpRet = 1
-			}
 			leftPtr := c.contextBlock.NewExtractValue(leftLLVM, 1)
 			rightPtr := c.contextBlock.NewExtractValue(rightLLVM, 1)
 			// Compare two strings
 			cmpRet := c.contextBlock.NewCall(c.osFuncs.Strcmp.Value.(llvmValue.Named), leftPtr, rightPtr)
+			strcmpRet :=  c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator, i64.IsSigned()), cmpRet, constant.NewInt(llvmTypes.I64, 0))
 
 			return value.Value{
-				Value:      c.contextBlock.NewICmp(getConditionLLVMpred(v.Operator, i64.IsSigned()), cmpRet, constant.NewInt(llvmTypes.I64, strcmpRet)),
+				Value:      strcmpRet,
 				Type:       types.Bool,
 				IsVariable: false,
 			}
