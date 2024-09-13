@@ -11,6 +11,8 @@ type ByteOrder interface {
 	Uint16([]byte) uint16
 	Uint32([]byte) uint32
 	Uint64([]byte) uint64
+	Uint128([]byte) uint128
+	Uint256([]byte) uint256
 	PutUint16([]byte, uint16)
 	PutUint32([]byte, uint32)
 	PutUint64([]byte, uint64)
@@ -76,6 +78,63 @@ func (le littleEndian) Uint64(b []byte) uint64 {
 	ret = ret | uint64(b[5])<<40
 	ret = ret | uint64(b[6])<<48
 	ret = ret | uint64(b[7])<<56
+	return ret
+}
+
+func (le littleEndian) Uint128(b []byte) uint128 {
+	ret := uint128(b[0])
+	ret = ret | uint128(b[1])<<uint128(8)
+	ret = ret | uint128(b[2])<<uint128(16)
+	ret = ret | uint128(b[3])<<uint128(24)
+	ret = ret | uint128(b[4])<<uint128(32)
+	ret = ret | uint128(b[5])<<uint128(40)
+	ret = ret | uint128(b[6])<<uint128(48)
+	ret = ret | uint128(b[7])<<uint128(56)
+	ret = ret | uint128(b[8])<<uint128(64)
+	ret = ret | uint128(b[9])<<uint128(72)
+	ret = ret | uint128(b[10])<<uint128(80)
+	ret = ret | uint128(b[11])<<uint128(88)
+	ret = ret | uint128(b[12])<<uint128(96)
+	ret = ret | uint128(b[13])<<uint128(104)
+	ret = ret | uint128(b[14])<<uint128(112)
+	ret = ret | uint128(b[15])<<uint128(120)
+	return ret
+}
+
+
+func (le littleEndian) Uint256(b []byte) uint256 {
+	ret := uint256(b[0])
+	ret = ret | uint256(b[1])<<uint256(8)
+	ret = ret | uint256(b[2])<<uint256(16)
+	ret = ret | uint256(b[3])<<uint256(24)
+	ret = ret | uint256(b[4])<<uint256(32)
+	ret = ret | uint256(b[5])<<uint256(40)
+	ret = ret | uint256(b[6])<<uint256(48)
+	ret = ret | uint256(b[7])<<uint256(56)
+	ret = ret | uint256(b[8])<<uint256(64)
+	ret = ret | uint256(b[9])<<uint256(72)
+	ret = ret | uint256(b[10])<<uint256(80)
+	ret = ret | uint256(b[11])<<uint256(88)
+	ret = ret | uint256(b[12])<<uint256(96)
+	ret = ret | uint256(b[13])<<uint256(104)
+	ret = ret | uint256(b[14])<<uint256(112)
+	ret = ret | uint256(b[15])<<uint256(120)
+	ret = ret | uint256(b[16])<<uint256(128)
+	ret = ret | uint256(b[17])<<uint256(136)
+	ret = ret | uint256(b[18])<<uint256(144)
+	ret = ret | uint256(b[19])<<uint256(152)
+	ret = ret | uint256(b[20])<<uint256(160)
+	ret = ret | uint256(b[21])<<uint256(168)
+	ret = ret | uint256(b[22])<<uint256(176)
+	ret = ret | uint256(b[23])<<uint256(184)
+	ret = ret | uint256(b[24])<<uint256(192)
+	ret = ret | uint256(b[25])<<uint256(200)
+	ret = ret | uint256(b[26])<<uint256(208)
+	ret = ret | uint256(b[27])<<uint256(216)
+	ret = ret | uint256(b[28])<<uint256(224)
+	ret = ret | uint256(b[29])<<uint256(232)
+	ret = ret | uint256(b[30])<<uint256(240)
+	ret = ret | uint256(b[31])<<uint256(248)
 	return ret
 }
 
@@ -159,6 +218,63 @@ func (be bigEndian) Uint64(b []byte) uint64 {
 	return ret
 }
 
+func (be bigEndian) Uint128(b []byte) uint128 {
+	ret := uint128(b[15])
+	ret = ret | uint128(b[14])<<uint128(8)
+	ret = ret | uint128(b[13])<<uint128(16)
+	ret = ret | uint128(b[12])<<uint128(24)
+	ret = ret | uint128(b[11])<<uint128(32)
+	ret = ret | uint128(b[10])<<uint128(40)
+	ret = ret | uint128(b[9])<<uint128(48)
+	ret = ret | uint128(b[8])<<uint128(56)
+	ret = ret | uint128(b[7])<<uint128(64)
+	ret = ret | uint128(b[6])<<uint128(72)
+	ret = ret | uint128(b[5])<<uint128(80)
+	ret = ret | uint128(b[4])<<uint128(88)
+	ret = ret | uint128(b[3])<<uint128(96)
+	ret = ret | uint128(b[2])<<uint128(104)
+	ret = ret | uint128(b[1])<<uint128(112)
+	ret = ret | uint128(b[0])<<uint128(120)
+	return ret
+}
+
+
+func (be bigEndian) Uint256(b []byte) uint256 {
+	ret := uint256(b[31])
+	ret = ret | uint256(b[30])<<uint256(8)
+	ret = ret | uint256(b[29])<<uint256(16)
+	ret = ret | uint256(b[28])<<uint256(24)
+	ret = ret | uint256(b[27])<<uint256(32)
+	ret = ret | uint256(b[26])<<uint256(40)
+	ret = ret | uint256(b[25])<<uint256(48)
+	ret = ret | uint256(b[24])<<uint256(56)
+	ret = ret | uint256(b[23])<<uint256(64)
+	ret = ret | uint256(b[22])<<uint256(72)
+	ret = ret | uint256(b[21])<<uint256(80)
+	ret = ret | uint256(b[20])<<uint256(88)
+	ret = ret | uint256(b[19])<<uint256(96)
+	ret = ret | uint256(b[18])<<uint256(104)
+	ret = ret | uint256(b[17])<<uint256(112)
+	ret = ret | uint256(b[16])<<uint256(120)
+	ret = ret | uint256(b[15])<<uint256(128)
+	ret = ret | uint256(b[14])<<uint256(136)
+	ret = ret | uint256(b[13])<<uint256(144)
+	ret = ret | uint256(b[12])<<uint256(152)
+	ret = ret | uint256(b[11])<<uint256(160)
+	ret = ret | uint256(b[10])<<uint256(168)
+	ret = ret | uint256(b[9])<<uint256(176)
+	ret = ret | uint256(b[8])<<uint256(184)
+	ret = ret | uint256(b[7])<<uint256(192)
+	ret = ret | uint256(b[6])<<uint256(200)
+	ret = ret | uint256(b[5])<<uint256(208)
+	ret = ret | uint256(b[4])<<uint256(216)
+	ret = ret | uint256(b[3])<<uint256(224)
+	ret = ret | uint256(b[2])<<uint256(232)
+	ret = ret | uint256(b[1])<<uint256(240)
+	ret = ret | uint256(b[0])<<uint256(248)
+	return ret
+}
+
 func (be bigEndian) PutUint64(b []byte, v uint64) {
 	b[0] = byte(v >> uint64(56))
 	b[1] = byte(v >> uint64(48))
@@ -213,9 +329,6 @@ func ReadUint32(r io.Reader, order ByteOrder) uint32 {
 
 func ReadUint64(r io.Reader, order ByteOrder) uint64 {
 	bs := make([]byte, 8)
-	for i, v := range bs {
-		debug.Printf("bs i %x", v)
-	}
 	n, err := io.ReadFull(r, bs)
 	if err.NotNone() {
 		return 0
@@ -226,4 +339,32 @@ func ReadUint64(r io.Reader, order ByteOrder) uint64 {
 func ReadUint64FromSlice(slice []byte, order ByteOrder) uint64 {
 	buffer := bytes.NewBuffer(slice)
 	return ReadUint64(buffer, order)
+}
+
+func ReadUint128(r io.Reader, order ByteOrder) uint128 {
+	bs := make([]byte, 16)
+	n, err := io.ReadFull(r, bs)
+	if err.NotNone() {
+		return uint128(0)
+	}
+	return order.Uint128(bs)
+}
+
+func ReadUint128FromSlice(slice []byte, order ByteOrder) uint128 {
+	buffer := bytes.NewBuffer(slice)
+	return ReadUint128(buffer, order)
+}
+
+func ReadUint256(r io.Reader, order ByteOrder) uint256 {
+	bs := make([]byte, 32)
+	n, err := io.ReadFull(r, bs)
+	if err.NotNone() {
+		return uint256(0)
+	}
+	return order.Uint256(bs)
+}
+
+func ReadUint256FromSlice(slice []byte, order ByteOrder) uint256 {
+	buffer := bytes.NewBuffer(slice)
+	return ReadUint256(buffer, order)
 }
