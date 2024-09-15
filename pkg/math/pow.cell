@@ -8,92 +8,44 @@ type uint128 uint128
 type uint256 uint256
 
 // x ** y
-func (x uint8) pow(y uint64) uint256 {
+//
+func fastPower(x uint256, y uint64) uint256 {
 	if y == 0 {
 		return 1u256
 	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
+	ret := 1u256
+	base := uint256(x)
+	for i, power := 1, y; power > 0; i++ {
+		isOdd := power % 2
+		if isOdd == 1 {
+			ret *= base
+		}
+		base *= base
+		power /= 2
 	}
 	return ret
+}
+
+func (x uint8) pow(y uint64) uint256 {
+	return fastPower(uint256(x), y)
 }
 
 func (x uint16) pow(y uint64) uint256 {
-	if y == 0 {
-		return 1u256
-	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
-	}
-	return ret
+	return fastPower(uint256(x), y)
 }
 
 func (x uint32) pow(y uint64) uint256 {
-	if y == 0 {
-		return 1u256
-	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
-	}
-	return ret
+	return fastPower(uint256(x), y)
 }
 
 func (x uint64) pow(y uint64) uint256 {
-	if y == 0 {
-		return 1u256
-	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
-	}
-	return ret
+	return fastPower(uint256(x), y)
 }
 
 func (x uint128) pow(y uint64) uint256 {
-	if y == 0 {
-		return 1u256
-	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
-	}
-	return ret
+	return fastPower(uint256(x), y)
 }
 
 func (x uint256) pow(y uint64) uint256 {
-	if y == 0 {
-		return 1u256
-	}
-	ret := uint256(x)
-	for i := 1; i < y; i += 2 {
-		ret *= ret
-	}
-	mod := y % 2
-	if mod == 1 {
-		ret *= uint256(x)
-	}
-	return ret
+	return fastPower(uint256(x), y)
 }

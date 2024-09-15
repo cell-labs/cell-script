@@ -1,0 +1,20 @@
+import (
+	"debug"
+	"math"
+)
+
+func main() {
+
+	b := 4u8.pow(3)
+	debug.Printf("b = %s", b.toString())
+	c := 5u16.pow(uint64(b))
+	debug.Printf("c = %s", c.toString())
+
+	d := 1234567890123456789u256 // todo: literal exceed uint64
+	debug.Printf("d = %s", d.toString())
+	
+	if c.toString() == "542101086242752217003726400434970855712890625" {
+		return 0
+	}
+	return 1
+}
