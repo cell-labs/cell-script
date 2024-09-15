@@ -32,9 +32,9 @@ jobs:
         version: 1.0
 
     - name: Install llvm
-      uses: FreeMasen/llvm-install-action@v1.0.0
+      uses: ZhongRuoyu/setup-llvm@v0.1.1
       with:
-        version: 18
+        llvm-version: 18
 
     # - name: Install LLVM
     #   run: |
