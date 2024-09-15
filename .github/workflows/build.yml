@@ -28,14 +28,13 @@ jobs:
     - name: Install basic packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: antlr4 openjdk-21-jdk clang
+        packages: antlr4 openjdk-21-jdk
         version: 1.0
 
     - name: Install llvm
-      uses: awalsh128/cache-apt-pkgs-action@latest
+      uses: FreeMasen/llvm-install-action@v1.0.0
       with:
-        packages: llvm=18.0 lld
-        version: 1.0
+        version: 18
 
     # - name: Install LLVM
     #   run: |
