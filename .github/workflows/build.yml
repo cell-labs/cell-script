@@ -34,7 +34,7 @@ jobs:
     - name: Install llvm
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: llvm lld
+        packages: llvm=18.0 lld
         version: 1.0
 
     # - name: Install LLVM
