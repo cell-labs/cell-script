@@ -28,6 +28,10 @@ func u64() {
 	if a != 100u256 {
 		panic("error")
 	}
+	a = 10.pow(2)
+	if a != 100u256 {
+		panic("error")
+	}
 }
 
 func u128() {

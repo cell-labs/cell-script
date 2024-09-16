@@ -278,15 +278,19 @@ func Lex(inputFullSource string) []Item {
 				if i >= len(input) || input[i] != '.' {
 					continue
 				}
-				i++
-				lexNumber()
+				// VERSION: NUMBER.NUMBER.NUMBER
+				i++ // skip over "."
+				isNumber := lexNumber()
+				if !isNumber {
+					i--
+					continue
+				}
 				if i >= len(input) || input[i] != '.' {
 					continue
 				}
-				i++
-				// VERSION: NUMBER.NUMBER.NUMBER
-				succ = lexNumber()
-				if !succ {
+				i++ // skip over "."
+				isNumber = lexNumber()
+				if !isNumber {
 					panic("Unexpected char in Lexer: " + string(input[i]))
 				}
 				continue

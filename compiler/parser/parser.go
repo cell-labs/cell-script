@@ -86,6 +86,8 @@ func (p *parser) parseNumberSuffix() (ty TypeNode) {
 			ty = &SingleTypeNode{SourceName: "uint256", TypeName: "uint256"}
 			p.i++
 		}
+	} else {
+		ty = &SingleTypeNode{SourceName: "uint64", TypeName: "uint64"}
 	}
 	return
 }
