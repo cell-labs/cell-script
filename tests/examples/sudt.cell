@@ -42,17 +42,17 @@ func main() {
 	// sudt cell
 	// data: amount uint128
 	// https://docs-xi-two.vercel.app/docs/rfcs/0025-simple-udt/0025-simple-udt#sudt-cell
-	inSum := 0
+	inSum := 0u128
 	for i := 0; i < ckb.scriptInputCells(); i++ {
 		raw := ckb.loadInputCellData(i)
-		amount := binary.ReadUint64FromSlice(raw, binary.LittleEndian)
+		amount := binary.ReadUint128FromSlice(raw, binary.LittleEndian)
 		inSum += amount
 	}
 
-	outSum := 0
+	outSum := 0u128
 	for i := 0; i < ckb.scriptOutputCells(); i++ {
 		raw := ckb.loadOutputCellData(i)
-		amount := binary.ReadUint64FromSlice(raw, binary.LittleEndian)
+		amount := binary.ReadUint128FromSlice(raw, binary.LittleEndian)
 		inSum += amount
 	}
 
