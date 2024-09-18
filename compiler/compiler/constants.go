@@ -21,7 +21,14 @@ func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 			IsVariable: false,
 		}
 	case parser.NUMBER:
-		var intType *types.Int = i64
+		// To make primitive have method table, there is a hacking way:
+		// by defining the type with the same name: `type uint64 uint64`,
+		// then new methods can be added to primitive types.
+		// Here we try to simulate the hacking approach.
+		// The default number type is uint64.
+		var intType *types.Int = c.parserTypeToType(&parser.SingleTypeNode{
+			SourceName: "uint64", TypeName: "uint64",
+		}).(*types.Int)
 
 		if v.TargetType != nil {
 			intType = c.parserTypeToType(v.TargetType).(*types.Int)
