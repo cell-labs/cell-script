@@ -84,9 +84,9 @@ func (c *Compiler) funcType(params, returnTypes []parser.TypeNode, isMethod bool
 }
 
 // ABI description
-// method:			package + _method_ + type + _ + name
-// named function: 	package + name
-// cffi(extern):	function_name
+// method:			package + _method_ + type + _ + name + args
+// named function: 	package + name + args
+// cffi(extern):	function_name + args
 // lambda:			package + anonName
 func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	var compiledName string
@@ -120,8 +120,15 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	}
 
 	argTypes := make([]parser.TypeNode, len(v.Arguments))
+	argTypesName := ""
 	for k, v := range v.Arguments {
 		argTypes[k] = v.Type
+		argTypesName += v.Type.Type()
+	}
+
+	// add arguments types to support overloading
+	if !v.IsExtern {
+		compiledName += argTypesName
 	}
 
 	retTypes := make([]parser.TypeNode, len(v.ReturnValues))
@@ -161,7 +168,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		LlvmReturnType: funcRetType,
 		ReturnTypes:    treReturnTypes,
 		IsVariadic:     isVariadicFunc,
-		IsExtern:		v.IsExtern,
+		IsExtern:       v.IsExtern,
 		ArgumentTypes:  treParams,
 	}
 
@@ -559,7 +566,6 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 				}
 			}
 		}
-
 
 		llvmArgs[i] = val
 	}

@@ -1,5 +1,24 @@
 package main
 import "debug"
+
+type A table {}
+
+func (a *A) bar(a uint32) {
+
+}
+
+func (a *A) bar(a uint64) {
+
+}
+
+func foo(a uint32) {
+
+}
+
+func foo(a uint64) {
+	
+}
+
 func main() {
 	hi := func() int64 {
 		return 999
