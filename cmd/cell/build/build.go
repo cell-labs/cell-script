@@ -160,7 +160,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 						continue
 					}
 					packageName := filepath.Base(packagePath)
-					if c.IsPackageImported(packageName) {
+					if c.IsPackageImported(packageName) && packageName != "debug" {
 						continue
 					}
 

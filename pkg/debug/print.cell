@@ -1,0 +1,31 @@
+package debug
+
+func Println(v uint8) {
+	Printf("%d\n", v)
+}
+
+func Println(v uint16) {
+	Printf("%d\n", v)
+}
+
+func Println(v uint32) {
+	Printf("%d\n", v)
+}
+
+func Println(v uint64) {
+	Printf("%d\n", v)
+}
+
+func Println(v uint128) {
+	Printf("%s\n", v.toString())
+}
+
+// func Println(v uint256) {
+// 	Printf("%s\n", v.toString())
+// }
+
+
+// func Println(v string) {
+// 	Printf("%s\n", v)
+// }
+
