@@ -4,7 +4,6 @@ import (
 	"errors"
 	"io"
 	"bytes"
-	"debug"
 )
 
 type ByteOrder interface {
@@ -321,9 +320,6 @@ func ReadUint32(r io.Reader, order ByteOrder) uint32 {
 	if err.NotNone() {
 		return uint32(0)
 	}
-	// for i, v := range bs {
-	// 	debug.Printf("bs i %d", v)
-	// }
 	return order.Uint32(bs)
 }
 

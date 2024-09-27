@@ -30,6 +30,11 @@ func Build(options *option.Options) error {
 		return err
 	}
 
+	err = compilePackage(c, root+"/"+"debug", "debug", options)
+	if err != nil {
+		return err
+	}
+
 	err = compilePackage(c, path, "main", options)
 	if err != nil {
 		return err
@@ -160,7 +165,7 @@ func compilePackage(c *compiler.Compiler, path, name string, options *option.Opt
 						continue
 					}
 					packageName := filepath.Base(packagePath)
-					if c.IsPackageImported(packageName) && packageName != "debug" {
+					if c.IsPackageImported(packageName) {
 						continue
 					}
 
