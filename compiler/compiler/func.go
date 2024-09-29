@@ -199,7 +199,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 		// Make this method available in interfaces via a jump function
 		typesFunc.JumpFunction = c.compileInterfaceMethodJump(fn)
 	} else if v.IsNamed {
-		c.currentPackage.DefinePkgVar(v.Name, value.Value{
+		c.currentPackage.DefinePkgVar(compiledName, value.Value{
 			Type:  typesFunc,
 			Value: fn,
 		})
@@ -441,7 +441,27 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 
 	var fnType *types.Function
 	var fn llvmValue.Named
+	// If the last argument is a slice that is "de variadicified"
+	// Eg: foo...
+	// When this is the case we don't have to convert the arguments to a slice when calling the func
+	lastIsVariadicSlice := false
 
+	// Compile all values
+	for _, vv := range v.Arguments {
+		if devVar, ok := vv.(*parser.DeVariadicSliceNode); ok {
+			lastIsVariadicSlice = true
+			args = append(args, c.compileValue(devVar.Item))
+			continue
+		}
+		args = append(args, c.compileValue(vv))
+	}
+	funcNode, ok := v.Function.(*parser.NameNode)
+	if ok && funcNode.Name != "Printf" {
+		funcNode.Name = funcNode.Package + "_" + funcNode.Name
+		for _, arg := range args {
+			funcNode.Name += arg.Type.Name()
+		}
+	}
 	funcByVal := c.compileValue(v.Function)
 	isMethod := false
 	if checkIfFunc, ok := funcByVal.Type.(*types.Function); ok {
@@ -493,21 +513,6 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 		fn = ifaceMethod.LlvmJumpFunction
 	} else {
 		panic("expected function or method, got something else")
-	}
-
-	// If the last argument is a slice that is "de variadicified"
-	// Eg: foo...
-	// When this is the case we don't have to convert the arguments to a slice when calling the func
-	lastIsVariadicSlice := false
-
-	// Compile all values
-	for _, vv := range v.Arguments {
-		if devVar, ok := vv.(*parser.DeVariadicSliceNode); ok {
-			lastIsVariadicSlice = true
-			args = append(args, c.compileValue(devVar.Item))
-			continue
-		}
-		args = append(args, c.compileValue(vv))
 	}
 
 	// Convert variadic arguments to a slice when needed
