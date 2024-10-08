@@ -458,6 +458,7 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	funcNode, ok := v.Function.(*parser.NameNode)
 	if ok && funcNode.Name != "Printf" {
 		if funcNode.Package == "" {
+			funcNode.Mangling = c.currentPackageName + "_" + funcNode.Name
 		} else {
 			funcNode.Mangling = funcNode.Package + "_" + funcNode.Name
 		}
