@@ -16,7 +16,7 @@ straightforward as possible.
 
 ### Fixed
 
-## [0.1.0] - 2024-06-20
+## [0.2.0] - 2024-08-09
 
 ### Added
 
@@ -29,3 +29,18 @@ straightforward as possible.
 ### Fixed
 
 - Fix `const` variable not initialized
+
+## [0.1.0] - 2024-06-20
+
+### Added
+
+* Interface and methods
+* Big integer u128 and u256
+* Standard libraries
+* `switch` expression
+
+### Changed
+
+### Fixed
+
+- Fix known bugs
