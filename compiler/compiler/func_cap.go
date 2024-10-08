@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"strings"
+
 	"github.com/cell-labs/cell-script/compiler/compiler/internal/pointer"
 	"github.com/cell-labs/cell-script/compiler/compiler/value"
 	"github.com/cell-labs/cell-script/compiler/parser"
@@ -9,7 +11,7 @@ import (
 func (c *Compiler) capFuncCall(v *parser.CallNode) value.Value {
 	arg := c.compileValue(v.Arguments[0])
 
-	if arg.Type.Name() == "slice" {
+	if strings.HasPrefix(arg.Type.Name(), "slice") {
 		val := arg.Value
 		val = c.contextBlock.NewLoad(pointer.ElemType(val), val)
 

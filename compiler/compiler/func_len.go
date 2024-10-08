@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/llir/llvm/ir/constant"
 	llvmTypes "github.com/llir/llvm/ir/types"
@@ -42,7 +43,7 @@ func (c *Compiler) lenFuncCall(v *parser.CallNode) value.Value {
 		}
 	}
 
-	if arg.Type.Name() == "slice" {
+	if strings.HasPrefix(arg.Type.Name(), "slice") {
 		val := arg.Value
 		if arg.IsVariable {
 			val = c.contextBlock.NewLoad(pointer.ElemType(val), val)

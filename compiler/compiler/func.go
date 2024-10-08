@@ -123,7 +123,7 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	argTypesName := ""
 	for k, v := range v.Arguments {
 		argTypes[k] = v.Type
-		argTypesName += v.Type.Type()
+		argTypesName += v.Type.Mangling()
 	}
 
 	// add arguments types to support overloading
@@ -457,9 +457,12 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 	}
 	funcNode, ok := v.Function.(*parser.NameNode)
 	if ok && funcNode.Name != "Printf" {
-		funcNode.Name = funcNode.Package + "_" + funcNode.Name
+		if funcNode.Package == "" {
+		} else {
+			funcNode.Mangling = funcNode.Package + "_" + funcNode.Name
+		}
 		for _, arg := range args {
-			funcNode.Name += arg.Type.Name()
+			funcNode.Mangling += arg.Type.Name()
 		}
 	}
 	funcByVal := c.compileValue(v.Function)

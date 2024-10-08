@@ -9,6 +9,7 @@ type TypeNode interface {
 	Node() // must also implement the Node interface
 	Type() string
 	String() string
+	Mangling() string
 	Variadic() bool
 	SetName(string)
 	GetName() string
@@ -32,6 +33,13 @@ func (stn SingleTypeNode) String() string {
 	return fmt.Sprintf("type(%s.%s)", stn.PackageName, stn.Type())
 }
 
+func (stn SingleTypeNode) Mangling() string {
+	if stn.PackageName == "" {
+		return stn.TypeName
+	}
+	return stn.PackageName + "." + stn.TypeName
+}
+
 func (stn SingleTypeNode) Variadic() bool {
 	return stn.IsVariadic
 }
@@ -49,6 +57,7 @@ type StructTypeNode struct {
 	baseNode
 
 	SourceName string
+	PackageName string // todo
 	Types      []TypeNode
 	Names      map[string]int
 	IsVariadic bool
@@ -60,6 +69,10 @@ func (stn StructTypeNode) Type() string {
 
 func (stn StructTypeNode) String() string {
 	return fmt.Sprintf("StructTypeNode(%+v)", stn.Types)
+}
+
+func (stn StructTypeNode) Mangling() string {
+	return stn.SourceName
 }
 
 func (stn StructTypeNode) Variadic() bool {
@@ -92,6 +105,10 @@ func (atn ArrayTypeNode) String() string {
 	return atn.Type()
 }
 
+func (atn ArrayTypeNode) Mangling() string {
+	return fmt.Sprintf("[%d]%s", atn.Len, atn.ItemType.Mangling())
+}
+
 func (atn ArrayTypeNode) Variadic() bool {
 	return atn.IsVariadic
 }
@@ -120,6 +137,10 @@ func (stn SliceTypeNode) String() string {
 	return stn.Type()
 }
 
+func (stn SliceTypeNode) Mangling() string {
+	return "slice" + stn.ItemType.Type()
+}
+
 func (stn SliceTypeNode) Variadic() bool {
 	return stn.IsVariadic
 }
@@ -146,6 +167,10 @@ func (itn InterfaceTypeNode) Type() string {
 
 func (itn InterfaceTypeNode) String() string {
 	return itn.Type()
+}
+
+func (itn InterfaceTypeNode) Mangling() string {
+	return "interface" + itn.SourceName
 }
 
 func (itn InterfaceTypeNode) Variadic() bool {
@@ -181,6 +206,10 @@ func (ptn PointerTypeNode) String() string {
 	return ptn.Type()
 }
 
+func (ptn PointerTypeNode) Mangling() string {
+	return "pointer" + ptn.ValueType.Type()
+}
+
 func (ptn PointerTypeNode) SetName(name string) {
 	ptn.SourceName = name
 }
@@ -208,6 +237,10 @@ func (ftn FuncTypeNode) Type() string {
 }
 
 func (ftn FuncTypeNode) String() string {
+	return ftn.Type()
+}
+
+func (ftn FuncTypeNode) Mangling() string {
 	return ftn.Type()
 }
 

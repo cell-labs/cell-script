@@ -188,6 +188,7 @@ type NameNode struct {
 
 	Package string
 	Name    string
+	Mangling string
 	Type    TypeNode
 }
 

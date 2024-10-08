@@ -42,6 +42,14 @@ func (dfn DefineFuncNode) String() string {
 	}
 }
 
+func (dfn DefineFuncNode) Mangling() string {
+	if dfn.IsNamed {
+		return fmt.Sprintf("%s%+v%+v", dfn.Name, dfn.Arguments, dfn.ReturnValues)
+	} else {
+		return fmt.Sprintf("%+v%+v", dfn.Arguments, dfn.ReturnValues)
+	}
+}
+
 type ExternNode struct {
 	baseNode
 	FuncNodes []*DefineFuncNode

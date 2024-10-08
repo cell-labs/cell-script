@@ -280,8 +280,8 @@ func (s Slice) LLVM() types.Type {
 	return s.LlvmType
 }
 
-func (Slice) Name() string {
-	return "slice"
+func (s Slice) Name() string {
+	return "slice" + s.Type.Name()
 }
 
 func (Slice) Size() int64 {

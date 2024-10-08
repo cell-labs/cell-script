@@ -315,11 +315,16 @@ func (c *Compiler) compileNameNode(v *parser.NameNode) value.Value {
 		}
 	}
 
+	if pkgVar, ok := pkg.GetPkgVar(v.Mangling, inSamePackage); ok {
+		return pkgVar
+	}
+
 	if pkgVar, ok := pkg.GetPkgVar(v.Name, inSamePackage); ok {
 		return pkgVar
 	}
 
-	panic(fmt.Sprintf("package %s has no memeber %s", v.Package, v.Name))
+
+	panic(fmt.Sprintf("package %s has no memeber %s/%s", v.Package, v.Name, v.Mangling))
 }
 
 func (c *Compiler) setVar(name string, val value.Value) {

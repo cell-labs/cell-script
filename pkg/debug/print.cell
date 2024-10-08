@@ -20,12 +20,12 @@ func Println(v uint128) {
 	Printf("%s\n", v.toString())
 }
 
-// func Println(v uint256) {
-// 	Printf("%s\n", v.toString())
-// }
+func Println(v uint256) {
+	Printf("%s\n", v.toString())
+}
 
 
-// func Println(v string) {
-// 	Printf("%s\n", v)
-// }
+func Println(v string) {
+	Printf("%s\n", v)
+}
 
