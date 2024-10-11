@@ -16,7 +16,7 @@ type Interface struct {
 }
 
 func (i Interface) Name() string {
-	return fmt.Sprintf("interface(%s)", i.SourceName)
+	return fmt.Sprintf("Any")
 }
 
 // SortedRequiredMethods returns a sorted slice of all method names

@@ -75,7 +75,7 @@ func (s Struct) LLVM() types.Type {
 }
 
 func (s Struct) Name() string {
-	return fmt.Sprintf("struct(%s)", s.SourceName)
+	return fmt.Sprintf("Any")
 }
 
 func (s Struct) Zero(block *ir.Block, alloca llvmValue.Value) {
