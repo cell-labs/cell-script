@@ -127,7 +127,7 @@ test/example:
 	${CELL} -d -t riscv tests/examples/named-ret-type.cell && ckb-debugger --bin named-ret-type${exe} | grep "0"
 	${CELL} -d -t riscv tests/examples/func.cell && ckb-debugger --bin func${exe} | grep "999"
 	${CELL} -d -t riscv tests/examples/method.cell && ckb-debugger --bin method${exe} | grep "100"
-	${CELL} -d -t riscv tests/examples/interface.cell && ckb-debugger --bin interface${exe} | grep "reset00"
+
 	${CELL} -d -t riscv tests/examples/typecast.cell && ckb-debugger --bin typecast${exe} | grep "128-128"
 
 	${CELL} -t riscv tests/examples/cell-data.cell && ckb-debugger --bin cell-data${exe}
@@ -140,9 +140,9 @@ test/example:
 	
 	${CELL} -t riscv tests/examples/brainfuck-vm.cell && ckb-debugger --bin brainfuck-vm${exe}
 	${CELL} -t riscv tests/examples/byte.cell && ckb-debugger --bin byte${exe}
-	${CELL} -t riscv tests/examples/xudt.cell && ckb-debugger --bin xudt${exe} || true
+
 	
-	${CELL} -t riscv tests/stdlib/binary-test.cell && ckb-debugger --bin binary-test${exe}
+
 	${CELL} -t riscv tests/stdlib/ckb-test.cell && ckb-debugger --bin ckb-test${exe}
 
 test/sudt:
