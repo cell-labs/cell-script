@@ -12,7 +12,7 @@ const (
 
 func main() {
 	script := ckb.loadScript()
-	if !ckb.verifyScript(script) {
+	if !ckb.verifyScript(script, true) {
 		return ERROR_SCRIPT_ERROR
 	}
 	rawArgs := script.Args().AsSlice()

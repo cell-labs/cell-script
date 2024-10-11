@@ -156,7 +156,7 @@ func main() {
 	ins := Inputs()
 	args := script.args
 	val := getFlagFromArgs(args)
-	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod()
+	owner_mode_for_input_type, owner_mode_for_input_lock, owner_mode_for_output_type := getOwnerModeCheckMethod(val)
 
 	// owner mode checking
 	var owner_mode bool
