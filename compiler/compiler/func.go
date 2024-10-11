@@ -123,7 +123,15 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 	argTypesName := ""
 	for k, v := range v.Arguments {
 		argTypes[k] = v.Type
-		argTypesName += v.Type.Mangling()
+		if ty, hit := c.currentPackage.GetPkgType(v.Type.Type(), true); hit {
+			argTypesName += ty.Name()
+		} else if pkg, ok := c.packages[v.Type.GetPackage()]; ok {
+			if ty, hit := pkg.GetPkgType(v.Type.Type(), true); hit {
+				argTypesName += ty.Name()
+			}
+		} else {
+			argTypesName += v.Type.Mangling()
+		}
 	}
 
 	// add arguments types to support overloading
@@ -463,7 +471,13 @@ func (c *Compiler) compileCallNode(v *parser.CallNode) value.Value {
 			funcNode.Mangling = funcNode.Package + "_" + funcNode.Name
 		}
 		for _, arg := range args {
-			funcNode.Mangling += arg.Type.Name()
+			if _, ok := arg.Type.(*types.Struct); ok {
+				funcNode.Mangling += "Any"
+			} else if _, ok := arg.Type.(*types.Interface); ok {
+				funcNode.Mangling += "Any"
+			} else {
+				funcNode.Mangling += arg.Type.Name()
+			}
 		}
 	}
 	funcByVal := c.compileValue(v.Function)
