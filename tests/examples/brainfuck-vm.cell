@@ -10,7 +10,7 @@ var r string
 
 var prog = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
 
-func scan(dir int64) {
+func scan(dir uint64) {
 	for nest := dir; (nest * dir) != 0; pc += dir {
 		if prog[pc+dir] == ']' {
 			nest--

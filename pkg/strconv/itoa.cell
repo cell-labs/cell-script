@@ -22,13 +22,13 @@ const host32bit = h32bit == 0
 // "90919293949596979899"
 const smallsString = "00010203040506070809101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798081828384858687888990919293949596979899"
 
-func isPowerOfTwo(x int) bool {
+func isPowerOfTwo(x uint64) bool {
 	ret := x&(x-1)
 	return ret == 0
 }
 
 // small returns the string for an i with 0 <= i < nSmalls.
-func small(i int) string {
+func small(i uint64) string {
 	if i < 10 {
 		return digits[i : i+1]
 	}
@@ -159,11 +159,11 @@ func formatBits(dst []byte, u uint64, base uint64, neg bool, append_ bool) ([]by
 // FormatUint returns the string representation of i in the given base,
 // for 2 <= base <= 36. The result uses the lower-case letters 'a' to 'z'
 // for digit values >= 10.
-func FormatUint(i uint64, base int64) string {
+func FormatUint(i uint64, base uint64) string {
 	ok := fastSmalls && i < nSmalls
 	ok = ok && base == int64(10)
 	if ok {
-		return small(int64(i))
+		return small(i)
 	}
 	_, s := formatBits([]byte{}, i, base, false, false)
 	return s
@@ -172,18 +172,26 @@ func FormatUint(i uint64, base int64) string {
 // FormatInt returns the string representation of i in the given base,
 // for 2 <= base <= 36. The result uses the lower-case letters 'a' to 'z'
 // for digit values >= 10.
-func FormatInt(i int64, base int64) string {
+func FormatInt(i int64, base uint64) string {
 	ok := fastSmalls && 0 <= i
 	ok = ok && i < nSmalls
 	ok = ok && base == 10
 	if ok {
-		return small(int64(i))
+		return small(uint64(i))
 	}
 	_, s := formatBits([]byte{}, uint64(i), base, i < 0, false)
 	return s
 }
 
+func FormatInt(i uint64, base uint64) string {
+	return FormatInt(int64(i), base)
+}
+
 // Itoa is equivalent to FormatInt(int64(i), 10).
 func Itoa(i int64) string {
+	return FormatInt(i, 10)
+}
+
+func Itoa(i uint64) string {
 	return FormatInt(i, 10)
 }
