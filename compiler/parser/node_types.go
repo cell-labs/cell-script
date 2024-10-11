@@ -13,6 +13,7 @@ type TypeNode interface {
 	Variadic() bool
 	SetName(string)
 	GetName() string
+	GetPackage() string
 }
 
 // SingleTypeNode refers to an existing type. Such as "string".
@@ -35,6 +36,9 @@ func (stn SingleTypeNode) String() string {
 
 func (stn SingleTypeNode) Mangling() string {
 	if stn.PackageName == "" {
+		if stn.TypeName == "byte" {
+			return "uint8"
+		}
 		return stn.TypeName
 	}
 	return stn.PackageName + "." + stn.TypeName
@@ -50,6 +54,10 @@ func (stn SingleTypeNode) SetName(name string) {
 
 func (stn SingleTypeNode) GetName() string {
 	return stn.SourceName
+}
+
+func (stn SingleTypeNode) GetPackage() string {
+	return stn.PackageName
 }
 
 // StructTypeNode refers to a struct type
@@ -87,6 +95,10 @@ func (stn StructTypeNode) GetName() string {
 	return stn.SourceName
 }
 
+func (stn StructTypeNode) GetPackage() string {
+	return stn.PackageName
+}
+
 // ArrayTypeNode refers to an array
 type ArrayTypeNode struct {
 	baseNode
@@ -121,6 +133,10 @@ func (atn ArrayTypeNode) GetName() string {
 	return atn.SourceName
 }
 
+func (atn ArrayTypeNode) GetPackage() string {
+	return ""
+}
+
 type SliceTypeNode struct {
 	baseNode
 
@@ -138,7 +154,7 @@ func (stn SliceTypeNode) String() string {
 }
 
 func (stn SliceTypeNode) Mangling() string {
-	return "slice" + stn.ItemType.Type()
+	return "slice" + stn.ItemType.Mangling()
 }
 
 func (stn SliceTypeNode) Variadic() bool {
@@ -153,9 +169,14 @@ func (stn SliceTypeNode) GetName() string {
 	return stn.SourceName
 }
 
+func (stn SliceTypeNode) GetPackage() string {
+	return ""
+}
+
 type InterfaceTypeNode struct {
 	baseNode
 
+	PackageName string
 	SourceName string
 	Methods    map[string]InterfaceMethod
 	IsVariadic bool
@@ -185,6 +206,10 @@ func (itn InterfaceTypeNode) GetName() string {
 	return itn.SourceName
 }
 
+func (itn InterfaceTypeNode) GetPackage() string {
+	return itn.PackageName
+}
+
 type InterfaceMethod struct {
 	ArgumentTypes []TypeNode
 	ReturnTypes   []TypeNode
@@ -207,7 +232,7 @@ func (ptn PointerTypeNode) String() string {
 }
 
 func (ptn PointerTypeNode) Mangling() string {
-	return "pointer" + ptn.ValueType.Type()
+	return "pointer" + ptn.ValueType.Type() // todo: check ValueType.Mangling()
 }
 
 func (ptn PointerTypeNode) SetName(name string) {
@@ -216,6 +241,10 @@ func (ptn PointerTypeNode) SetName(name string) {
 
 func (ptn PointerTypeNode) GetName() string {
 	return ptn.SourceName
+}
+
+func (ptn PointerTypeNode) GetPackage() string {
+	return ""
 }
 
 func (ptn PointerTypeNode) Variadic() bool {
@@ -250,6 +279,10 @@ func (ftn FuncTypeNode) SetName(name string) {
 
 func (ftn FuncTypeNode) GetName() string {
 	return ftn.SourceName
+}
+
+func (ftn FuncTypeNode) GetPackage() string {
+	return ""
 }
 
 func (ftn FuncTypeNode) Variadic() bool {
