@@ -156,6 +156,7 @@ func (c *Compiler) compileTypeCastNode(v *parser.TypeCastNode) value.Value {
 
 	// Same size, nothing to do here
 	if current.BitSize == target.BitSize {
+		val.Type = targetType
 		return val
 	}
 
