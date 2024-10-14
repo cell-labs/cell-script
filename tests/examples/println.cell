@@ -1,0 +1,15 @@
+import (
+	"debug"
+)
+
+func main() {
+	debug.Println("1")
+	debug.Println(1)
+	debug.Println(1u8)
+	debug.Println(1u16)
+	debug.Println(1u32)
+	debug.Println(1u64)
+	debug.Println(1u128)
+	debug.Println(1u256)
+	return 0
+}
