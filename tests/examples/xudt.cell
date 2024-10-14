@@ -199,7 +199,7 @@ func main() {
 			}
 			blake160Hash := args[tx.BLAKE2B_BLOCK_SIZE+FLAGS_SIZE:]
 			witness := tx.getWitness()
-			witnessBlake2bHash := tx.getBlake2b()
+			witnessBlake2bHash := tx.getBlake2b(witness)
 			if witnessBlake2bHash[0:tx.BLAKE160_SIZE] == blake160Hash {
 				return ERROR_HASH_MISMATCHED
 			}
@@ -222,7 +222,7 @@ func main() {
 
 		// decode ownerScript raw bytes to Script
 		var ownerScript CellScript
-		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode, 0, ownerScript.args)
+		err := tx.executeFunc(ownerScriptHash, ownerScript.hashType, "validate", owner_mode, 0u64, ownerScript.args)
 		if err == SUCCESS {
 			owner_mode = true
 		}
@@ -254,7 +254,7 @@ func main() {
 	extensionScripts := loadExtensionScripts()
 	// execute all scripts
 	for i, script := range(extensionScripts) {
-		tx.executeFunc(script.codeHash, script.hashType, "validate", owner_mode, i, script.args)
+		tx.executeFunc(script.codeHash, script.hashType, "validate", owner_mode, uint64(i), script.args)
 	}
 	return SUCCESS
 }

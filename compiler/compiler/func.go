@@ -121,14 +121,30 @@ func (c *Compiler) compileDefineFuncNode(v *parser.DefineFuncNode) value.Value {
 
 	argTypes := make([]parser.TypeNode, len(v.Arguments))
 	argTypesName := ""
+	// Struct and Interface are mangled in another manner to support receiver-method.
+	getTypeManglingName := func(p string, name string) string {
+		if ty, hit := c.currentPackage.GetPkgType(name, true); hit {
+			return ty.Name()
+		} else if pkg, ok := c.packages[p]; ok {
+			if ty, hit := pkg.GetPkgType(name, true); hit {
+				return ty.Name()
+			}
+		}
+		return ""
+	}
 	for k, v := range v.Arguments {
 		argTypes[k] = v.Type
-		if ty, hit := c.currentPackage.GetPkgType(v.Type.Type(), true); hit {
-			argTypesName += ty.Name()
-		} else if pkg, ok := c.packages[v.Type.GetPackage()]; ok {
-			if ty, hit := pkg.GetPkgType(v.Type.Type(), true); hit {
-				argTypesName += ty.Name()
+		typeMangling := getTypeManglingName(v.Type.GetPackage(), v.Type.Type())
+		if sliceTy, ok := v.Type.(*parser.SliceTypeNode); ok && typeMangling == "" {
+			itemTy := sliceTy.ItemType
+			itemTyMangling := getTypeManglingName(itemTy.GetPackage(), itemTy.Type())
+			if itemTyMangling != "" {
+				typeMangling = "slice" + itemTyMangling
 			}
+		}
+		// todo: support more compound types
+		if typeMangling != "" {
+			argTypesName += typeMangling
 		} else {
 			argTypesName += v.Type.Mangling()
 		}
