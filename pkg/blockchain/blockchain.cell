@@ -22,7 +22,7 @@ func NewByte(b byte) Byte {
 	return b
 }
 func ByteDefault() Byte {
-	return byte(0)
+	return Byte(0)
 }
 func ByteFromSliceUnchecked(slice []byte) Byte {
 	return slice[0]
@@ -108,7 +108,7 @@ func (s *Uint32Builder) Nth3(v Byte) *Uint32Builder {
 func Uint32FromSlice(slice []byte, _compatible bool) (ret Uint32, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(4) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint32", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(4)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint32", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(4)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Uint32{inner: slice}, errors.None()
@@ -227,7 +227,7 @@ func (s *Uint64Builder) Nth7(v Byte) *Uint64Builder {
 func Uint64FromSlice(slice []byte, _compatible bool) (ret Uint64, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(8) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint64", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(8)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint64", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(8)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Uint64{inner: slice}, errors.None()
@@ -410,7 +410,7 @@ func (s *Uint128Builder) Nth15(v Byte) *Uint128Builder {
 func Uint128FromSlice(slice []byte, _compatible bool) (ret Uint128, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(16) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint128", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(16)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint128", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(16)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Uint128{inner: slice}, errors.None()
@@ -721,7 +721,7 @@ func (s *Byte32Builder) Nth31(v Byte) *Byte32Builder {
 func Byte32FromSlice(slice []byte, _compatible bool) (ret Byte32, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(32) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(32)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(32)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Byte32{inner: slice}, errors.None()
@@ -1128,7 +1128,7 @@ func (s *Uint256Builder) Nth31(v Byte) *Uint256Builder {
 func Uint256FromSlice(slice []byte, _compatible bool) (ret Uint256, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(32) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint256", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(32)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Uint256", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(32)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Uint256{inner: slice}, errors.None()
@@ -1400,20 +1400,20 @@ func NewBytesBuilder() BytesBuilder {
 func BytesFromSlice(slice []byte, _compatible bool) (ret Bytes, e error) {
 	sliceLen := len(slice)
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Bytes", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Bytes", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := unpackNumber(slice)
 	if itemCount == uint32(0) {
 		if sliceLen != HeaderSizeUint {
-			errMsg := strings.Join([]string{"TotalSizeNotMatch", "Bytes", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+			errMsg := strings.Join([]string{"TotalSizeNotMatch", "Bytes", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 			return ret, errors.New(errMsg)
 		}
 		return Bytes{inner: slice}, errors.None()
 	}
 	totalSize := uint64(HeaderSizeUint) + uint64(uint32(1)*itemCount)
 	if uint64(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Bytes", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Bytes", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Bytes{inner: slice}, errors.None()
@@ -1611,13 +1611,13 @@ func BytesVecFromSlice(slice []byte, compatible bool) (ret BytesVec, e error) {
 	sliceLen := len(slice)
 
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "BytesVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "BytesVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if sliceLen != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "BytesVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "BytesVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -1626,24 +1626,24 @@ func BytesVecFromSlice(slice []byte, compatible bool) (ret BytesVec, e error) {
 	}
 
 	if sliceLen < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "BytesVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "BytesVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "BytesVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "BytesVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "BytesVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "BytesVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "BytesVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "BytesVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := uint32(offsetFirst)/HeaderSizeUint - uint32(1)
@@ -1792,20 +1792,20 @@ func NewByte32VecBuilder() Byte32VecBuilder {
 func Byte32VecFromSlice(slice []byte, _compatible bool) (ret Byte32Vec, e error) {
 	sliceLen := len(slice)
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Byte32Vec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Byte32Vec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := unpackNumber(slice)
 	if itemCount == uint32(0) {
 		if sliceLen != HeaderSizeUint {
-			errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32Vec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+			errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32Vec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 			return ret, errors.New(errMsg)
 		}
 		return Byte32Vec{inner: slice}, errors.None()
 	}
 	totalSize := uint64(HeaderSizeUint) + uint64(uint32(32)*itemCount)
 	if uint64(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32Vec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Byte32Vec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Byte32Vec{inner: slice}, errors.None()
@@ -1913,35 +1913,35 @@ func NewScriptBuilder() ScriptBuilder {
 func ScriptFromSlice(slice []byte, compatible bool) (ret Script, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Script", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Script", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Script", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Script", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Script", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Script", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Script", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Script", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Script", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Script", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Script", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Script", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -2205,7 +2205,7 @@ func (s *ProposalShortIdBuilder) Nth9(v Byte) *ProposalShortIdBuilder {
 func ProposalShortIdFromSlice(slice []byte, _compatible bool) (ret ProposalShortId, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(10) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortId", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(10)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortId", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(10)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return ProposalShortId{inner: slice}, errors.None()
@@ -2345,20 +2345,20 @@ func NewProposalShortIdVecBuilder() ProposalShortIdVecBuilder {
 func ProposalShortIdVecFromSlice(slice []byte, _compatible bool) (ret ProposalShortIdVec, e error) {
 	sliceLen := len(slice)
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "ProposalShortIdVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "ProposalShortIdVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := unpackNumber(slice)
 	if itemCount == uint32(0) {
 		if sliceLen != HeaderSizeUint {
-			errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortIdVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+			errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortIdVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 			return ret, errors.New(errMsg)
 		}
 		return ProposalShortIdVec{inner: slice}, errors.None()
 	}
 	totalSize := uint64(HeaderSizeUint) + uint64(uint32(10)*itemCount)
 	if uint64(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortIdVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "ProposalShortIdVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return ProposalShortIdVec{inner: slice}, errors.None()
@@ -2442,7 +2442,7 @@ func NewOutPointBuilder() OutPointBuilder {
 func OutPointFromSlice(slice []byte, _compatible bool) (ret OutPoint, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(36) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "OutPoint", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(36)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "OutPoint", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(36)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return OutPoint{inner: slice}, errors.None()
@@ -2509,7 +2509,7 @@ func NewCellInputBuilder() CellInputBuilder {
 func CellInputFromSlice(slice []byte, _compatible bool) (ret CellInput, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(44) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInput", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(44)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInput", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(44)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return CellInput{inner: slice}, errors.None()
@@ -2600,35 +2600,35 @@ func NewCellOutputBuilder() CellOutputBuilder {
 func CellOutputFromSlice(slice []byte, compatible bool) (ret CellOutput, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutput", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutput", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutput", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutput", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutput", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutput", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutput", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutput", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutput", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutput", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutput", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutput", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -2776,7 +2776,7 @@ func NewCellDepBuilder() CellDepBuilder {
 func CellDepFromSlice(slice []byte, _compatible bool) (ret CellDep, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(37) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDep", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(37)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDep", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(37)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return CellDep{inner: slice}, errors.None()
@@ -2864,20 +2864,20 @@ func NewCellDepVecBuilder() CellDepVecBuilder {
 func CellDepVecFromSlice(slice []byte, _compatible bool) (ret CellDepVec, e error) {
 	sliceLen := len(slice)
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellDepVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellDepVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := unpackNumber(slice)
 	if itemCount == uint32(0) {
 		if sliceLen != HeaderSizeUint {
-			errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDepVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+			errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDepVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 			return ret, errors.New(errMsg)
 		}
 		return CellDepVec{inner: slice}, errors.None()
 	}
 	totalSize := uint64(HeaderSizeUint) + uint64(uint32(37)*itemCount)
 	if uint64(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDepVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellDepVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return CellDepVec{inner: slice}, errors.None()
@@ -2982,20 +2982,20 @@ func NewCellInputVecBuilder() CellInputVecBuilder {
 func CellInputVecFromSlice(slice []byte, _compatible bool) (ret CellInputVec, e error) {
 	sliceLen := len(slice)
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellInputVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellInputVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := unpackNumber(slice)
 	if itemCount == uint32(0) {
 		if sliceLen != HeaderSizeUint {
-			errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInputVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+			errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInputVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 			return ret, errors.New(errMsg)
 		}
 		return CellInputVec{inner: slice}, errors.None()
 	}
 	totalSize := uint64(HeaderSizeUint) + uint64(uint32(44)*itemCount)
 	if uint64(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInputVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellInputVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return CellInputVec{inner: slice}, errors.None()
@@ -3119,13 +3119,13 @@ func CellOutputVecFromSlice(slice []byte, compatible bool) (ret CellOutputVec, e
 	sliceLen := len(slice)
 
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutputVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutputVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if sliceLen != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutputVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutputVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -3134,24 +3134,24 @@ func CellOutputVecFromSlice(slice []byte, compatible bool) (ret CellOutputVec, e
 	}
 
 	if sliceLen < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutputVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellOutputVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutputVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutputVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutputVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellOutputVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutputVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellOutputVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := uint32(offsetFirst)/HeaderSizeUint - uint32(1)
@@ -3330,35 +3330,35 @@ func NewRawTransactionBuilder() RawTransactionBuilder {
 func RawTransactionFromSlice(slice []byte, compatible bool) (ret RawTransaction, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "RawTransaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "RawTransaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawTransaction", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawTransaction", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawTransaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawTransaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "RawTransaction", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "RawTransaction", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "RawTransaction", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "RawTransaction", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "RawTransaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "RawTransaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -3557,35 +3557,35 @@ func NewTransactionBuilder() TransactionBuilder {
 func TransactionFromSlice(slice []byte, compatible bool) (ret Transaction, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Transaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Transaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Transaction", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Transaction", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Transaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Transaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Transaction", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Transaction", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Transaction", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Transaction", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Transaction", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Transaction", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -3761,13 +3761,13 @@ func TransactionVecFromSlice(slice []byte, compatible bool) (ret TransactionVec,
 	sliceLen := len(slice)
 
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "TransactionVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "TransactionVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if sliceLen != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "TransactionVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "TransactionVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -3776,24 +3776,24 @@ func TransactionVecFromSlice(slice []byte, compatible bool) (ret TransactionVec,
 	}
 
 	if sliceLen < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "TransactionVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "TransactionVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "TransactionVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "TransactionVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "TransactionVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "TransactionVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "TransactionVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "TransactionVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := uint32(offsetFirst)/HeaderSizeUint - uint32(1)
@@ -3977,7 +3977,7 @@ func NewRawHeaderBuilder() RawHeaderBuilder {
 func RawHeaderFromSlice(slice []byte, _compatible bool) (ret RawHeader, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(192) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawHeader", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(192)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "RawHeader", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(192)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return RawHeader{inner: slice}, errors.None()
@@ -4092,7 +4092,7 @@ func NewHeaderBuilder() HeaderBuilder {
 func HeaderFromSlice(slice []byte, _compatible bool) (ret Header, e error) {
 	sliceLen := len(slice)
 	if sliceLen != uint32(208) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Header", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(208)}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Header", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(208)}, " ")
 		return ret, errors.New(errMsg)
 	}
 	return Header{inner: slice}, errors.None()
@@ -4174,35 +4174,35 @@ func NewUncleBlockBuilder() UncleBlockBuilder {
 func UncleBlockFromSlice(slice []byte, compatible bool) (ret UncleBlock, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlock", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlock", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlock", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlock", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlock", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlock", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlock", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlock", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlock", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlock", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlock", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlock", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -4378,13 +4378,13 @@ func UncleBlockVecFromSlice(slice []byte, compatible bool) (ret UncleBlockVec, e
 	sliceLen := len(slice)
 
 	if sliceLen < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlockVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlockVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if sliceLen != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlockVec", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlockVec", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -4393,24 +4393,24 @@ func UncleBlockVecFromSlice(slice []byte, compatible bool) (ret UncleBlockVec, e
 	}
 
 	if sliceLen < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlockVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "UncleBlockVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlockVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlockVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlockVec", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "UncleBlockVec", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlockVec", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "UncleBlockVec", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	itemCount := uint32(offsetFirst)/HeaderSizeUint - uint32(1)
@@ -4571,35 +4571,35 @@ func NewBlockBuilder() BlockBuilder {
 func BlockFromSlice(slice []byte, compatible bool) (ret Block, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Block", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Block", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Block", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Block", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Block", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "Block", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Block", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Block", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "Block", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "Block", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "Block", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "Block", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -4774,35 +4774,35 @@ func NewCellbaseWitnessBuilder() CellbaseWitnessBuilder {
 func CellbaseWitnessFromSlice(slice []byte, compatible bool) (ret CellbaseWitness, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellbaseWitness", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellbaseWitness", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellbaseWitness", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellbaseWitness", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellbaseWitness", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "CellbaseWitness", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellbaseWitness", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellbaseWitness", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellbaseWitness", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "CellbaseWitness", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "CellbaseWitness", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "CellbaseWitness", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
@@ -4962,35 +4962,35 @@ func NewWitnessArgsBuilder() WitnessArgsBuilder {
 func WitnessArgsFromSlice(slice []byte, compatible bool) (ret WitnessArgs, e error) {
 	sliceLen := len(slice)
 	if uint32(sliceLen) < HeaderSizeUint {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "WitnessArgs", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
+		errMsg := strings.Join([]string{"HeaderIsBroken", "WitnessArgs", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	totalSize := unpackNumber(slice)
 	if Number(sliceLen) != totalSize {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "WitnessArgs", strconv.Itoa(int64(sliceLen)), "!=", strconv.Itoa(int64(totalSize))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "WitnessArgs", strconv.Itoa(uint64(sliceLen)), "!=", strconv.Itoa(uint64(totalSize))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	if uint32(sliceLen) < HeaderSizeUint*uint32(2) {
-		errMsg := strings.Join([]string{"TotalSizeNotMatch", "WitnessArgs", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"TotalSizeNotMatch", "WitnessArgs", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
 	offsetFirst := unpackNumber(slice[HeaderSizeUint:])
 	offsetSize := offsetFirst % HeaderSizeUint
 	if offsetSize != uint32(0) {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "WitnessArgs", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "WitnessArgs", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 	headerSize := HeaderSizeUint * uint32(2)
 	if offsetFirst < headerSize {
-		errMsg := strings.Join([]string{"OffsetsNotMatch", "WitnessArgs", strconv.Itoa(int64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(int64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
+		errMsg := strings.Join([]string{"OffsetsNotMatch", "WitnessArgs", strconv.Itoa(uint64(offsetFirst % uint32(4))), "!= 0", strconv.Itoa(uint64(offsetFirst)), "<", strconv.Itoa(uint64(HeaderSizeUint * uint32(2)))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
-	if sliceLen < uint32(offsetFirst) {
-		errMsg := strings.Join([]string{"HeaderIsBroken", "WitnessArgs", strconv.Itoa(int64(sliceLen)), "<", strconv.Itoa(int64(offsetFirst))}, " ")
+	if sliceLen < offsetFirst {
+		errMsg := strings.Join([]string{"HeaderIsBroken", "WitnessArgs", strconv.Itoa(uint64(sliceLen)), "<", strconv.Itoa(uint64(offsetFirst))}, " ")
 		return ret, errors.New(errMsg)
 	}
 
