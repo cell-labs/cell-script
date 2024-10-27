@@ -48,12 +48,11 @@ The internal discussion can be found [here](./DISCUSSION.md).
 brew install go@1.22
 brew install antlr@4
 brew install openjdk@21
-brew install llvm@16
+brew install llvm@18
 brew tap riscv-software-src/riscv
 brew install riscv-tools
 export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/opt/llvm@16/bin:$PATH"
-brew install --cask spike
+export PATH="/opt/homebrew/opt/llvm@18/bin:$PATH"
 make build
 source install.sh
 ```
@@ -114,31 +113,6 @@ or
 
 ```
 sudo apt install gcc-riscv64-unknown-elf
-```
-
-Install `spike`. ⚠️This is optional
-
-```
-sudo apt install device-tree-compiler libboost-all-dev
-
-cd ~/risc-v
-git clone https://github.com/riscv-software-src/riscv-isa-sim.git
-
-cd riscv-isa-sim
-
-mkdir build
-cd build
-
-../configure --prefix=/opt/riscv
-make
-make install
-```
-
-Build & Install compiler in the root folder
-
-```
-make build
-source install.sh
 ```
 
 ## How to compile cellscript program
