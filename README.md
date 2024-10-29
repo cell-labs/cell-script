@@ -11,7 +11,7 @@ import "debug"
 import "tx"
 import "cell"
 
-function main() {
+func main() {
     if tx.isOwnerMode() {
         return 0
     }
@@ -167,7 +167,7 @@ ckb-c-stdlib use molecule 0.7.1
 cargo install moleculec@0.7.1 --locked
 ```
 
-## How to Deploy?
+## To Deploy a CKB contract
 
 ```
 git clone git@github.com:cell-labs/cell-cli.git
