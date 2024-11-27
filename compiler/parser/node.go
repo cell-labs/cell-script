@@ -117,6 +117,7 @@ const (
 
 var opsCharToOp map[string]Operator
 var arithOperators map[Operator]struct{}
+var cmpOperators map[Operator]struct{}
 
 func init() {
 	opsCharToOp = make(map[string]Operator)
@@ -135,6 +136,13 @@ func init() {
 		OP_ADD, OP_SUB, OP_DIV, OP_MUL,
 	} {
 		arithOperators[op] = struct{}{}
+	}
+
+	cmpOperators = make(map[Operator]struct{})
+	for _, op := range []Operator{
+		OP_EQ, OP_GT, OP_GTEQ, OP_LT, OP_LTEQ,
+	} {
+		cmpOperators[op] = struct{}{}
 	}
 }
 

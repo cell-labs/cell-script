@@ -185,3 +185,20 @@ func TestLexerPragma(t *testing.T) {
 
 	assert.Equal(t, expected, r)
 }
+
+func TestCondition(t *testing.T) {
+	r := Lex(`a > b && b > c`)
+
+	expected := []Item{
+		{Type: IDENTIFIER, Val: "a", Line: 1},
+		{Type: OPERATOR, Val: ">", Line: 1},
+		{Type: IDENTIFIER, Val: "b", Line: 1},
+		{Type: OPERATOR, Val: "&&", Line: 1},
+		{Type: IDENTIFIER, Val: "b", Line: 1},
+		{Type: OPERATOR, Val: ">", Line: 1},
+		{Type: IDENTIFIER, Val: "c", Line: 1},
+		{Type: EOL},
+		{Type: EOF},
+	}
+	assert.Equal(t, expected, r)
+}

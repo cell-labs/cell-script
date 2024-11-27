@@ -754,6 +754,7 @@ func (p *parser) parseOperation(input Node, withArithAhead bool) Node {
 	// Handle "Operations" both arith and comparision
 	operator := opsCharToOp[next.Val]
 	_, isArithOp := arithOperators[operator]
+	_, isCmpOp := cmpOperators[operator]
 
 	if !withArithAhead && isArithOp {
 		return input
@@ -764,11 +765,27 @@ func (p *parser) parseOperation(input Node, withArithAhead bool) Node {
 		Operator: operator,
 		Left:     input,
 	}
+	if operator == OP_LOGICAL_AND || operator == OP_LOGICAL_OR {
+		body, _ := p.parseUntilEither(
+			[]lexer.Item{
+				{Type: lexer.OPERATOR, Val: "{"},
+				{Type: lexer.EOL},
+				{Type: lexer.EOF},
+			},
+		)
+		return &OperatorNode{
+			Operator: operator,
+			Left:     input,
+			Right:  body[0],
+		}
+	}
 
 	if isArithOp {
 		res.Right = p.parseOneWithOptions(false, false, false)
 		// Sort infix operations if necessary (eg: apply OP_MUL before OP_ADD)
 		res = sortInfix(res)
+	} else if isCmpOp {
+		res.Right = p.parseOneWithOptions(false, false, false)
 	} else {
 		res.Right = p.parseOneWithOptions(true, true, true)
 	}

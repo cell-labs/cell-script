@@ -341,3 +341,41 @@ func TestFunction(t *testing.T) {
 
 	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
 }
+
+func TestCondition(t *testing.T) {
+	input := []lexer.Item{
+		{Type: lexer.IDENTIFIER, Val: "a", Line: 1},
+		{Type: lexer.OPERATOR, Val: ">", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "b", Line: 1},
+		{Type: lexer.OPERATOR, Val: "&&", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "b", Line: 1},
+		{Type: lexer.OPERATOR, Val: ">", Line: 1},
+		{Type: lexer.IDENTIFIER, Val: "c", Line: 1},
+		{Type: lexer.EOL},
+		{Type: lexer.EOF},
+	}
+
+	/*
+		a > b && b > c
+	*/
+
+	expected := &FileNode{
+		Instructions: []Node{
+			&OperatorNode{
+				Operator: "&&",
+				Left: &OperatorNode{
+					Operator: ">",
+					Left: &NameNode{Name: "a"},
+					Right: &NameNode{Name: "b"},
+				},
+				Right: &OperatorNode{
+					Operator: ">",
+					Left: &NameNode{Name: "b"},
+					Right: &NameNode{Name: "c"},
+				},
+			},
+		},
+	}
+
+	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
+}
