@@ -378,7 +378,7 @@ func TestCondition(t *testing.T) {
 	}
 
 	/*
-		(a + d > 2 && b == false) || c < 3
+		a + d > 2 && b == false || c < 3
 	*/
 
 	input = []lexer.Item{
@@ -405,25 +405,30 @@ func TestCondition(t *testing.T) {
 				Operator: "&&",
 				Left: &OperatorNode{
 					Operator: ">",
-					Left: &NameNode{Name: "a"},
-					Right: &NameNode{Name: "b"},
+					Left: &OperatorNode{
+						Operator: "+",
+						Left: &NameNode{Name: "a"},
+						Right: &NameNode{Name: "d"},
+					},
+					Right: &ConstantNode{Type: NUMBER, Value: 2},
 				},
 				Right: &OperatorNode{
-					Operator: "&&",
+					Operator: "||",
 					Left: &OperatorNode{
-						Operator: ">",
-						Left: &NameNode{Name: "a"},
-						Right: &NameNode{Name: "b"},
+						Operator: "==",
+						Left: &NameNode{Name: "b"},
+						Right: &ConstantNode{Type: BOOL, Value: 0},
 					},
 					Right: &OperatorNode{
-						Operator: ">",
-						Left: &NameNode{Name: "b"},
-						Right: &NameNode{Name: "c"},
+						Operator: "<",
+						Left: &NameNode{Name: "c"},
+						Right: &ConstantNode{Type: NUMBER, Value: 3},
 					},
 				},
 			},
 		},
 	}
-
-	assert.Equal(t, expected, Parse(input, &option.Options{Debug: false}))
+	
+	actual := Parse(input, &option.Options{Debug: false})
+	assert.Equal(t, expected, actual)
 }

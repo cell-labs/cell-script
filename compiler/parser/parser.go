@@ -1148,6 +1148,10 @@ func (p *parser) parseUntil(until lexer.Item) []Node {
 // is returned in "reached"
 func (p *parser) parseUntilEither(untils []lexer.Item) (res []Node, reached lexer.Item) {
 	for {
+		if p.i >= len(p.input) - 1 {
+			return
+		}
+
 		current := p.input[p.i]
 
 		// Check if we have reached the end
@@ -1171,9 +1175,12 @@ func (p *parser) parseUntilEither(untils []lexer.Item) (res []Node, reached lexe
 
 		one := p.parseOne(true)
 		if one != nil {
-			next := p.lookAhead(1)
-			if _, isOperationNode := opsCharToOp[next.Val]; next.Type == lexer.OPERATOR && isOperationNode {
-				one = p.parseOperation(one, false)
+			if p.i < len(p.input) - 1 {
+				// look ahead one more to see if there is an operator
+				next := p.lookAhead(1)
+				if _, isOperationNode := opsCharToOp[next.Val]; next.Type == lexer.OPERATOR && isOperationNode {
+					one = p.parseOperation(one, false)
+				}
 			}
 			res = append(res, one)
 		}

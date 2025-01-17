@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch test function",
+            "name": "parser",
             "type": "go",
             "request": "launch",
             "mode": "test",
@@ -17,7 +17,7 @@
         },
 
         {
-            "name": "Launch",
+            "name": "cell",
             "type": "go",
             "request": "launch",
             "mode": "exec",
